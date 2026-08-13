@@ -18,6 +18,11 @@
     "strictPropertyInitialization": false,
     "types": ["node", "jest"]
   },
-  "include": ["src/**/*"],
+  "baseUrl": ".",
+    "paths": {
+      "@kemraa/adapter-*": ["../../packages/adapters/*/src/index.ts"],
+      "@kemraa/*": ["../../packages/*/src/index.ts"]
+    },
+    "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

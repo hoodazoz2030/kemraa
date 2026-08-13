@@ -184,17 +184,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           
-      - name: Build and push Admin image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: apps/admin/Dockerfile
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository }}/admin:latest
-            ghcr.io/${{ github.repository }}/admin:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
   # ========================================
   # Job 4: Security Scan
@@ -221,15 +210,4 @@ jobs:
         with:
           sarif_file: 'trivy-api-results.sarif'
           
-      - name: Run Trivy vulnerability scanner (Admin)
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ghcr.io/${{ github.repository }}/admin:${{ github.sha }}
-          format: 'sarif'
-          output: 'trivy-admin-results.sarif'
           
-      - name: Upload Trivy scan results (Admin)
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: 'trivy-admin-results.sarif'
