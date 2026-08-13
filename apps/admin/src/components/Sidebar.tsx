@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Map, ShoppingBag, Calendar, Bell, HelpCircle, Users, BarChart3 } from "lucide-react";
+import { Home, Map, ShoppingBag, Calendar, Bell, HelpCircle, Users, BarChart3, ScrollText, Flag } from "lucide-react";
 import clsx from "clsx";
 
 const navItems = [
@@ -13,6 +13,8 @@ const navItems = [
   { href: "/support", label: "Support", icon: HelpCircle },
   { href: "/users", label: "Users", icon: Users },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/audit-logs", label: "Audit Logs", icon: ScrollText },
+  { href: "/feature-flags", label: "Feature Flags", icon: Flag },
 ];
 
 export default function Sidebar() {

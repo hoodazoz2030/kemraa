@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Patch, Body, Param, Query, Req, UseGuards, ParseUUIDPipe, HttpCode, HttpStatus } from "@nestjs/common";
 import { Audit } from "../common/interceptors/audit.interceptor.js";
+import { FeatureFlagGuard, RequireFlag } from "../common/guards/feature-flag.guard.js";
 import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { TripsService } from "./trips.service.js";
 import { CreateTripDto, UpdateTripDto, AddItineraryItemsDto, RejectTripDto, ListTripsQueryDto } from "./dto/trips.dto.js";
@@ -20,7 +21,11 @@ export class TripsController {
     return roles.some((r) => ADMIN_ROLES.includes(r));
   }
 
-  @Post() @ApiOperation({ summary: "Create trip (DRAFT)" })
+  @Post()
+  @UseGuards(FeatureFlagGuard)
+  @RequireFlag("trips_enabled")
+  @ApiOperation({ summary: "Create trip (DRAFT)" })
+  @Audit("trip.create", "trip")
   create(@Req() req: Request, @Body() dto: CreateTripDto) {
     return this.trips.create((req as any).user.sub, dto);
   }

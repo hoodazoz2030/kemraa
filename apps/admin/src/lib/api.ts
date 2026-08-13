@@ -88,3 +88,15 @@ export async function listAuditLogs(params: {
   const res = await api.get("/admin/audit-logs?" + qs.toString());
   return res.data;
 }
+// ============ Feature Flags ============
+export interface FeatureFlag {
+  key: string;
+  enabled: boolean;
+  updatedAt: string;
+}
+
+export const featureFlagsApi = {
+  list: () => api.get("/feature-flags").then((r) => r.data),
+  get: (key: string) => api.get("/feature-flags/" + key).then((r) => r.data),
+  set: (key: string, enabled: boolean) => api.put("/feature-flags/" + key, { enabled }).then((r) => r.data),
+};
