@@ -1,0 +1,1 @@
+export const MoneySchema={amountMinor:"integer >= 0",currency:"ISO-4217 uppercase 3 letters"};

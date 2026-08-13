@@ -1,0 +1,8 @@
+export interface ThothToolCall{tool:string;input:Record<string,unknown>;}
+export interface ThothMessage{role:"user"|"assistant"|"system"|"tool";content:string;toolCall?:ThothToolCall;}
+export interface ThothCompletionInput{messages:ThothMessage[];allowedTools:readonly string[];maxTokens?:number;}
+export interface ThothCompletionOutput{text:string;toolCall?:ThothToolCall;model:string;usage:{inputTokens:number;outputTokens:number};}
+export interface AiProvider{readonly name:string;complete(i:ThothCompletionInput):Promise<ThothCompletionOutput>;}
+export class MockLlmAdapter implements AiProvider{readonly name="mock";
+  async complete(i:ThothCompletionInput):Promise<ThothCompletionOutput>{const last=[...i.messages].reverse().find(m=>m.role==="user");const t=(last?.content??"").toLowerCase();const allow=new Set(i.allowedTools);const map:Array<[RegExp,string]>>=[[/\b(search|find)\b/,"search_services"],[/\b(plan|itinerary)\b/,"create_itinerary_draft"],[/\b(budget)\b/,"calculate_budget"],[/\b(book|reserve)\b/,"create_booking_draft"],[/\b(ride|taxi)\b/,"estimate_ride"]];let tc:ThothToolCall|undefined;for(const [re,tool] of map){if(re.test(t)&&allow.has(tool)){tc={tool,input:{query:last?.content??""}};break;}}return {text:tc?`[mock-thoth] use tool ${tc.tool}`:"[mock-thoth] received (AI_PROVIDER=mock)",toolCall:tc,model:"mock-llm-v1",usage:{inputTokens:t.length,outputTokens:42}};}}
+export function createAiProvider(_p:string):AiProvider{return new MockLlmAdapter();}

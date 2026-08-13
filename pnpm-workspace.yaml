@@ -1,0 +1,8 @@
+packages:
+  - apps/api
+  - apps/thoth-worker
+  - apps/admin-web
+  - apps/partner-web
+  - apps/agency-web
+  - packages/*
+  - packages/adapters/*

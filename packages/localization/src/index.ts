@@ -1,0 +1,2 @@
+export const strings:Record<string,Record<string,string>>={"ar-EG":{booking_confirmed:"تم تأكيد الحجز",payment_failed:"فشلت عملية الدفع",driver_arrived:"وصل السائق"},en:{booking_confirmed:"Booking confirmed",payment_failed:"Payment failed",driver_arrived:"Driver arrived"}};
+export function t(locale:string,key:string):string{return strings[locale]?.[key]??strings.en[key]??key;}

@@ -1,0 +1,1 @@
+console.log("[thoth-worker] scaffold ready - full pipeline in Phase 4.");

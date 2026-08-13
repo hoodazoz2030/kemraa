@@ -1,0 +1,6 @@
+export interface SearchInput{query:string;type:"hotel"|"restaurant"|"experience"|"flight";}export interface SearchResult{id:string;type:string;title:string;priceMinor?:number;currency?:string;}
+export interface Availability{available:boolean;slots?:number;}export interface BookInput{serviceId:string;idempotencyKey:string;details:Record<string,unknown>;}
+export interface ExternalBooking{externalRef:string;status:string;}export interface CancelResult{externalRef:string;status:string;refundableMinor?:number;}
+export interface TravelProvider{readonly name:string;search(i:SearchInput):Promise<SearchResult[]>;availability(s:string,d:string):Promise<Availability>;book(i:BookInput):Promise<ExternalBooking>;cancel(r:string,k:string):Promise<CancelResult>;}
+export class MockTravelAdapter implements TravelProvider{readonly name="mock";async search(i:SearchInput){return [{id:"mock_"+i.type+"_1",type:i.type,title:"Mock "+i.type+": "+i.query,priceMinor:150000,currency:"EGP"}];}async availability(){return {available:true,slots:5};}async book(i:BookInput){return {externalRef:"mock_bk_"+i.idempotencyKey.slice(0,8),status:"confirmed"};}async cancel(r:string){return {externalRef:r,status:"cancelled",refundableMinor:150000};}}
+export function createTravelProvider(_p:string):TravelProvider{return new MockTravelAdapter();}

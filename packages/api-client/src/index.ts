@@ -1,0 +1,1 @@
+export const API_CLIENT_TODO="Generate typed client from /docs-json in Phase 3.";

@@ -1,0 +1,28 @@
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
+async function main() {
+  console.log("[seed] starting...");
+  const flags = ["ENABLE_WALLET","ENABLE_CARD","ENABLE_RIDE","ENABLE_INSURANCE","ENABLE_FLIGHT_BOOKING","ENABLE_CASH","ENABLE_AGENCY_COMMISSION","ENABLE_CROSS_BORDER_PAYMENT"];
+  for (const key of flags) await prisma.featureFlag.upsert({ where: { key }, create: { key, enabled: key === "ENABLE_AGENCY_COMMISSION" }, update: {} });
+  await prisma.user.upsert({ where: { email: "admin@kemraa.local" }, create: { email: "admin@kemraa.local", phone: "+201000000000", status: "ACTIVE", locale: "ar-EG", mfaEnabled: true, profile: { create: { firstName: "Super", lastName: "Admin", nationality: "EG" } } }, update: {} });
+  const custAr = await prisma.user.upsert({ where: { email: "customer.ar@kemraa.local" }, create: { email: "customer.ar@kemraa.local", phone: "+201111111111", status: "ACTIVE", locale: "ar-EG", profile: { create: { firstName: "Ahmed", lastName: "Traveler", nationality: "EG" } } }, update: {} });
+  await prisma.user.upsert({ where: { email: "customer.en@kemraa.local" }, create: { email: "customer.en@kemraa.local", phone: "+201222222222", status: "ACTIVE", locale: "en", profile: { create: { firstName: "Ahmed", lastName: "Traveler", nationality: "EG" } } }, update: {} });
+  const hotelOrg = await prisma.organization.upsert({ where: { id: "00000000-0000-0000-0000-000000000001" }, create: { id: "00000000-0000-0000-0000-000000000001", legalName: "Nile View Hotel LLC", displayName: "Nile View Hotel", type: "HOTEL", status: "ACTIVE", country: "EG" }, update: {} });
+  await prisma.partner.upsert({ where: { organizationId: hotelOrg.id }, create: { organizationId: hotelOrg.id, partnerType: "HOTEL", contractStatus: "ACTIVE" }, update: {} });
+  await prisma.service.upsert({ where: { id: "00000000-0000-0000-0000-000000000101" }, create: { id: "00000000-0000-0000-0000-000000000101", providerId: hotelOrg.id, type: "HOTEL", title: "Deluxe Nile Room", currency: "EGP", priceMinor: 250000, status: "ACTIVE" }, update: {} });
+  const restOrg = await prisma.organization.upsert({ where: { id: "00000000-0000-0000-0000-000000000002" }, create: { id: "00000000-0000-0000-0000-000000000002", legalName: "Koshary El-Tahrir", displayName: "Koshary El-Tahrir", type: "RESTAURANT", status: "ACTIVE" }, update: {} });
+  await prisma.partner.upsert({ where: { organizationId: restOrg.id }, create: { organizationId: restOrg.id, partnerType: "RESTAURANT", contractStatus: "ACTIVE" }, update: {} });
+  await prisma.service.upsert({ where: { id: "00000000-0000-0000-0000-000000000102" }, create: { id: "00000000-0000-0000-0000-000000000102", providerId: restOrg.id, type: "RESTAURANT", title: "Dinner for Two", currency: "EGP", priceMinor: 45000, status: "ACTIVE" }, update: {} });
+  const expOrg = await prisma.organization.upsert({ where: { id: "00000000-0000-0000-0000-000000000003" }, create: { id: "00000000-0000-0000-0000-000000000003", legalName: "Pyramids Tour Co", displayName: "Pyramids Tour", type: "EXPERIENCE", status: "ACTIVE" }, update: {} });
+  await prisma.partner.upsert({ where: { organizationId: expOrg.id }, create: { organizationId: expOrg.id, partnerType: "EXPERIENCE", contractStatus: "ACTIVE" }, update: {} });
+  await prisma.service.upsert({ where: { id: "00000000-0000-0000-0000-000000000103" }, create: { id: "00000000-0000-0000-0000-000000000103", providerId: expOrg.id, type: "EXPERIENCE", title: "Giza Pyramids Day Tour", currency: "EGP", priceMinor: 120000, status: "ACTIVE" }, update: {} });
+  const agOrg = await prisma.organization.upsert({ where: { id: "00000000-0000-0000-0000-000000000004" }, create: { id: "00000000-0000-0000-0000-000000000004", legalName: "Sunrise Travel Agency", displayName: "Sunrise Travel", type: "AGENCY", status: "ACTIVE" }, update: {} });
+  await prisma.agency.upsert({ where: { organizationId: agOrg.id }, create: { organizationId: agOrg.id, attributionWindowDays: 30 }, update: {} });
+  await prisma.commissionRule.upsert({ where: { id: "00000000-0000-0000-0000-000000000901" }, create: { id: "00000000-0000-0000-0000-000000000901", scopeType: "PARTNER", scopeId: hotelOrg.id, basis: "NET", rateBps: 1000, fixedMinor: 0, currency: "EGP" }, update: {} });
+  const driverUser = await prisma.user.upsert({ where: { email: "driver@kemraa.local" }, create: { email: "driver@kemraa.local", phone: "+201555555555", status: "ACTIVE", locale: "ar-EG", profile: { create: { firstName: "Mahmoud", lastName: "Driver" } } }, update: {} });
+  await prisma.driver.upsert({ where: { userId: driverUser.id }, create: { userId: driverUser.id, verificationStatus: "VERIFIED", rating: 4.8, status: "ONLINE" }, update: {} });
+  await prisma.vehicle.upsert({ where: { id: "00000000-0000-0000-0000-000000000201" }, create: { id: "00000000-0000-0000-0000-000000000201", driverId: driverUser.id, plateRef: "ABC-1234", make: "Toyota", model: "Corolla", year: 2023, capacity: 4, status: "ACTIVE" }, update: {} });
+  await prisma.trip.upsert({ where: { id: "00000000-0000-0000-0000-000000000301" }, create: { id: "00000000-0000-0000-0000-000000000301", travelerId: custAr.id, title: "Cairo 3-day trip", destinationCountry: "EG", currency: "EGP", budgetMinor: 500000, status: "PLANNING" }, update: {} });
+  console.log("[seed] done. accounts: admin@ / customer.ar@ / customer.en@ / driver@ kemraa.local");
+}
+main().catch((e) => { console.error(e); process.exit(1); }).finally(() => prisma.$disconnect());

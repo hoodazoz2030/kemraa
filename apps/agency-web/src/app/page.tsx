@@ -1,0 +1,1 @@
+export default function Page() { return <main style={{padding:24}}><h1>Agency Portal</h1><p>P1 scaffold ready.</p></main>; }

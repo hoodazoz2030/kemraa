@@ -1,0 +1,54 @@
+name: kemraa
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: kemraa-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-kemraa}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-kemraa_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-kemraa}
+    ports:
+      - "127.0.0.1:15432:5432"
+    volumes: [./.data/postgres:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kemraa -d kemraa"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  redis:
+    image: redis:7-alpine
+    container_name: kemraa-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:6380:6379"
+    volumes: [./.data/redis:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  typesense:
+    image: typesense/typesense:27.0
+    container_name: kemraa-typesense
+    restart: unless-stopped
+    environment:
+      TYPESENSE_DATA_DIR: /data
+      TYPESENSE_API_KEY: ${SEARCH_API_KEY:-kemraa_typesense_dev_key}
+      TYPESENSE_ENABLE_CORS: "true"
+    ports:
+      - "127.0.0.1:8108:8108"
+    volumes: [./.data/typesense:/data]
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8108/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: kemraa-mailhog
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:1025:1025"
+      - "127.0.0.1:8025:8025"

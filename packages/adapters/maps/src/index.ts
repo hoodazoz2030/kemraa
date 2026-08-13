@@ -1,0 +1,4 @@
+export interface LatLng{lat:number;lng:number;}
+export interface MapsProvider{readonly name:string;geocode(p:string):Promise<LatLng>;route(a:LatLng,b:LatLng):Promise<{distanceMeters:number;durationSeconds:number;polyline:string}>;distanceMatrix(o:LatLng[],d:LatLng[]):Promise<number[][]>;}
+export class MockMapsAdapter implements MapsProvider{readonly name="mock";async geocode(){return {lat:30.0444,lng:31.2357};}async route(){return {distanceMeters:12000,durationSeconds:900,polyline:"mock"};}async distanceMatrix(o:LatLng[],d:LatLng[]){return o.map(()=>d.map(()=>12000));}}
+export function createMapsProvider(_p:string):MapsProvider{return new MockMapsAdapter();}

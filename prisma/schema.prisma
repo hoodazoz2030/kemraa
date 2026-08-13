@@ -1,0 +1,658 @@
+// KEMRAA Prisma Schema - Spec Section 8, 9. Source of Truth.
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String       @id @db.Uuid @default(uuid())
+  email         String?      @unique
+  phone         String?      @unique
+  passwordHash  String?      @map("password_hash")
+  status        UserStatus   @default(PENDING_VERIFICATION)
+  locale        String       @default("ar-EG")
+  timezone      String       @default("Africa/Cairo")
+  mfaEnabled    Boolean      @default(false) @map("mfa_enabled")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+  deletedAt     DateTime?    @map("deleted_at")
+  profile       UserProfile?
+  trips         Trip[]
+  bookings      Booking[]
+  notifications Notification[]
+  tickets       SupportTicket[]
+  reviews       Review[]
+  driver        Driver?
+  orgMembers    OrganizationMember[]
+  attributions  Attribution[]
+
+  @@index([status])
+  @@map("users")
+}
+
+model UserProfile {
+  userId      String   @id @map("user_id") @db.Uuid
+  firstName   String?  @map("first_name")
+  lastName    String?  @map("last_name")
+  nationality String?
+  dob         DateTime? @db.Date
+  avatarUrl   String?  @map("avatar_url")
+  preferences Json     @default("{}") @map("preferences_json")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+model Organization {
+  id          String           @id @db.Uuid @default(uuid())
+  legalName   String           @map("legal_name")
+  displayName String           @map("display_name")
+  type        String
+  status      ContractStatus   @default(DRAFT)
+  country     String           @default("EG")
+  metadata    Json             @default("{}") @map("metadata_json")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  members     OrganizationMember[]
+  partner     Partner?
+  agency      Agency?
+
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  organizationId String         @map("organization_id") @db.Uuid
+  userId         String         @map("user_id") @db.Uuid
+  role           Role
+  status         MemberStatus   @default(ACTIVE)
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([organizationId, userId])
+  @@map("organization_members")
+}
+
+model Partner {
+  organizationId  String         @id @map("organization_id") @db.Uuid
+  partnerType     String         @map("partner_type")
+  contractStatus  ContractStatus @default(DRAFT) @map("contract_status")
+  settlementTerms Json           @default("{}") @map("settlement_terms_json")
+  organization    Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  services        Service[]
+  drivers         Driver[]
+  vehicles        Vehicle[]
+  settlements     Settlement[]
+
+  @@map("partners")
+}
+
+model Agency {
+  organizationId        String       @id @map("organization_id") @db.Uuid
+  attributionWindowDays Int          @default(30) @map("attribution_window_days")
+  commissionPolicyId    String?      @map("commission_policy_id") @db.Uuid
+  organization          Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  attributions          Attribution[]
+
+  @@map("agencies")
+}
+
+model Driver {
+  userId             String             @id @map("user_id") @db.Uuid
+  partnerId          String?            @map("partner_id") @db.Uuid
+  verificationStatus VerificationStatus @default(UNVERIFIED) @map("verification_status")
+  licenseRef         String?            @map("license_ref")
+  rating             Float?
+  status             DriverStatus       @default(OFFLINE)
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  partner            Partner?           @relation(fields: [partnerId], references: [organizationId])
+  vehicles           Vehicle[]
+  rides              Ride[]
+
+  @@map("drivers")
+}
+
+model Vehicle {
+  id        String        @id @db.Uuid @default(uuid())
+  driverId  String?       @map("driver_id") @db.Uuid
+  partnerId String?       @map("partner_id") @db.Uuid
+  plateRef  String        @map("plate_ref")
+  make      String
+  model     String
+  year      Int
+  capacity  Int
+  status    VehicleStatus @default(ACTIVE)
+  driver    Driver?       @relation(fields: [driverId], references: [userId])
+  partner   Partner?      @relation(fields: [partnerId], references: [organizationId])
+
+  @@map("vehicles")
+}
+
+model Service {
+  id          String        @id @db.Uuid @default(uuid())
+  providerId  String        @map("provider_id") @db.Uuid
+  type        ServiceType
+  title       String
+  description String?
+  currency    String        @default("EGP")
+  priceMinor  Int           @default(0) @map("price_minor")
+  status      ServiceStatus @default(ACTIVE)
+  metadata    Json          @default("{}") @map("metadata_json")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  provider    Partner       @relation(fields: [providerId], references: [organizationId])
+  bookings    Booking[]
+
+  @@index([type, status])
+  @@map("services")
+}
+
+model Trip {
+  id                 String     @id @db.Uuid @default(uuid())
+  travelerId         String     @map("traveler_id") @db.Uuid
+  title              String
+  destinationCountry String     @default("EG") @map("destination_country")
+  startAt            DateTime?  @map("start_at")
+  endAt              DateTime?  @map("end_at")
+  currency           String     @default("EGP")
+  budgetMinor        Int        @default(0) @map("budget_minor")
+  status             TripStatus @default(DRAFT)
+  createdAt          DateTime   @default(now()) @map("created_at")
+  updatedAt          DateTime   @updatedAt @map("updated_at")
+  traveler           User       @relation(fields: [travelerId], references: [id])
+  itineraries        Itinerary[]
+  bookings           Booking[]
+  rides              Ride[]
+  tickets            SupportTicket[]
+  incidents          Incident[]
+
+  @@index([travelerId, status])
+  @@map("trips")
+}
+
+model Itinerary {
+  id                  String          @id @db.Uuid @default(uuid())
+  tripId              String          @map("trip_id") @db.Uuid
+  version             Int             @default(1)
+  status              ItineraryStatus @default(DRAFT)
+  totalEstimatedMinor Int             @default(0) @map("total_estimated_minor")
+  approvedAt          DateTime?       @map("approved_at")
+  createdAt           DateTime        @default(now()) @map("created_at")
+  trip                Trip            @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  items               ItineraryItem[]
+
+  @@unique([tripId, version])
+  @@map("itineraries")
+}
+
+model ItineraryItem {
+  id             String    @id @db.Uuid @default(uuid())
+  itineraryId    String    @map("itinerary_id") @db.Uuid
+  type           String
+  title          String
+  startAt        DateTime? @map("start_at")
+  endAt          DateTime? @map("end_at")
+  location       Json      @default("{}") @map("location_json")
+  estimatedMinor Int       @default(0) @map("estimated_minor")
+  itinerary      Itinerary @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+
+  @@map("itinerary_items")
+}
+
+model Booking {
+  id             String        @id @db.Uuid @default(uuid())
+  tripId         String?       @map("trip_id") @db.Uuid
+  travelerId     String        @map("traveler_id") @db.Uuid
+  serviceId      String        @map("service_id") @db.Uuid
+  providerId     String        @map("provider_id") @db.Uuid
+  status         BookingStatus @default(DRAFT)
+  externalRef    String?       @map("external_ref")
+  totalMinor     Int           @default(0) @map("total_minor")
+  currency       String        @default("EGP")
+  idempotencyKey String        @unique @map("idempotency_key")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+  trip           Trip?         @relation(fields: [tripId], references: [id])
+  traveler       User          @relation(fields: [travelerId], references: [id])
+  service        Service       @relation(fields: [serviceId], references: [id])
+  items          BookingItem[]
+  payments       Payment[]
+  commissions    CommissionEntry[]
+  review         Review?
+
+  @@index([travelerId, status])
+  @@index([providerId, status])
+  @@map("bookings")
+}
+
+model BookingItem {
+  id          String  @id @db.Uuid @default(uuid())
+  bookingId   String  @map("booking_id") @db.Uuid
+  description String
+  quantity    Int     @default(1)
+  unitMinor   Int     @map("unit_minor")
+  taxMinor    Int     @default(0) @map("tax_minor")
+  feeMinor    Int     @default(0) @map("fee_minor")
+  totalMinor  Int     @map("total_minor")
+  booking     Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@map("booking_items")
+}
+
+model Payment {
+  id                String        @id @db.Uuid @default(uuid())
+  bookingId         String?       @map("booking_id") @db.Uuid
+  tripId            String?       @map("trip_id") @db.Uuid
+  provider          String
+  providerPaymentId String?       @map("provider_payment_id")
+  status            PaymentStatus @default(CREATED)
+  amountMinor       Int           @map("amount_minor")
+  currency          String        @default("EGP")
+  methodType        String        @map("method_type")
+  idempotencyKey    String        @unique @map("idempotency_key")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+  booking           Booking?      @relation(fields: [bookingId], references: [id])
+  refunds           Refund[]
+  ledger            LedgerEntry[]
+
+  @@index([status])
+  @@map("payments")
+}
+
+model Refund {
+  id             String       @id @db.Uuid @default(uuid())
+  paymentId      String       @map("payment_id") @db.Uuid
+  providerRef    String?      @map("provider_ref")
+  amountMinor    Int          @map("amount_minor")
+  reason         String?
+  status         RefundStatus @default(PENDING)
+  idempotencyKey String       @unique @map("idempotency_key")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  payment        Payment      @relation(fields: [paymentId], references: [id])
+
+  @@map("refunds")
+}
+
+model LedgerEntry {
+  id            String          @id @db.Uuid @default(uuid())
+  accountId     String          @map("account_id")
+  direction     LedgerDirection
+  amountMinor   Int             @map("amount_minor")
+  currency      String          @default("EGP")
+  referenceType String          @map("reference_type")
+  referenceId   String          @map("reference_id") @db.Uuid
+  paymentId     String?         @map("payment_id") @db.Uuid
+  createdAt     DateTime        @default(now()) @map("created_at")
+  payment       Payment?        @relation(fields: [paymentId], references: [id])
+
+  @@index([accountId, createdAt])
+  @@index([referenceType, referenceId])
+  @@map("ledger_entries")
+}
+
+model CommissionRule {
+  id         String   @id @db.Uuid @default(uuid())
+  scopeType  String   @map("scope_type")
+  scopeId    String?  @map("scope_id") @db.Uuid
+  basis      String   @default("NET")
+  rateBps    Int      @default(0) @map("rate_bps")
+  fixedMinor Int      @default(0) @map("fixed_minor")
+  currency   String   @default("EGP")
+  activeFrom DateTime @default(now()) @map("active_from")
+  activeTo   DateTime? @map("active_to")
+  entries    CommissionEntry[]
+
+  @@map("commission_rules")
+}
+
+model CommissionEntry {
+  id              String           @id @db.Uuid @default(uuid())
+  ruleId          String           @map("rule_id") @db.Uuid
+  bookingId       String           @map("booking_id") @db.Uuid
+  beneficiaryType String           @map("beneficiary_type")
+  beneficiaryId   String           @map("beneficiary_id") @db.Uuid
+  amountMinor     Int              @map("amount_minor")
+  currency        String           @default("EGP")
+  status          CommissionStatus @default(PENDING)
+  ruleSnapshot    Json             @map("rule_snapshot")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  rule            CommissionRule   @relation(fields: [ruleId], references: [id])
+  booking         Booking          @relation(fields: [bookingId], references: [id])
+
+  @@map("commission_entries")
+}
+
+model Settlement {
+  id              String           @id @db.Uuid @default(uuid())
+  partnerId       String           @map("partner_id") @db.Uuid
+  periodStart     DateTime         @map("period_start")
+  periodEnd       DateTime         @map("period_end")
+  grossMinor      Int              @map("gross_minor")
+  commissionMinor Int              @map("commission_minor")
+  netMinor        Int              @map("net_minor")
+  currency        String           @default("EGP")
+  status          SettlementStatus @default(OPEN)
+  partner         Partner          @relation(fields: [partnerId], references: [organizationId])
+
+  @@unique([partnerId, periodStart, periodEnd])
+  @@map("settlements")
+}
+
+model Attribution {
+  id          String    @id @db.Uuid @default(uuid())
+  customerId  String?   @map("customer_id") @db.Uuid
+  agencyId    String    @map("agency_id") @db.Uuid
+  sourceType  String    @default("REFERRAL_LINK") @map("source_type")
+  token       String    @unique
+  firstSeenAt DateTime  @default(now()) @map("first_seen_at")
+  expiresAt   DateTime? @map("expires_at")
+  customer    User?     @relation(fields: [customerId], references: [id])
+  agency      Agency    @relation(fields: [agencyId], references: [organizationId])
+
+  @@map("attributions")
+}
+
+model Ride {
+  id        String     @id @db.Uuid @default(uuid())
+  tripId    String?    @map("trip_id") @db.Uuid
+  riderId   String     @map("rider_id") @db.Uuid
+  driverId  String?    @map("driver_id") @db.Uuid
+  pickup    Json       @default("{}") @map("pickup_json")
+  dropoff   Json       @default("{}") @map("dropoff_json")
+  fareMinor Int        @default(0) @map("fare_minor")
+  currency  String     @default("EGP")
+  status    RideStatus @default(REQUESTED)
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  trip      Trip?      @relation(fields: [tripId], references: [id])
+  driver    Driver?    @relation(fields: [driverId], references: [userId])
+  events    RideEvent[]
+
+  @@index([riderId, status])
+  @@index([driverId, status])
+  @@map("rides")
+}
+
+model RideEvent {
+  id         String   @id @db.Uuid @default(uuid())
+  rideId     String   @map("ride_id") @db.Uuid
+  type       String
+  payload    Json     @default("{}") @map("payload_json")
+  occurredAt DateTime @default(now()) @map("occurred_at")
+  ride       Ride     @relation(fields: [rideId], references: [id], onDelete: Cascade)
+
+  @@index([rideId, occurredAt])
+  @@map("ride_events")
+}
+
+model Notification {
+  id     String            @id @db.Uuid @default(uuid())
+  userId String            @map("user_id") @db.Uuid
+  channel String
+  type   String
+  title  String
+  body   String
+  status NotificationStatus @default(QUEUED)
+  sentAt DateTime?         @map("sent_at")
+  user   User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, sentAt])
+  @@map("notifications")
+}
+
+model SupportTicket {
+  id         String         @id @db.Uuid @default(uuid())
+  userId     String         @map("user_id") @db.Uuid
+  tripId     String?        @map("trip_id") @db.Uuid
+  category   String
+  priority   TicketPriority @default(MEDIUM)
+  status     TicketStatus   @default(OPEN)
+  assignedTo String?        @map("assigned_to") @db.Uuid
+  createdAt  DateTime       @default(now()) @map("created_at")
+  updatedAt  DateTime       @updatedAt @map("updated_at")
+  user       User           @relation(fields: [userId], references: [id])
+  trip       Trip?          @relation(fields: [tripId], references: [id])
+
+  @@map("support_tickets")
+}
+
+model Incident {
+  id         String           @id @db.Uuid @default(uuid())
+  tripId     String?          @map("trip_id") @db.Uuid
+  type       String
+  severity   IncidentSeverity @default(MEDIUM)
+  status     String           @default("OPEN")
+  resolution String?
+  createdAt  DateTime         @default(now()) @map("created_at")
+  trip       Trip?            @relation(fields: [tripId], references: [id])
+
+  @@map("incidents")
+}
+
+model Review {
+  id         String   @id @db.Uuid @default(uuid())
+  bookingId  String   @unique @map("booking_id") @db.Uuid
+  reviewerId String   @map("reviewer_id") @db.Uuid
+  targetType String   @map("target_type")
+  targetId   String   @map("target_id") @db.Uuid
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now()) @map("created_at")
+  booking    Booking  @relation(fields: [bookingId], references: [id])
+  reviewer   User     @relation(fields: [reviewerId], references: [id])
+
+  @@map("reviews")
+}
+
+model AuditLog {
+  id           String   @id @db.Uuid @default(uuid())
+  actorId      String?  @map("actor_id") @db.Uuid
+  action       String
+  resourceType String   @map("resource_type")
+  resourceId   String?  @map("resource_id")
+  metadata     Json     @default("{}") @map("metadata_json")
+  ip           String?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([actorId, createdAt])
+  @@index([resourceType, resourceId])
+  @@map("audit_logs")
+}
+
+model FeatureFlag {
+  key       String   @id
+  enabled   Boolean  @default(false)
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("feature_flags")
+}
+
+enum UserStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+}
+
+enum MemberStatus {
+  ACTIVE
+  SUSPENDED
+  REMOVED
+}
+
+enum ContractStatus {
+  DRAFT
+  ACTIVE
+  SUSPENDED
+  TERMINATED
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum DriverStatus {
+  OFFLINE
+  ONLINE
+  BUSY
+  SUSPENDED
+}
+
+enum VehicleStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+}
+
+enum ServiceType {
+  HOTEL
+  RESTAURANT
+  EXPERIENCE
+  FLIGHT
+  TRANSFER
+  RIDE
+  CAR
+  TICKET
+  INSURANCE
+  ESIM
+}
+
+enum ServiceStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+enum TripStatus {
+  DRAFT
+  PLANNING
+  READY
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum ItineraryStatus {
+  DRAFT
+  PROPOSED
+  APPROVED
+  LOCKED
+}
+
+enum BookingStatus {
+  DRAFT
+  PENDING_APPROVAL
+  PAYMENT_PENDING
+  CONFIRMING
+  CONFIRMED
+  REJECTED
+  FAILED
+  CANCEL_REQUESTED
+  CANCELLED
+  COMPLETED
+  DISPUTED
+}
+
+enum PaymentStatus {
+  CREATED
+  REQUIRES_ACTION
+  AUTHORIZED
+  CAPTURED
+  SETTLED
+  FAILED
+  VOIDED
+  REFUND_PENDING
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum RefundStatus {
+  PENDING
+  PROCESSING
+  SUCCEEDED
+  FAILED
+}
+
+enum LedgerDirection {
+  DEBIT
+  CREDIT
+}
+
+enum CommissionStatus {
+  PENDING
+  ELIGIBLE
+  PAID
+  REVERSED
+}
+
+enum SettlementStatus {
+  OPEN
+  CLOSED
+  APPROVED
+  PAID
+}
+
+enum RideStatus {
+  REQUESTED
+  MATCHING
+  DRIVER_ASSIGNED
+  DRIVER_ARRIVING
+  DRIVER_ARRIVED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_DRIVER
+  INCIDENT
+}
+
+enum NotificationStatus {
+  QUEUED
+  SENT
+  FAILED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING
+  RESOLVED
+  CLOSED
+}
+
+enum IncidentSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum Role {
+  CUSTOMER
+  DRIVER
+  PARTNER_ADMIN
+  PARTNER_STAFF
+  AGENCY_ADMIN
+  SUPPORT
+  FINANCE
+  OPERATIONS
+  CONTENT
+  ADMIN
+  SUPER_ADMIN
+}

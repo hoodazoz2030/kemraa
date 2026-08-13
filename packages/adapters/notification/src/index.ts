@@ -1,0 +1,4 @@
+export type Channel="push"|"email"|"sms"|"in_app";export interface SendInput{channel:Channel;to:string;title:string;body:string;locale?:string;}
+export interface SendResult{ok:boolean;providerId?:string;}export interface NotificationProvider{readonly name:string;send(i:SendInput):Promise<SendResult>;}
+export class MockNotificationAdapter implements NotificationProvider{readonly name="mock";async send(i:SendInput){console.log(`[mock-notify][${i.channel}] -> ${i.to}: ${i.title}`);return {ok:true,providerId:"mock_ntf_"+Math.random().toString(36).slice(2,8)};}}
+export function createNotificationProvider(_p:string):NotificationProvider{return new MockNotificationAdapter();}

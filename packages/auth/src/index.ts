@@ -1,0 +1,2 @@
+export interface TokenPair{accessToken:string;refreshToken:string;expiresAt:string;}
+export const AUTH_RULES={mfaRequiredFor:["ADMIN","SUPER_ADMIN","FINANCE"],refreshTokenRotation:true,argon2idForPasswords:true};

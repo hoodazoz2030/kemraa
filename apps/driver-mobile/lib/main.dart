@@ -1,0 +1,2 @@
+import 'package:flutter/material.dart';
+void main() => runApp(MaterialApp(home: Scaffold(appBar: AppBar(title: const Text('KEMRAA Driver')), body: const Center(child: Text('Phase 4+ — DB & Admin first')))));

@@ -1,0 +1,15 @@
+node_modules
+.next
+dist
+*.log
+.git
+.github
+.vscode
+.DS_Store
+coverage
+.nyc_output
+*.test.ts
+*.spec.ts
+docs
+apps/admin/out
+infra/docker/volumes

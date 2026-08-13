@@ -1,0 +1,2 @@
+export interface DomainEvent<T=unknown>{eventId:string;type:string;version:number;timestamp:string;source:string;actorId?:string;correlationId:string;payload:T;}
+export const EventTypes={TRIP_CREATED:"TRIP_CREATED",BOOKING_CONFIRMED:"BOOKING_CONFIRMED",PAYMENT_AUTHORIZED:"PAYMENT_AUTHORIZED",REFUND_ISSUED:"REFUND_ISSUED",RIDE_COMPLETED:"RIDE_COMPLETED"} as const;
