@@ -1,13 +1,12 @@
 "use client";
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { authApi } from "@/lib/api";
 import { useRouter } from "next/navigation";
-import { Mail, Smartphone, Loader2, Bug } from "lucide-react";
-import Cookies from "js-cookie";
+import { Mail, Smartphone, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
-  const { login, user } = useAuth();
+  const { login } = useAuth();
   const router = useRouter();
   const [identifier, setIdentifier] = useState("customer.ar@kemraa.local");
   const [channel, setChannel] = useState<"EMAIL" | "SMS">("EMAIL");
@@ -16,34 +15,17 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
-  const [diag, setDiag] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (user && !loading) {
-      console.log("[LOGIN] user detected, pushing to /");
-      router.push("/");
-    }
-  }, [user, loading, router]);
-
-  const log = (msg: string) => {
-    console.log(msg);
-    setDiag((prev) => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`]);
-  };
 
   const handleRequestOtp = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     try {
-      log("Requesting OTP...");
       await authApi.requestOtp(identifier, channel);
-      log("OTP requested OK");
       setMessage("OTP sent! Check docker logs for the code.");
       setStep("verify");
     } catch (err: any) {
-      const msg = err.response?.data?.error?.message ?? err.message ?? "Failed";
-      log("Request failed: " + msg);
-      setError(msg);
+      setError(err.response?.data?.error?.message ?? "Failed to send OTP");
     } finally {
       setLoading(false);
     }
@@ -54,27 +36,18 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
     try {
-      log("Verifying OTP...");
       await login(identifier, channel, code);
-      log("login() returned. Checking cookies...");
-      const token = Cookies.get("access_token");
-      log(`Cookie present: ${!!token}, length: ${token?.length ?? 0}`);
-      setMessage("Login successful! Redirecting...");
-      // Give useEffect time to trigger
-      setTimeout(() => {
-        if (!user) {
-          log("WARNING: user still null after 1s, forcing reload");
-          window.location.href = "/";
-        }
-      }, 1000);
+      setMessage("✓ Login successful! Redirecting...");
+      // Redirect IMMEDIATELY — don't wait for useEffect
+      setTimeout(() => router.replace("/"), 100);
     } catch (err: any) {
-      const msg = err.response?.data?.error?.message ?? err.message ?? "Invalid OTP";
-      log("Verify failed: " + msg);
-      setError(msg);
+      setError(err.response?.data?.error?.message ?? "Invalid OTP");
     } finally {
       setLoading(false);
     }
   };
+
+  const inputClass = "w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition";
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -87,31 +60,47 @@ export default function LoginPage() {
         {step === "request" ? (
           <form onSubmit={handleRequestOtp} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email or Phone</label>
-              <input
-                type="text"
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg"
-                required
-              />
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email or Phone
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  className={inputClass + " pl-10"}
+                  placeholder="your@email.com"
+                  autoComplete="username"
+                  required
+                />
+                <Mail className="absolute left-3 top-3.5 text-gray-400" size={20} />
+              </div>
             </div>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setChannel("EMAIL")}
-                className={`flex-1 py-2 rounded-lg font-medium ${channel === "EMAIL" ? "bg-blue-600 text-white" : "bg-gray-100"}`}
-              >
-                Email
-              </button>
-              <button
-                type="button"
-                onClick={() => setChannel("SMS")}
-                className={`flex-1 py-2 rounded-lg font-medium ${channel === "SMS" ? "bg-blue-600 text-white" : "bg-gray-100"}`}
-              >
-                SMS
-              </button>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Channel</label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setChannel("EMAIL")}
+                  className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
+                    channel === "EMAIL" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  Email
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setChannel("SMS")}
+                  className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
+                    channel === "SMS" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  SMS
+                </button>
+              </div>
             </div>
+
             <button
               type="submit"
               disabled={loading}
@@ -126,19 +115,24 @@ export default function LoginPage() {
             <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-800">
               {message}
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">OTP Code (from docker logs)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                OTP Code
+              </label>
               <input
                 type="text"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-center text-2xl tracking-widest"
+                className={inputClass + " text-center text-2xl tracking-widest"}
                 placeholder="123456"
                 maxLength={6}
-                required
+                autoComplete="one-time-code"
                 autoFocus
+                required
               />
             </div>
+
             <button
               type="submit"
               disabled={loading}
@@ -147,9 +141,10 @@ export default function LoginPage() {
               {loading && <Loader2 className="animate-spin" size={20} />}
               Verify & Sign In
             </button>
+
             <button
               type="button"
-              onClick={() => { setStep("request"); setError(""); setMessage(""); setDiag([]); }}
+              onClick={() => { setStep("request"); setError(""); setMessage(""); }}
               className="w-full text-gray-600 hover:text-gray-900 text-sm"
             >
               ← Back
@@ -162,18 +157,6 @@ export default function LoginPage() {
             {error}
           </div>
         )}
-
-        {/* Diagnostic panel */}
-        <div className="mt-6 p-3 bg-gray-50 rounded-lg border text-xs font-mono max-h-40 overflow-y-auto">
-          <div className="flex items-center gap-2 mb-2">
-            <Bug size={12} /> <span className="font-semibold">Debug</span>
-          </div>
-          {diag.length === 0 ? (
-            <div className="text-gray-400">Events will appear here...</div>
-          ) : (
-            diag.map((d, i) => <div key={i} className="text-gray-700">{d}</div>)
-          )}
-        </div>
       </div>
     </div>
   );
