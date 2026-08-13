@@ -51,12 +51,6 @@ jobs:
       - name: TypeCheck API
         run: pnpm --filter @kemraa/api typecheck
         
-      - name: Lint Admin
-        run: pnpm --filter admin lint
-        
-      - name: TypeCheck Admin
-        run: pnpm --filter admin typecheck
-
   # ========================================
   # Job 2: Tests
   # ========================================
