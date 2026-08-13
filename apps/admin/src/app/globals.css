@@ -1,20 +1,40 @@
-/* Fix browser autofill colors */
+/* ===== Force clear black text on ALL form fields ===== */
+:root {
+  color-scheme: light;
+}
+
+input, select, textarea, option {
+  color: #111827 !important;
+  background-color: #ffffff !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+/* Fix browser autofill (yellow bg + invisible text) */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px white inset !important;
+input:-webkit-autofill:active,
+select:-webkit-autofill,
+textarea:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
   -webkit-text-fill-color: #111827 !important;
   caret-color: #111827;
   transition: background-color 5000s ease-in-out 0s;
 }
 
-input {
+/* Dropdown options */
+select option, select optgroup {
+  background-color: #ffffff !important;
   color: #111827 !important;
 }
 
-input::placeholder {
-  color: #9ca3af !important;
+/* Date/time pickers icon visibility */
+input[type="date"], input[type="time"], input[type="datetime-local"] {
+  color: #111827 !important;
 }
 
 @import "tailwindcss";
