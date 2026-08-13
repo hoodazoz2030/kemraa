@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main, develop]
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   # ========================================
   # Job 1: Lint + TypeCheck
@@ -149,6 +153,7 @@ jobs:
         with:
           name: coverage-report
           path: apps/api/coverage/
+          if-no-files-found: ignore
 
   # ========================================
   # Job 3: Docker Build
