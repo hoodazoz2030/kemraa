@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ar" dir="rtl">
+    <html lang="en" dir="ltr">
       <body className={inter.className}>
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
