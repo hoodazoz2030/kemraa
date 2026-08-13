@@ -53,6 +53,9 @@ jobs:
       - name: Lint API
         run: pnpm --filter @kemraa/api lint
         
+      - name: Build workspace packages
+        run: pnpm -r --filter "./packages/*" build
+
       - name: TypeCheck API
         run: pnpm --filter @kemraa/api typecheck
         

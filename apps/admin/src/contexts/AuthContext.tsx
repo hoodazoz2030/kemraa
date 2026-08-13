@@ -27,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const token = Cookies.get("access_token");
     if (token) {
       authApi.me()
-        .then((res) => setUser(res.data))
+        .then((res: any) => setUser(res.data))
         .catch(() => {
           Cookies.remove("access_token");
           Cookies.remove("refresh_token");

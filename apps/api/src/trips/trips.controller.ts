@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Patch, Body, Param, Query, Req, UseGuards, ParseUUIDPipe, HttpCode, HttpStatus } from "@nestjs/common";
+import { Audit } from "../common/interceptors/audit.interceptor.js";
 import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { TripsService } from "./trips.service.js";
 import { CreateTripDto, UpdateTripDto, AddItineraryItemsDto, RejectTripDto, ListTripsQueryDto } from "./dto/trips.dto.js";

@@ -1,4 +1,5 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from "@nestjs/common";
+import { Audit } from "../common/interceptors/audit.interceptor.js";
 import { ApiTags, ApiOperation } from "@nestjs/swagger";
 import { AuthService } from "./auth.service.js";
 import { RequestOtpDto, VerifyOtpDto, RefreshTokenDto, LogoutDto } from "./dto/auth.dto.js";
@@ -14,11 +15,13 @@ export class AuthController {
   requestOtp(@Body() dto: RequestOtpDto) { return this.auth.requestOtp(dto.identifier, dto.channel); }
 
   @Post("otp/verify")
+  @Audit("user.login", "user")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Verify OTP and get tokens" })
   verifyOtp(@Body() dto: VerifyOtpDto) { return this.auth.verifyOtp(dto.identifier, dto.channel, dto.code); }
 
   @Post("refresh")
+  @Audit("auth.refresh", "session")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Refresh access token" })
   refresh(@Body() dto: RefreshTokenDto) { return this.auth.refresh(dto.refreshToken); }

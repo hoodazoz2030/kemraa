@@ -15,12 +15,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "strictPropertyInitialization": false,
-    "types": ["node", "jest"],
-    "baseUrl": ".",
-    "paths": {
-      "@kemraa/adapter-*": ["../../packages/adapters/*/src/index.ts"],
-      "@kemraa/*": ["../../packages/*/src/index.ts"]
-    }
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

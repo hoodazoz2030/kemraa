@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, Param, Query, Req, UseGuards, ParseUUIDPipe, HttpCode, HttpStatus } from "@nestjs/common";
+import { Audit } from "../common/interceptors/audit.interceptor.js";
 import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { BookingsService } from "./bookings.service.js";
 import { CreateBookingDto, SubmitPaymentDto, ConfirmBookingDto, CreateReviewDto, ListBookingsQueryDto } from "./dto/bookings.dto.js";
@@ -33,12 +34,14 @@ export class BookingsController {
     return this.bookings.getOne((req as any).user.sub, isAdmin, id);
   }
 
-  @Post(":id/submit") @HttpCode(HttpStatus.OK) @ApiOperation({ summary: "DRAFT -> PENDING_APPROVAL" })
+  @Post(":id/submit")
+  @Audit("booking.submit", "booking") @HttpCode(HttpStatus.OK) @ApiOperation({ summary: "DRAFT -> PENDING_APPROVAL" })
   submit(@Req() req: Request, @Param("id", new ParseUUIDPipe()) id: string) {
     return this.bookings.submitForApproval((req as any).user.sub, id);
   }
 
-  @Post(":id/approve") @Roles(...ADMIN_ROLES) @HttpCode(HttpStatus.OK) @ApiOperation({ summary: "PENDING_APPROVAL -> PAYMENT_PENDING (admin)" })
+  @Post(":id/approve")
+  @Audit("booking.approve", "booking") @Roles(...ADMIN_ROLES) @HttpCode(HttpStatus.OK) @ApiOperation({ summary: "PENDING_APPROVAL -> PAYMENT_PENDING (admin)" })
   approve(@Req() req: Request, @Param("id", new ParseUUIDPipe()) id: string) {
     return this.bookings.approve((req as any).user.sub, id);
   }
@@ -63,7 +66,8 @@ export class BookingsController {
     return this.bookings.complete((req as any).user.sub, id);
   }
 
-  @Post(":id/cancel") @HttpCode(HttpStatus.OK) @ApiOperation({ summary: "Request cancellation" })
+  @Post(":id/cancel")
+  @Audit("booking.cancel", "booking") @HttpCode(HttpStatus.OK) @ApiOperation({ summary: "Request cancellation" })
   cancel(@Req() req: Request, @Param("id", new ParseUUIDPipe()) id: string) {
     return this.bookings.cancel((req as any).user.sub, id);
   }

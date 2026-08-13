@@ -24,26 +24,17 @@ export default function AnalyticsPage() {
 
   // Aggregate trips by status
   const tripsByStatus = Object.entries(
-    (trips as any[]).reduce<Record<string, number>>((acc, t) => {
-      acc[t.status] = (acc[t.status] ?? 0) + 1;
-      return acc;
-    }, {})
+    (trips as any[]).reduce((acc: Record<string, number>, t: any) => { acc[t.status] = (acc[t.status] ?? 0) + 1; return acc; }, {} as Record<string, number>)
   ).map(([name, value]) => ({ name, value }));
 
   // Aggregate services by type
   const servicesByType = Object.entries(
-    (services?.items ?? []).reduce<Record<string, number>>((acc, s: any) => {
-      acc[s.type] = (acc[s.type] ?? 0) + 1;
-      return acc;
-    }, {})
+    (services?.items ?? []).reduce((acc: Record<string, number>, s: any) => { acc[s.type] = (acc[s.type] ?? 0) + 1; return acc; }, {} as Record<string, number>)
   ).map(([name, value]) => ({ name, value }));
 
   // Aggregate bookings by status
   const bookingsByStatus = Object.entries(
-    (bookings?.items ?? []).reduce<Record<string, number>>((acc, b: any) => {
-      acc[b.status] = (acc[b.status] ?? 0) + 1;
-      return acc;
-    }, {})
+    (bookings?.items ?? []).reduce((acc: Record<string, number>, b: any) => { acc[b.status] = (acc[b.status] ?? 0) + 1; return acc; }, {} as Record<string, number>)
   ).map(([name, value]) => ({ name, value }));
 
   return (

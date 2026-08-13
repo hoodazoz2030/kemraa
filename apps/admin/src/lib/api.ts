@@ -10,7 +10,7 @@ export const api = axios.create({
 });
 
 // Request interceptor: attach token
-api.interceptors.request.use((config) => {
+api.interceptors.request.use((config: any) => {
   const token = Cookies.get("access_token");
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
@@ -18,8 +18,8 @@ api.interceptors.request.use((config) => {
 
 // Response interceptor: handle 401 + refresh
 api.interceptors.response.use(
-  (res) => res,
-  async (error) => {
+  (res: any) => res,
+  async (error: any) => {
     const original = error.config;
     if (error.response?.status === 401 && !original._retry) {
       original._retry = true;
@@ -53,3 +53,38 @@ export const authApi = {
   logout: () => api.post("/auth/logout"),
   me: () => api.get("/users/me"),
 };
+// ============ Audit Logs ============
+export interface AuditLog {
+  id: string;
+  actorId: string | null;
+  action: string;
+  resourceType: string;
+  resourceId: string | null;
+  metadata: Record<string, any>;
+  ip: string | null;
+  createdAt: string;
+}
+
+export interface ListAuditLogsResponse {
+  items: AuditLog[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export async function listAuditLogs(params: {
+  action?: string;
+  resourceType?: string;
+  actorId?: string;
+  from?: string;
+  to?: string;
+  limit?: number;
+  offset?: number;
+} = {}): Promise<ListAuditLogsResponse> {
+  const qs = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => {
+    if (v !== undefined && v !== null && v !== "") qs.append(k, String(v));
+  });
+  const res = await api.get("/admin/audit-logs?" + qs.toString());
+  return res.data;
+}

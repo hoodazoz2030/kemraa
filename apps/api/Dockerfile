@@ -33,7 +33,9 @@ RUN npm install -g pnpm@9.15.9
 
 # Build from apps/api, calling nest.js from root
 WORKDIR /app/apps/api
-RUN node /app/node_modules/@nestjs/cli/bin/nest.js build
+RUN pnpm -r --filter "./packages/*" build
+
+    RUN node /app/node_modules/@nestjs/cli/bin/nest.js build
 
 # ============================================
 # Stage 3: Production (lean image)
