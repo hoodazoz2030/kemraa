@@ -100,3 +100,20 @@ export const featureFlagsApi = {
   get: (key: string) => api.get("/feature-flags/" + key).then((r) => r.data),
   set: (key: string, enabled: boolean) => api.put("/feature-flags/" + key, { enabled }).then((r) => r.data),
 };
+// ============ Search ============
+export interface SearchHit {
+  document: any;
+  text_match: number;
+}
+export interface SearchCollectionResult {
+  collection: string;
+  found: number;
+  hits: SearchHit[];
+}
+export interface SearchResponse {
+  results: SearchCollectionResult[];
+}
+export const searchApi = {
+  query: (q: string) => api.get("/search", { params: { q } }).then((r) => r.data as SearchResponse),
+  reindex: () => api.post("/search/reindex").then((r) => r.data),
+};

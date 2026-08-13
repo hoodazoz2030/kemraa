@@ -1,6 +1,7 @@
 "use client";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, User } from "lucide-react";
+import SearchBar from "./SearchBar";
 
 export default function Header() {
   const { user, logout } = useAuth();
