@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
+import { Prisma } from "@prisma/client";
 import { ListUsersQueryDto } from "./dto/users.dto.js";
 
 @Injectable()
@@ -29,8 +30,8 @@ export class UsersService {
       status: user.status,
       mfaEnabled: user.mfaEnabled,
       profile: user.profile,
-      roles: user.orgMembers.map((m) => m.role),
-      organizations: user.orgMembers.map((m) => ({
+      roles: user.orgMembers.map((m: any) => m.role),
+      organizations: user.orgMembers.map((m: any) => ({
         role: m.role,
         name: m.organization.displayName,
         type: m.organization.type,
@@ -69,7 +70,7 @@ export class UsersService {
       this.prisma.user.count({ where }),
     ]);
 
-    const items = users.map((u) => ({
+    const items = users.map((u: any) => ({
       id: u.id,
       email: u.email,
       phone: u.phone,
@@ -78,7 +79,7 @@ export class UsersService {
       firstName: u.profile?.firstName,
       lastName: u.profile?.lastName,
       avatarUrl: u.profile?.avatarUrl,
-      roles: u.orgMembers.map((m) => m.role),
+      roles: u.orgMembers.map((m: any) => m.role),
       organization: u.orgMembers[0]?.organization?.displayName,
       tripsCount: u._count.trips,
       bookingsCount: u._count.bookings,
