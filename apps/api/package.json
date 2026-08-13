@@ -8,9 +8,11 @@
                     "start:prod":  "node dist/main.js",
                     "lint":  "eslint src/**/*.ts",
                     "typecheck":  "tsc -p tsconfig.json --noEmit",
-                    "test":  "jest",
+                    "test":  "jest --passWithNoTests",
                     "seed:admin":  "tsx src/seed-roles.ts",
-                    "test:e2e":  "jest --config ./test/jest-e2e.json"
+                    "test:e2e":  "jest --config ./test/jest-e2e.json",
+                    "prisma:generate":  "prisma generate --schema=../../prisma/schema.prisma",
+                    "prisma:migrate:deploy":  "prisma migrate deploy --schema=../../prisma/schema.prisma"
                 },
     "dependencies":  {
                          "@kemraa/adapter-ai":  "workspace:*",
