@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Kemraa — The Land of the Sun",
-  icons: [{ url: "/logo-dark.png" }],
+  icons: [{ url: "/logo-dark.png?v=2", sizes: "any" }],
   description: "Admin dashboard for Kemraa travel platform",
 };
 
