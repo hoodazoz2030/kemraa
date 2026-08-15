@@ -58,7 +58,7 @@ export default function UsersPage() {
                 <td className="px-4 py-3 text-gray-600" dir="ltr">{u.email ?? u.phone ?? "—"}</td>
                 <td className="px-4 py-3">
                   <div className="flex flex-wrap gap-1">
-                    {(u.roles ?? []).map((r: string) => (
+                    {[...new Set(u.roles ?? [])].map((r: string) => (
                       <span key={r} className="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-xs font-medium">{r}</span>
                     ))}
                     {(!u.roles || u.roles.length === 0) && <span className="text-gray-400 text-xs">—</span>}
