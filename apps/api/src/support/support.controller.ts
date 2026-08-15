@@ -1,65 +1,65 @@
-import { Controller, Get, Post, Patch, Body, Param, Query, Req, UseGuards, ParseUUIDPipe, HttpCode, HttpStatus } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
-import { SupportService } from "./support.service.js";
-import { CreateTicketDto, UpdateTicketDto, ListTicketsQueryDto, CreateIncidentDto, ResolveIncidentDto, ListIncidentsQueryDto } from "./dto/support.dto.js";
-import { RolesGuard, Roles } from "../common/guards/roles.guard.js";
+import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Request } from "express";
-
-const SUPPORT_ROLES = ["ADMIN", "SUPER_ADMIN", "SUPPORT", "OPERATIONS"];
+import { RolesGuard, Roles } from "../common/guards/roles.guard.js";
+import { SupportService } from "./support.service.js";
 
 @ApiTags("support")
 @ApiBearerAuth()
-@Controller("support")
 @UseGuards(RolesGuard)
+@Controller("support")
 export class SupportController {
   constructor(private readonly support: SupportService) {}
 
-  @Post("tickets") @ApiOperation({ summary: "Create support ticket" })
-  createTicket(@Req() req: Request, @Body() dto: CreateTicketDto) {
-    return this.support.createTicket((req as any).user.sub, dto);
+  // Customer
+  @Get("me")
+  myTickets(@Req() req: Request) {
+    return this.support.myTickets((req as any).user.sub);
   }
 
-  @Get("tickets") @ApiOperation({ summary: "List tickets (mine for customer, all for support staff)" })
-  listTickets(@Req() req: Request, @Query() query: ListTicketsQueryDto) {
-    const roles: string[] = (req as any).user?.roles ?? [];
-    const isAdmin = roles.some((r) => SUPPORT_ROLES.includes(r));
-    return this.support.listTickets((req as any).user.sub, isAdmin, query);
+  @Get("me/:id")
+  myDetail(@Req() req: Request, @Param("id") id: string) {
+    return this.support.getDetail(id, (req as any).user.sub, false);
   }
 
-  @Get("tickets/:id") @ApiOperation({ summary: "Get ticket detail" })
-  getTicket(@Req() req: Request, @Param("id", new ParseUUIDPipe()) id: string) {
-    const roles: string[] = (req as any).user?.roles ?? [];
-    const isAdmin = roles.some((r) => SUPPORT_ROLES.includes(r));
-    return this.support.getTicket((req as any).user.sub, isAdmin, id);
+  @Post("me/:id/reply")
+  myReply(@Req() req: Request, @Param("id") id: string, @Body() body: { body: string }) {
+    return this.support.addReply(id, (req as any).user.sub, body.body, false);
   }
 
-  @Patch("tickets/:id") @Roles(...SUPPORT_ROLES) @ApiOperation({ summary: "Update ticket (status, priority, assignedTo)" })
-  updateTicket(@Req() req: Request, @Param("id", new ParseUUIDPipe()) id: string, @Body() dto: UpdateTicketDto) {
-    return this.support.updateTicket((req as any).user.sub, id, dto);
+  // Admin
+  @Get("admin")
+  @Roles("ADMIN", "STAFF")
+  adminList(
+    @Query("status") status?: string,
+    @Query("priority") priority?: string,
+    @Query("assignedTo") assignedTo?: string,
+  ) {
+    return this.support.adminList({ status, priority, assignedTo });
   }
 
-  @Get("tickets/:id/sla") @ApiOperation({ summary: "Check SLA metrics for ticket" })
-  checkSla(@Param("id", new ParseUUIDPipe()) id: string) {
-    return this.support.checkSla(id);
+  @Get("admin/:id")
+  @Roles("ADMIN", "STAFF")
+  adminDetail(@Param("id") id: string) {
+    return this.support.getDetail(id, undefined, true);
   }
 
-  @Post("incidents") @ApiOperation({ summary: "Create incident" })
-  createIncident(@Req() req: Request, @Body() dto: CreateIncidentDto) {
-    return this.support.createIncident((req as any).user.sub, dto);
+  @Post("admin/:id/reply")
+  @Roles("ADMIN", "STAFF")
+  adminReply(@Req() req: Request, @Param("id") id: string, @Body() body: { body: string }) {
+    return this.support.addReply(id, (req as any).user.sub, body.body, true);
   }
 
-  @Get("incidents") @ApiOperation({ summary: "List incidents" })
-  listIncidents(@Query() query: ListIncidentsQueryDto) {
-    return this.support.listIncidents(query);
+  @Patch("admin/:id")
+  @Roles("ADMIN", "STAFF")
+  adminUpdate(@Param("id") id: string, @Body() update: { status?: string; priority?: string; assignedTo?: string | null }) {
+    return this.support.adminUpdate(id, update);
   }
 
-  @Get("incidents/:id") @ApiOperation({ summary: "Get incident detail" })
-  getIncident(@Param("id", new ParseUUIDPipe()) id: string) {
-    return this.support.getIncident(id);
-  }
-
-  @Post("incidents/:id/resolve") @Roles(...SUPPORT_ROLES) @HttpCode(HttpStatus.OK) @ApiOperation({ summary: "Resolve incident" })
-  resolveIncident(@Req() req: Request, @Param("id", new ParseUUIDPipe()) id: string, @Body() dto: ResolveIncidentDto) {
-    return this.support.resolveIncident((req as any).user.sub, id, dto);
+  @Post("admin/seed")
+  @Roles("ADMIN")
+  async seed(@Req() req: Request) {
+    const userId = (req as any).user.sub;
+    return this.support.seedSample(userId);
   }
 }

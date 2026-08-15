@@ -32,6 +32,7 @@ model User {
   orgMembers    OrganizationMember[]
   attributions  Attribution[]
 
+  supportReplies SupportReply[] @relation("SupportReplies")
   @@index([status])
   @@map("users")
 }
@@ -420,6 +421,7 @@ model SupportTicket {
   user       User           @relation(fields: [userId], references: [id])
   trip       Trip?          @relation(fields: [tripId], references: [id])
 
+  replies   SupportReply[]
   @@map("support_tickets")
 }
 
@@ -656,4 +658,18 @@ enum Role {
   CONTENT
   ADMIN
   SUPER_ADMIN
+}
+// ============ Support Replies ============
+model SupportReply {
+  id        String        @id @db.Uuid @default(uuid())
+  ticketId  String        @map("ticket_id") @db.Uuid
+  authorId  String        @map("author_id") @db.Uuid
+  body      String
+  isStaff   Boolean       @default(false) @map("is_staff")
+  createdAt DateTime      @default(now()) @map("created_at")
+  ticket    SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  author    User          @relation("SupportReplies", fields: [authorId], references: [id])
+
+  @@index([ticketId])
+  @@map("support_replies")
 }
