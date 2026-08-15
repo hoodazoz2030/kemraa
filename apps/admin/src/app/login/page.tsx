@@ -3,52 +3,8 @@ import { useState, FormEvent } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { authApi } from "@/lib/api";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sun } from "lucide-react";
 import Image from "next/image";
-
-function WingedSun() {
-  return (
-    <svg viewBox="0 0 220 40" className="w-52 h-10 mx-auto mt-3">
-      <defs>
-        <linearGradient id="wingGoldR" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#F0D78C" />
-          <stop offset="55%" stopColor="#C9A227" />
-          <stop offset="100%" stopColor="#8C6D1F" stopOpacity="0.4" />
-        </linearGradient>
-        <linearGradient id="wingGoldL" x1="1" y1="0" x2="0" y2="0">
-          <stop offset="0%" stopColor="#F0D78C" />
-          <stop offset="55%" stopColor="#C9A227" />
-          <stop offset="100%" stopColor="#8C6D1F" stopOpacity="0.4" />
-        </linearGradient>
-        <radialGradient id="sunGold" cx="0.5" cy="0.35" r="0.9">
-          <stop offset="0%" stopColor="#F7E7A0" />
-          <stop offset="55%" stopColor="#E6C55C" />
-          <stop offset="100%" stopColor="#8C6D1F" />
-        </radialGradient>
-      </defs>
-
-      {/* Right wing — layered feathers */}
-      <g fill="url(#wingGoldR)">
-        <path d="M116 13 Q 165 4 214 7 Q 168 13 116 18 Z" />
-        <path d="M116 18 Q 162 12 206 14 Q 164 19 116 23 Z" />
-        <path d="M116 23 Q 158 19 197 21 Q 160 25 116 28 Z" />
-        <path d="M116 28 Q 152 26 187 28 Q 154 31 116 32 Z" />
-      </g>
-
-      {/* Left wing — mirrored */}
-      <g fill="url(#wingGoldL)">
-        <path d="M104 13 Q 55 4 6 7 Q 52 13 104 18 Z" />
-        <path d="M104 18 Q 58 12 14 14 Q 56 19 104 23 Z" />
-        <path d="M104 23 Q 62 19 23 21 Q 60 25 104 28 Z" />
-        <path d="M104 28 Q 68 26 33 28 Q 66 31 104 32 Z" />
-      </g>
-
-      {/* Sun disk with ring */}
-      <circle cx="110" cy="20" r="12.5" fill="none" stroke="#C9A227" strokeOpacity="0.5" strokeWidth="1" />
-      <circle cx="110" cy="20" r="9" fill="url(#sunGold)" stroke="#8C6D1F" strokeWidth="1" />
-    </svg>
-  );
-}
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -121,7 +77,12 @@ export default function LoginPage() {
           <p className="text-[11px] text-[#C9A227]/80 tracking-[0.35em] uppercase mt-1">
             The Land of the Sun
           </p>
-          <WingedSun />
+          {/* Winged sun divider */}
+          <div className="flex items-center justify-center gap-2 mt-3">
+            <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#C9A227]/70" />
+            <Sun size={16} className="text-[#C9A227]" />
+            <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#C9A227]/70" />
+          </div>
         </div>
 
         {step === "request" ? (
