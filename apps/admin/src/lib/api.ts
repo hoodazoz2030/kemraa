@@ -262,3 +262,51 @@ export const servicesApi = {
   deactivate: (id: string) => api.post(`/services/${id}/status`, { status: "INACTIVE" }).then((r) => r.data),
   delete: (id: string) => api.delete(`/services/${id}`).then((r) => r.data),
 };
+// ============ Trips ============
+export interface ItineraryItem {
+  id: string;
+  type: string;
+  title: string;
+  startAt?: string;
+  endAt?: string;
+  location?: Record<string, unknown>;
+  estimatedMinor?: number;
+}
+
+export interface Itinerary {
+  id: string;
+  version: number;
+  items: ItineraryItem[];
+  createdAt: string;
+}
+
+export interface Trip {
+  id: string;
+  travelerId: string;
+  title: string;
+  destinationCountry: string;
+  startAt?: string;
+  endAt?: string;
+  currency: string;
+  budgetMinor: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  traveler?: { email: string; profile?: { firstName: string | null; lastName: string | null } | null };
+  itineraries?: Itinerary[];
+}
+
+export const tripsApi = {
+  list: (params?: { status?: string; limit?: number }) => {
+    const q = new URLSearchParams();
+    if (params?.status) q.set("status", params.status);
+    q.set("limit", String(params?.limit ?? 200));
+    return api.get(`/trips?${q.toString()}`).then((r) => r.data as Trip[]);
+  },
+  get: (id: string) => api.get(`/trips/${id}`).then((r) => r.data as Trip),
+  create: (data: Partial<Trip>) => api.post("/trips", data).then((r) => r.data as Trip),
+  update: (id: string, data: Partial<Trip>) => api.patch(`/trips/${id}`, data).then((r) => r.data as Trip),
+  approve: (id: string) => api.post(`/trips/${id}/approve`).then((r) => r.data),
+  reject: (id: string, reason: string) => api.post(`/trips/${id}/reject`, { reason }).then((r) => r.data),
+  requestReview: (id: string) => api.post(`/trips/${id}/request`).then((r) => r.data),
+};
