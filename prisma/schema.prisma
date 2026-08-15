@@ -413,6 +413,8 @@ model SupportTicket {
   userId     String         @map("user_id") @db.Uuid
   tripId     String?        @map("trip_id") @db.Uuid
   category   String
+  subject    String
+  body       String
   priority   TicketPriority @default(MEDIUM)
   status     TicketStatus   @default(OPEN)
   assignedTo String?        @map("assigned_to") @db.Uuid

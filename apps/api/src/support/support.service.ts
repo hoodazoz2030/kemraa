@@ -17,7 +17,7 @@ export class SupportService {
   // Admin: all tickets
   async adminList(filter?: { status?: string; priority?: string; assignedTo?: string }) {
     const where: any = {};
-    if (filter?.status) where.status = filter.status;
+    if (filter?.status) where.status = filter.status as any;
     if (filter?.priority) where.priority = filter.priority;
     if (filter?.assignedTo) where.assignedTo = filter.assignedTo;
 
