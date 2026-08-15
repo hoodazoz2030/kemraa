@@ -232,3 +232,33 @@ export const supportApi = {
   adminUpdate: (id: string, update: { status?: string; priority?: string; assignedTo?: string | null }) =>
     api.patch(`/support/admin/${id}`, update).then((r) => r.data),
 };
+// ============ Services ============
+export interface Service {
+  id: string;
+  title: string;
+  description?: string | null;
+  type: string;
+  currency: string;
+  priceMinor: number;
+  status: string;
+  metadata?: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const servicesApi = {
+  list: (params?: { type?: string; status?: string; search?: string; limit?: number }) => {
+    const q = new URLSearchParams();
+    if (params?.type) q.set("type", params.type);
+    if (params?.status) q.set("status", params.status);
+    if (params?.search) q.set("search", params.search);
+    q.set("limit", String(params?.limit ?? 200));
+    return api.get(`/services?${q.toString()}`).then((r) => r.data as { items: Service[]; total: number });
+  },
+  get: (id: string) => api.get(`/services/${id}`).then((r) => r.data as Service),
+  create: (data: Partial<Service>) => api.post("/services", data).then((r) => r.data as Service),
+  update: (id: string, data: Partial<Service>) => api.patch(`/services/${id}`, data).then((r) => r.data as Service),
+  activate: (id: string) => api.post(`/services/${id}/status`, { status: "ACTIVE" }).then((r) => r.data),
+  deactivate: (id: string) => api.post(`/services/${id}/status`, { status: "INACTIVE" }).then((r) => r.data),
+  delete: (id: string) => api.delete(`/services/${id}`).then((r) => r.data),
+};
