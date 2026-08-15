@@ -63,7 +63,7 @@ export default function LoginPage() {
       <div className="absolute inset-0 bg-black/35" />
 
       {/* ===== Login card ===== */}
-      <div className="max-w-sm w-full bg-[#160f06]/90 backdrop-blur-md rounded-2xl border border-[#C9A227]/40 p-6 shadow-[0_0_60px_rgba(201,162,39,0.25)] relative z-10">
+      <div className="max-w-sm w-full bg-[#160f06]/45 backdrop-blur-sm rounded-2xl border border-[#C9A227]/40 p-6 shadow-[0_0_60px_rgba(201,162,39,0.25)] relative z-10">
         {/* Logo + title */}
         <div className="text-center">
           <Image
