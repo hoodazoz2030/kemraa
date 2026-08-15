@@ -1,4 +1,4 @@
-﻿node_modules/
+node_modules/
 .pnpm-store/
 dist/
 .next/
@@ -23,3 +23,11 @@ coverage/
 infra/docker/.data/
 *.pem
 secrets/
+# Playwright
+test-results/
+playwright-report/
+diag-*.png
+
+# IDE
+.vscode/
+.idea/
