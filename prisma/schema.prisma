@@ -33,6 +33,7 @@ model User {
   attributions  Attribution[]
 
   supportReplies SupportReply[] @relation("SupportReplies")
+  liveLocation   UserLocation?
   @@index([status])
   @@map("users")
 }
@@ -674,4 +675,18 @@ model SupportReply {
 
   @@index([ticketId])
   @@map("support_replies")
+}
+// ============ User Live Location ============
+model UserLocation {
+  id        String   @id @db.Uuid @default(uuid())
+  userId    String   @unique @map("user_id") @db.Uuid
+  latitude  Float
+  longitude Float
+  accuracy  Float?   // meters
+  source    String?  // GPS, NETWORK, MANUAL
+  battery   Int?     // percentage
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_locations")
 }
