@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { listAuditLogs, type AuditLog } from "@/lib/api";
 
 export default function AuditLogsPage() {
@@ -105,9 +105,8 @@ export default function AuditLogsPage() {
             </thead>
             <tbody className="divide-y">
               {logs.map((log) => (
-                <>
+                <Fragment key={log.id}>
                   <tr
-                    key={log.id}
                     className="hover:bg-gray-50 cursor-pointer"
                     onClick={() => setExpanded(expanded === log.id ? null : log.id)}
                   >
@@ -140,7 +139,7 @@ export default function AuditLogsPage() {
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               ))}
             </tbody>
           </table>
