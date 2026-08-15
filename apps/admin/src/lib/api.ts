@@ -310,3 +310,44 @@ export const tripsApi = {
   reject: (id: string, reason: string) => api.post(`/trips/${id}/reject`, { reason }).then((r) => r.data),
   requestReview: (id: string) => api.post(`/trips/${id}/request`).then((r) => r.data),
 };
+// ============ Users ============
+export interface UserSummary {
+  id: string;
+  email: string | null;
+  phone: string | null;
+  status: string;
+  mfaEnabled: boolean;
+  createdAt: string;
+  firstName: string | null;
+  lastName: string | null;
+  avatarUrl: string | null;
+  roles: string[];
+  organization: string | null;
+  tripsCount: number;
+  bookingsCount: number;
+  ticketsCount: number;
+}
+
+export interface UserDetail extends UserSummary {
+  profile: any;
+  trips: any[];
+  bookings: any[];
+  tickets: any[];
+  notifications: any[];
+  _count: { trips: number; bookings: number; tickets: number; notifications: number };
+}
+
+export const usersApi = {
+  list: (params?: { search?: string; status?: string; role?: string; limit?: number }) => {
+    const q = new URLSearchParams();
+    if (params?.search) q.set("search", params.search);
+    if (params?.status) q.set("status", params.status);
+    if (params?.role) q.set("role", params.role);
+    q.set("limit", String(params?.limit ?? 200));
+    return api.get(`/users?${q.toString()}`).then((r) => r.data as { items: UserSummary[]; total: number });
+  },
+  getDetail: (id: string) => api.get(`/users/${id}`).then((r) => r.data as UserDetail),
+  updateStatus: (id: string, status: string, reason?: string) =>
+    api.patch(`/users/${id}/status`, { status, reason }).then((r) => r.data),
+  setRoles: (id: string, roles: string[]) => api.patch(`/users/${id}/roles`, { roles }).then((r) => r.data),
+};
