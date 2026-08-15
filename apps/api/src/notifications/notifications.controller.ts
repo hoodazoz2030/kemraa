@@ -1,61 +1,64 @@
-import { Controller, Get, Post, Patch, Body, Param, Query, Req, UseGuards, ParseUUIDPipe, HttpCode, HttpStatus } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
-import { NotificationsService } from "./notifications.service.js";
-import { SendNotificationDto, UpdatePreferencesDto, ListNotificationsQueryDto } from "./dto/notifications.dto.js";
-import { RolesGuard, Roles } from "../common/guards/roles.guard.js";
+import { Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Request } from "express";
-
-const ADMIN_ROLES = ["ADMIN", "SUPER_ADMIN", "OPERATIONS", "SUPPORT"];
+import { RolesGuard, Roles } from "../common/guards/roles.guard.js";
+import { NotificationService } from "./notifications.service.js";
 
 @ApiTags("notifications")
 @ApiBearerAuth()
-@Controller("notifications")
 @UseGuards(RolesGuard)
+@Controller("notifications")
 export class NotificationsController {
-  constructor(private readonly notifications: NotificationsService) {}
-
-  @Post()
-  @Roles(...ADMIN_ROLES)
-  @ApiOperation({ summary: "Send notification (admin only)" })
-  send(@Body() dto: SendNotificationDto) {
-    return this.notifications.send(dto);
-  }
+  constructor(private readonly notifications: NotificationService) {}
 
   @Get()
-  @ApiOperation({ summary: "List my notifications" })
-  list(@Req() req: Request, @Query() query: ListNotificationsQueryDto) {
-    return this.notifications.list((req as any).user.sub, query);
+  list(
+    @Req() req: Request,
+    @Query("unreadOnly") unreadOnly?: string,
+    @Query("type") type?: string,
+  ) {
+    return this.notifications.list((req as any).user.sub, {
+      unreadOnly: unreadOnly === "true",
+      type,
+    });
   }
 
-  @Get("preferences")
-  @ApiOperation({ summary: "Get my notification preferences" })
-  getPreferences(@Req() req: Request) {
-    return this.notifications.getPreferences((req as any).user.sub);
+  @Get("unread-count")
+  unreadCount(@Req() req: Request) {
+    return this.notifications.unreadCount((req as any).user.sub);
   }
 
-  @Patch("preferences")
-  @ApiOperation({ summary: "Update my notification preferences" })
-  updatePreferences(@Req() req: Request, @Body() dto: UpdatePreferencesDto) {
-    return this.notifications.updatePreferences((req as any).user.sub, dto);
-  }
-
-  @Get(":id")
-  @ApiOperation({ summary: "Get notification detail" })
-  getOne(@Req() req: Request, @Param("id", new ParseUUIDPipe()) id: string) {
-    return this.notifications.getOne((req as any).user.sub, id);
-  }
-
-  @Post(":id/read")
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: "Mark notification as read" })
-  markRead(@Req() req: Request, @Param("id", new ParseUUIDPipe()) id: string) {
+  @Patch(":id/read")
+  markRead(@Req() req: Request, @Param("id") id: string) {
     return this.notifications.markRead((req as any).user.sub, id);
   }
 
   @Post("read-all")
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: "Mark all notifications as read" })
   markAllRead(@Req() req: Request) {
     return this.notifications.markAllRead((req as any).user.sub);
+  }
+
+  // Admin
+  @Get("admin")
+  @Roles("ADMIN", "STAFF")
+  adminList(@Query("type") type?: string, @Query("userId") userId?: string) {
+    return this.notifications.adminList({ type, userId });
+  }
+
+  @Post("admin/seed")
+  @Roles("ADMIN")
+  async seedSample(@Req() req: Request) {
+    const userId = (req as any).user.sub;
+    const samples = [
+      { type: "PAYMENT", title: "Payment captured", body: "EGP 500.00 captured via Fawry" },
+      { type: "BOOKING", title: "New booking confirmed", body: "Booking #9217 confirmed" },
+      { type: "SYSTEM", title: "System maintenance", body: "Scheduled for tonight 3am EET" },
+      { type: "MARKETING", title: "New campaign launched", body: "Summer offer campaign is live" },
+      { type: "SUPPORT", title: "New support ticket", body: "Customer asked about refund policy" },
+    ];
+    for (const s of samples) {
+      await this.notifications.create({ userId, channel: "IN_APP", ...s });
+    }
+    return { seeded: samples.length };
   }
 }

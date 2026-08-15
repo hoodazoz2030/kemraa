@@ -1,16 +1,18 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Home, Map, ShoppingBag, Calendar, Bell, HelpCircle, Users, BarChart3, ScrollText, Flag, CreditCard } from "lucide-react";
 import clsx from "clsx";
 import Image from "next/image";
+import { notificationsApi } from "@/lib/api";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: Home },
   { href: "/trips", label: "Trips", icon: Map },
   { href: "/services", label: "Services", icon: ShoppingBag },
   { href: "/bookings", label: "Bookings", icon: Calendar },
-  { href: "/notifications", label: "Notifications", icon: Bell },
+  { href: "/notifications", label: "Notifications", icon: Bell, badge: true },
   { href: "/support", label: "Support", icon: HelpCircle },
   { href: "/users", label: "Users", icon: Users },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
@@ -21,6 +23,16 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [unread, setUnread] = useState(0);
+
+  useEffect(() => {
+    notificationsApi.unreadCount().then((r) => setUnread(r.count)).catch(() => {});
+    const t = setInterval(() => {
+      notificationsApi.unreadCount().then((r) => setUnread(r.count)).catch(() => {});
+    }, 30000);
+    return () => clearInterval(t);
+  }, [pathname]);
+
   return (
     <aside className="w-72 bg-[#0C0A06] border-r border-[#C9A227]/25 flex flex-col min-h-screen">
       <div className="p-5 border-b border-[#C9A227]/25 flex items-center gap-3">
@@ -37,21 +49,31 @@ export default function Sidebar() {
         </div>
       </div>
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-        {navItems.map(({ href, label, icon: Icon }) => {
+        {navItems.map(({ href, label, icon: Icon, badge }) => {
           const isActive = pathname === href;
           return (
             <Link
               key={href}
               href={href}
               className={clsx(
-                "flex items-center gap-3 px-4 py-3 rounded-lg transition",
+                "flex items-center gap-3 px-4 py-3 rounded-lg transition relative",
                 isActive
                   ? "bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06] font-semibold shadow-[0_0_15px_rgba(201,162,39,0.4)]"
                   : "text-[#d8c9a0]/75 hover:bg-white/5 hover:text-[#E6C55C]"
               )}
             >
               <Icon size={20} />
-              <span>{label}</span>
+              <span className="flex-1">{label}</span>
+              {badge && unread > 0 && (
+                <span className={clsx(
+                  "min-w-[22px] h-[22px] px-1.5 rounded-full text-xs font-bold flex items-center justify-center",
+                  isActive
+                    ? "bg-[#0C0A06] text-[#E6C55C]"
+                    : "bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06] shadow-[0_0_8px_rgba(201,162,39,0.5)]"
+                )}>
+                  {unread > 99 ? "99+" : unread}
+                </span>
+              )}
             </Link>
           );
         })}

@@ -140,3 +140,53 @@ export interface Payment {
 export const paymentsApi = {
   adminList: () => api.get("/payments/admin").then((r) => r.data as Payment[]),
 };
+// ============ Analytics ============
+export interface AnalyticsOverview {
+  totals: {
+    revenue: number;
+    bookings: number;
+    users: number;
+    tickets: number;
+  };
+  revenueByDay: { date: string; total: number }[];
+  paymentsByProvider: { provider: string; count: number; total: number }[];
+  bookingsByStatus: { status: string; count: number }[];
+  topServices: { name: string; count: number; revenue: number }[];
+}
+
+export const analyticsApi = {
+  overview: (days = 14) =>
+    api.get(`/analytics/overview?days=${days}`).then((r) => r.data as AnalyticsOverview),
+};
+// ============ Notifications ============
+export interface Notification {
+  id: string;
+  userId: string;
+  channel: string;
+  type: string;
+  title: string;
+  body: string;
+  status: string;
+  sentAt: string | null;
+  readAt: string | null;
+}
+
+export const notificationsApi = {
+  list: (params?: { unreadOnly?: boolean; type?: string }) => {
+    const q = new URLSearchParams();
+    if (params?.unreadOnly) q.set("unreadOnly", "true");
+    if (params?.type) q.set("type", params.type);
+    const qs = q.toString();
+    return api.get(`/notifications${qs ? `?${qs}` : ""}`).then((r) => r.data as { items: Notification[]; total: number });
+  },
+  unreadCount: () => api.get("/notifications/unread-count").then((r) => r.data as { count: number }),
+  markRead: (id: string) => api.patch(`/notifications/${id}/read`).then((r) => r.data),
+  markAllRead: () => api.post("/notifications/read-all").then((r) => r.data),
+  adminList: (params?: { type?: string; userId?: string }) => {
+    const q = new URLSearchParams();
+    if (params?.type) q.set("type", params.type);
+    if (params?.userId) q.set("userId", params.userId);
+    const qs = q.toString();
+    return api.get(`/notifications/admin${qs ? `?${qs}` : ""}`).then((r) => r.data as Notification[]);
+  },
+};

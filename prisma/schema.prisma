@@ -400,6 +400,7 @@ model Notification {
   body   String
   status NotificationStatus @default(QUEUED)
   sentAt DateTime?         @map("sent_at")
+  readAt DateTime?         @map("read_at")
   user   User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, sentAt])
