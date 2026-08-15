@@ -3,7 +3,7 @@ import { useState, FormEvent } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { authApi } from "@/lib/api";
 import { useRouter } from "next/navigation";
-import { Loader2, Sun } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Image from "next/image";
 
 export default function LoginPage() {
@@ -77,12 +77,7 @@ export default function LoginPage() {
           <p className="text-[11px] text-[#C9A227]/80 tracking-[0.35em] uppercase mt-1">
             The Land of the Sun
           </p>
-          {/* Winged sun divider */}
-          <div className="flex items-center justify-center gap-2 mt-3">
-            <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#C9A227]/70" />
-            <Sun size={16} className="text-[#C9A227]" />
-            <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#C9A227]/70" />
-          </div>
+          <WingedSun />
         </div>
 
         {step === "request" ? (
