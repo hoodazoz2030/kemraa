@@ -190,3 +190,45 @@ export const notificationsApi = {
     return api.get(`/notifications/admin${qs ? `?${qs}` : ""}`).then((r) => r.data as Notification[]);
   },
 };
+// ============ Support ============
+export interface SupportReply {
+  id: string;
+  ticketId: string;
+  authorId: string;
+  body: string;
+  isStaff: boolean;
+  createdAt: string;
+  author: { email: string; profile: { firstName: string | null; lastName: string | null } | null };
+}
+
+export interface SupportTicket {
+  id: string;
+  userId: string;
+  tripId?: string | null;
+  category: string;
+  priority: string;
+  status: string;
+  assignedTo?: string | null;
+  subject: string;
+  body: string;
+  createdAt: string;
+  updatedAt: string;
+  customerName?: string;
+  user: { email: string; profile: { firstName: string | null; lastName: string | null } | null };
+  replies?: SupportReply[];
+  _count?: { replies: number };
+}
+
+export const supportApi = {
+  adminList: (params?: { status?: string; priority?: string }) => {
+    const q = new URLSearchParams();
+    if (params?.status) q.set("status", params.status);
+    if (params?.priority) q.set("priority", params.priority);
+    const qs = q.toString();
+    return api.get(`/support/admin${qs ? `?${qs}` : ""}`).then((r) => r.data as SupportTicket[]);
+  },
+  adminDetail: (id: string) => api.get(`/support/admin/${id}`).then((r) => r.data as SupportTicket),
+  adminReply: (id: string, body: string) => api.post(`/support/admin/${id}/reply`, { body }).then((r) => r.data),
+  adminUpdate: (id: string, update: { status?: string; priority?: string; assignedTo?: string | null }) =>
+    api.patch(`/support/admin/${id}`, update).then((r) => r.data),
+};

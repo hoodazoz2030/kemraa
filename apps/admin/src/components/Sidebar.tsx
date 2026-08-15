@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Home, Map, ShoppingBag, Calendar, Bell, HelpCircle, Users, BarChart3, ScrollText, Flag, CreditCard } from "lucide-react";
 import clsx from "clsx";
 import Image from "next/image";
-import { notificationsApi } from "@/lib/api";
+import { notificationsApi, supportApi } from "@/lib/api";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: Home },
@@ -13,7 +13,7 @@ const navItems = [
   { href: "/services", label: "Services", icon: ShoppingBag },
   { href: "/bookings", label: "Bookings", icon: Calendar },
   { href: "/notifications", label: "Notifications", icon: Bell, badge: true },
-  { href: "/support", label: "Support", icon: HelpCircle },
+  { href: "/support", label: "Support", icon: HelpCircle, badgeType: "tickets" },
   { href: "/users", label: "Users", icon: Users },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/audit-logs", label: "Audit Logs", icon: ScrollText },
@@ -24,11 +24,14 @@ const navItems = [
 export default function Sidebar() {
   const pathname = usePathname();
   const [unread, setUnread] = useState(0);
+  const [openTickets, setOpenTickets] = useState(0);
 
   useEffect(() => {
     notificationsApi.unreadCount().then((r) => setUnread(r.count)).catch(() => {});
+    supportApi.adminList({ status: "OPEN" }).then((r) => setOpenTickets(r.length)).catch(() => {});
     const t = setInterval(() => {
       notificationsApi.unreadCount().then((r) => setUnread(r.count)).catch(() => {});
+      supportApi.adminList({ status: "OPEN" }).then((r) => setOpenTickets(r.length)).catch(() => {});
     }, 30000);
     return () => clearInterval(t);
   }, [pathname]);
