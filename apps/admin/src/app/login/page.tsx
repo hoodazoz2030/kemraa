@@ -57,10 +57,10 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#0C0A06]">
       {/* ===== Thoth + Pyramids panorama ===== */}
       <div
-        className="absolute inset-0"
-        style={{ backgroundImage: "url('/login-bg.png')", backgroundSize: "100% 100%", backgroundPosition: "center", backgroundRepeat: "no-repeat" }}
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: "url('/login-bg.png')" }}
       />
-      <div className="absolute inset-0 bg-black/25" />
+      <div className="absolute inset-0 bg-black/35" />
 
       {/* ===== Login card ===== */}
       <div className="max-w-md w-full bg-[#160f06]/90 backdrop-blur-md rounded-2xl border border-[#C9A227]/40 p-8 shadow-[0_0_80px_rgba(201,162,39,0.25)] relative z-10">
