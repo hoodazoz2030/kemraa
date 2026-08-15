@@ -3,7 +3,7 @@ import { useState, FormEvent } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { authApi } from "@/lib/api";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sun } from "lucide-react";
 import Image from "next/image";
 
 export default function LoginPage() {
@@ -47,43 +47,53 @@ export default function LoginPage() {
     }
   };
 
-  const inputClass =
-    "w-full px-4 py-3 rounded-lg bg-[#141008] border border-[#C9A227]/30 text-[#F5E9C9] placeholder-[#C9A227]/40 focus:outline-none focus:border-[#E6C55C] focus:ring-1 focus:ring-[#E6C55C]/50 transition";
+  const whiteInput =
+    "w-full px-4 py-3 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C9A227] transition";
 
   const goldBtn =
     "w-full py-3 rounded-lg font-semibold text-[#0C0A06] bg-gradient-to-r from-[#C9A227] via-[#E6C55C] to-[#C9A227] hover:brightness-110 disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(201,162,39,0.35)] transition";
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0C0A06] p-4 relative overflow-hidden">
-      <div className="absolute top-[-200px] left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#C9A227]/15 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-150px] right-[-100px] w-[400px] h-[400px] rounded-full bg-[#0E7C86]/10 blur-[100px] pointer-events-none" />
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#0C0A06]">
+      {/* ===== Thoth + Pyramids panorama ===== */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: "url('/login-bg.png')" }}
+      />
+      <div className="absolute inset-0 bg-black/35" />
 
-      <div className="max-w-md w-full bg-black/50 backdrop-blur rounded-2xl border border-[#C9A227]/30 p-8 shadow-[0_0_60px_rgba(201,162,39,0.15)] relative">
-        <div className="text-center mb-8">
+      {/* ===== Login card ===== */}
+      <div className="max-w-md w-full bg-[#160f06]/90 backdrop-blur-md rounded-2xl border border-[#C9A227]/40 p-8 shadow-[0_0_80px_rgba(201,162,39,0.25)] relative z-10">
+        {/* Logo + title */}
+        <div className="text-center">
           <Image
             src="/logo-dark.png"
             alt="Kemraa — The Land of the Sun"
-            width={140}
-            height={140}
-            className="mx-auto rounded-full ring-2 ring-[#C9A227]/50 shadow-[0_0_40px_rgba(201,162,39,0.45)]"
+            width={150}
+            height={150}
+            className="mx-auto rounded-full ring-1 ring-[#C9A227]/60 shadow-[0_0_45px_rgba(201,162,39,0.5)]"
           />
-          <h1 className="mt-4 text-3xl font-bold tracking-[0.2em] bg-gradient-to-b from-[#F0D78C] to-[#B8860B] bg-clip-text text-transparent">
-            KEMRAA
-          </h1>
-          <p className="text-[11px] text-[#C9A227]/70 tracking-[0.35em] uppercase mt-1">
+          <h1 className="mt-4 text-3xl font-bold tracking-[0.25em] text-[#E6C55C]">KEMRAA</h1>
+          <p className="text-[11px] text-[#C9A227]/80 tracking-[0.35em] uppercase mt-1">
             The Land of the Sun
           </p>
+          {/* Winged sun divider */}
+          <div className="flex items-center justify-center gap-2 mt-3">
+            <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#C9A227]/70" />
+            <Sun size={16} className="text-[#C9A227]" />
+            <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#C9A227]/70" />
+          </div>
         </div>
 
         {step === "request" ? (
-          <form onSubmit={handleRequestOtp} className="space-y-4">
+          <form onSubmit={handleRequestOtp} className="space-y-4 mt-6">
             <div>
-              <label className="block text-sm font-medium text-[#E6C55C] mb-1">Email or Phone</label>
+              <label className="block text-sm font-medium text-[#E6C55C] mb-1.5">Email or Phone</label>
               <input
                 type="text"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
-                className={inputClass}
+                className={whiteInput}
                 placeholder="your@email.com"
                 autoComplete="username"
                 required
@@ -96,10 +106,10 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setChannel("EMAIL")}
-                  className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
+                  className={`flex-1 py-2.5 px-4 rounded-lg font-medium transition ${
                     channel === "EMAIL"
                       ? "bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06]"
-                      : "bg-white/5 text-[#d8c9a0]/70 hover:bg-white/10"
+                      : "bg-white/5 text-[#d8c9a0]/70 hover:bg-white/10 border border-white/10"
                   }`}
                 >
                   Email
@@ -107,10 +117,10 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setChannel("SMS")}
-                  className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
+                  className={`flex-1 py-2.5 px-4 rounded-lg font-medium transition ${
                     channel === "SMS"
                       ? "bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06]"
-                      : "bg-white/5 text-[#d8c9a0]/70 hover:bg-white/10"
+                      : "bg-white/5 text-[#d8c9a0]/70 hover:bg-white/10 border border-white/10"
                   }`}
                 >
                   SMS
@@ -124,17 +134,17 @@ export default function LoginPage() {
             </button>
           </form>
         ) : (
-          <form onSubmit={handleVerifyOtp} className="space-y-4">
+          <form onSubmit={handleVerifyOtp} className="space-y-4 mt-6">
             <div className="bg-[#C9A227]/10 border border-[#C9A227]/30 rounded-lg p-3 text-sm text-[#F0D78C]">
               {message}
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#E6C55C] mb-1">OTP Code</label>
+              <label className="block text-sm font-medium text-[#E6C55C] mb-1.5">OTP Code</label>
               <input
                 type="text"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                className={inputClass + " text-center text-2xl tracking-[0.5em]"}
+                className={whiteInput + " text-center text-2xl tracking-[0.5em]"}
                 placeholder="123456"
                 maxLength={6}
                 autoComplete="one-time-code"
@@ -157,12 +167,12 @@ export default function LoginPage() {
         )}
 
         {error && (
-          <div className="mt-4 bg-red-900/30 border border-red-500/40 rounded-lg p-3 text-sm text-red-300">
+          <div className="mt-4 bg-red-900/40 border border-red-500/40 rounded-lg p-3 text-sm text-red-300">
             {error}
           </div>
         )}
 
-        <p className="mt-6 text-center text-[10px] text-[#C9A227]/50 tracking-[0.3em] uppercase">
+        <p className="mt-6 text-center text-[10px] text-[#C9A227]/60 tracking-[0.3em] uppercase">
           Powered by Thoth
         </p>
       </div>
