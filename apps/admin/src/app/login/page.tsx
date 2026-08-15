@@ -48,10 +48,10 @@ export default function LoginPage() {
   };
 
   const whiteInput =
-    "w-full px-4 py-3 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C9A227] transition";
+    "w-full px-4 py-2.5 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C9A227] transition";
 
   const goldBtn =
-    "w-full py-3 rounded-lg font-semibold text-[#0C0A06] bg-gradient-to-r from-[#C9A227] via-[#E6C55C] to-[#C9A227] hover:brightness-110 disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(201,162,39,0.35)] transition";
+    "w-full py-2.5 rounded-lg font-semibold text-[#0C0A06] bg-gradient-to-r from-[#C9A227] via-[#E6C55C] to-[#C9A227] hover:brightness-110 disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(201,162,39,0.35)] transition";
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#0C0A06]">
@@ -63,17 +63,17 @@ export default function LoginPage() {
       <div className="absolute inset-0 bg-black/35" />
 
       {/* ===== Login card ===== */}
-      <div className="max-w-md w-full bg-[#160f06]/90 backdrop-blur-md rounded-2xl border border-[#C9A227]/40 p-8 shadow-[0_0_80px_rgba(201,162,39,0.25)] relative z-10">
+      <div className="max-w-sm w-full bg-[#160f06]/90 backdrop-blur-md rounded-2xl border border-[#C9A227]/40 p-6 shadow-[0_0_60px_rgba(201,162,39,0.25)] relative z-10">
         {/* Logo + title */}
         <div className="text-center">
           <Image
             src="/logo-dark.png"
             alt="Kemraa — The Land of the Sun"
-            width={150}
-            height={150}
+            width={110}
+            height={110}
             className="mx-auto rounded-full ring-1 ring-[#C9A227]/60 shadow-[0_0_45px_rgba(201,162,39,0.5)]"
           />
-          <h1 className="mt-4 text-3xl font-bold tracking-[0.25em] text-[#E6C55C]">KEMRAA</h1>
+          <h1 className="mt-3 text-2xl font-bold tracking-[0.25em] text-[#E6C55C]">KEMRAA</h1>
           <p className="text-[11px] text-[#C9A227]/80 tracking-[0.35em] uppercase mt-1">
             The Land of the Sun
           </p>
@@ -86,7 +86,7 @@ export default function LoginPage() {
         </div>
 
         {step === "request" ? (
-          <form onSubmit={handleRequestOtp} className="space-y-4 mt-6">
+          <form onSubmit={handleRequestOtp} className="space-y-3 mt-5">
             <div>
               <label className="block text-sm font-medium text-[#E6C55C] mb-1.5">Email or Phone</label>
               <input
@@ -134,7 +134,7 @@ export default function LoginPage() {
             </button>
           </form>
         ) : (
-          <form onSubmit={handleVerifyOtp} className="space-y-4 mt-6">
+          <form onSubmit={handleVerifyOtp} className="space-y-3 mt-5">
             <div className="bg-[#C9A227]/10 border border-[#C9A227]/30 rounded-lg p-3 text-sm text-[#F0D78C]">
               {message}
             </div>
