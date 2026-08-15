@@ -223,7 +223,7 @@ importers:
         specifier: ^4.19.2
         version: 4.22.2
       helmet:
-        specifier: ^7.1.0
+        specifier: ^7.2.0
         version: 7.2.0
       ioredis:
         specifier: ^6.0.0

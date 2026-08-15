@@ -1,4 +1,5 @@
 import { Controller, Post, Get, Body, Headers, RawBodyRequest, Req, UseGuards } from "@nestjs/common";
+import { Throttle } from "@nestjs/throttler";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Request } from "express";
 import { RolesGuard, Roles } from "../common/guards/roles.guard.js";
@@ -13,12 +14,14 @@ import { CreatePaymentIntentDto } from "./dto/payments.dto.js";
 export class PaymentsController {
   constructor(private readonly payments: PaymentsService) {}
 
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post("intent")
   @Audit("payment.create", "payment")
   createIntent(@Req() req: Request, @Body() dto: CreatePaymentIntentDto) {
     return this.payments.createPaymentIntent((req as any).user.sub, dto);
   }
 
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post("fawry")
   @Audit("payment.fawry.create", "payment")
   createFawry(@Req() req: Request, @Body() dto: CreatePaymentIntentDto) {

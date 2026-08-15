@@ -1,4 +1,5 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from "@nestjs/common";
+import { Throttle } from "@nestjs/throttler";
 import { Audit } from "../common/interceptors/audit.interceptor.js";
 import { ApiTags, ApiOperation } from "@nestjs/swagger";
 import { AuthService } from "./auth.service.js";
@@ -9,11 +10,13 @@ import { RequestOtpDto, VerifyOtpDto, RefreshTokenDto, LogoutDto } from "./dto/a
 export class AuthController {
   constructor(private readonly auth: AuthService) {}
 
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
   @Post("otp/request")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Request OTP (email/SMS)" })
   requestOtp(@Body() dto: RequestOtpDto) { return this.auth.requestOtp(dto.identifier, dto.channel); }
 
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post("otp/verify")
   @Audit("user.login", "user")
   @HttpCode(HttpStatus.OK)
