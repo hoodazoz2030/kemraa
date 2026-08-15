@@ -6,6 +6,43 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 
+function WingedSun() {
+  return (
+    <svg viewBox="0 0 220 36" className="w-44 h-9 mx-auto mt-3" fill="none">
+      <defs>
+        <linearGradient id="wingGold" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#C9A227" stopOpacity="0" />
+          <stop offset="30%" stopColor="#C9A227" />
+          <stop offset="50%" stopColor="#F0D78C" />
+          <stop offset="70%" stopColor="#C9A227" />
+          <stop offset="100%" stopColor="#C9A227" stopOpacity="0" />
+        </linearGradient>
+        <radialGradient id="sunGold" cx="0.5" cy="0.4" r="0.8">
+          <stop offset="0%" stopColor="#F7E7A0" />
+          <stop offset="60%" stopColor="#E6C55C" />
+          <stop offset="100%" stopColor="#8C6D1F" />
+        </radialGradient>
+      </defs>
+
+      {/* Left wing */}
+      <path d="M96 17 C 70 9, 40 7, 8 11" stroke="url(#wingGold)" strokeWidth="2" />
+      <path d="M96 19 C 72 15, 45 14, 14 17" stroke="url(#wingGold)" strokeWidth="1.6" />
+      <path d="M96 21 C 74 21, 50 21, 22 23" stroke="url(#wingGold)" strokeWidth="1.2" />
+      <path d="M96 23 C 76 26, 55 27, 30 28" stroke="url(#wingGold)" strokeWidth="0.8" />
+
+      {/* Right wing */}
+      <path d="M124 17 C 150 9, 180 7, 212 11" stroke="url(#wingGold)" strokeWidth="2" />
+      <path d="M124 19 C 148 15, 175 14, 206 17" stroke="url(#wingGold)" strokeWidth="1.6" />
+      <path d="M124 21 C 146 21, 170 21, 198 23" stroke="url(#wingGold)" strokeWidth="1.2" />
+      <path d="M124 23 C 144 26, 165 27, 190 28" stroke="url(#wingGold)" strokeWidth="0.8" />
+
+      {/* Sun disk */}
+      <circle cx="110" cy="18" r="12" stroke="#C9A227" strokeOpacity="0.4" strokeWidth="1" />
+      <circle cx="110" cy="18" r="9" fill="url(#sunGold)" stroke="#8C6D1F" strokeWidth="1" />
+    </svg>
+  );
+}
+
 export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
