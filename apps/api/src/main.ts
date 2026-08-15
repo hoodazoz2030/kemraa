@@ -12,7 +12,7 @@ async function bootstrap() {
   // Validate environment BEFORE starting
   const env = validateEnv();
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { rawBody: true });
 
   // Security: Helmet (security headers)
   app.use(helmet());

@@ -117,3 +117,26 @@ export const searchApi = {
   query: (q: string) => api.get("/search", { params: { q } }).then((r) => r.data as SearchResponse),
   reindex: () => api.post("/search/reindex").then((r) => r.data),
 };
+// ============ Payments ============
+export interface Payment {
+  id: string;
+  bookingId: string | null;
+  tripId: string | null;
+  provider: string;
+  providerPaymentId: string | null;
+  status: string;
+  amountMinor: number;
+  currency: string;
+  methodType: string;
+  createdAt: string;
+  booking?: {
+    id: string;
+    status: string;
+    traveler?: { email: string };
+    service?: { name: string; type: string };
+  };
+}
+
+export const paymentsApi = {
+  adminList: () => api.get("/payments/admin").then((r) => r.data as Payment[]),
+};
