@@ -1,5 +1,6 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common" from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
+import { ResendService } from "./resend.service.js";
 import { AppConfig } from "../config/app.config.js";
 import { APP_CONFIG } from "../config/config.module.js";
 import { Inject } from "@nestjs/common";
@@ -13,7 +14,9 @@ export class OtpService {
 
   constructor(
     private readonly prisma: PrismaService,
-    @Inject(APP_CONFIG) private readonly config: AppConfig,
+    private readonly resend: ResendService,
+    @Inject(APP_CONFIG)
+  private readonly logger = new Logger(OtpService.name); private readonly config: AppConfig,
   ) {}
 
   private key(identifier: string, channel: string) { return `${channel}:${identifier.toLowerCase()}`; }
