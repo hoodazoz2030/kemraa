@@ -38,6 +38,9 @@ model User {
   username     String?     @unique @map("username")
   trustedDevices TrustedDevice[]
 
+  features       Json         @default("[]")
+
+
   accountType  AccountType @default(TRAVELER) @map("account_type")
 
 

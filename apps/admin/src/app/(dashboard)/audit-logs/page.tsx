@@ -205,7 +205,7 @@ export default function AuditLogsPage() {
             {filtered.map((log) => {
               const style = getStyle(log.action);
               const actorName = log.actor
-                ? ([log.actor.profile?.firstName, log.actor.profile?.lastName].filter(Boolean).join(" ") || log.actor.email || "Unknown")
+                ? (log.actorId?.slice(0, 8) ?? "System")
                 : (log.actorId ? log.actorId.slice(0, 8) + "..." : "System");
               return (
                 <button
@@ -276,7 +276,7 @@ export default function AuditLogsPage() {
                 </div>
                 <div className="p-3 bg-gray-50 rounded-lg">
                   <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Actor</p>
-                  <p className="text-xs text-gray-900 mt-1">{selected.actor?.email ?? "System"}</p>
+                  <p className="text-xs text-gray-900 mt-1">{selected.actorId?.slice(0, 8) ?? "System"}</p>
                   {selected.actorId && <p className="text-[10px] text-gray-400 mt-0.5 font-mono" dir="ltr">{selected.actorId.slice(0, 12)}...</p>}
                 </div>
               </div>

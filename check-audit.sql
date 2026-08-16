@@ -1,0 +1,1 @@
+SELECT action, COUNT(*) AS c FROM audit_logs GROUP BY action ORDER BY c DESC LIMIT 15;
