@@ -20,6 +20,8 @@ const navItems = [
   { href: "/audit-logs", label: "Audit Logs", icon: ScrollText },
   { href: "/feature-flags", label: "Feature Flags", icon: Flag },
   { href: "/payments", label: "Payments", icon: CreditCard, Percent, ArrowRightLeft },
+  { href: "/refunds", label: "Refunds", icon: ArrowRightLeft },
+  { href: "/commissions", label: "Commissions", icon: Percent },
 ];
 
 export default function Sidebar() {
