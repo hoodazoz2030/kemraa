@@ -418,3 +418,73 @@ export const bookingsApi = {
   complete: (id: string) => api.post(`/bookings/${id}/complete`).then((r) => r.data),
   cancel: (id: string, reason?: string) => api.post(`/bookings/${id}/cancel`, { reason }).then((r) => r.data),
 };
+// ============ Refunds ============
+export interface Refund {
+  id: string;
+  paymentId: string;
+  amountMinor: number;
+  reason: string | null;
+  status: string;
+  createdAt: string;
+  payment?: {
+    id: string;
+    provider: string;
+    methodType: string;
+    status: string;
+    amountMinor: number;
+    currency: string;
+    booking?: {
+      id: string;
+      service?: { title: string; type: string };
+      traveler?: { email: string };
+    };
+  };
+}
+
+export const refundsApi = {
+  list: () => api.get("/refunds/admin").then((r) => r.data as Refund[]),
+  process: (id: string) => api.post(`/refunds/${id}/process`).then((r) => r.data),
+  succeed: (id: string) => api.post(`/refunds/${id}/succeed`).then((r) => r.data),
+  fail: (id: string) => api.post(`/refunds/${id}/fail`).then((r) => r.data),
+  create: (paymentId: string, amountMinor: number, reason?: string) =>
+    api.post("/refunds", { paymentId, amountMinor, reason }).then((r) => r.data),
+};
+
+// ============ Commissions ============
+export interface CommissionRule {
+  id: string;
+  scopeType: string;
+  scopeId: string | null;
+  basis: string;
+  rateBps: number;
+  fixedMinor: number;
+  currency: string;
+  activeFrom: string;
+  activeTo: string | null;
+}
+
+export interface CommissionEntry {
+  id: string;
+  ruleId: string;
+  bookingId: string;
+  beneficiaryType: string;
+  beneficiaryId: string;
+  amountMinor: number;
+  currency: string;
+  status: string;
+  createdAt: string;
+  rule?: { rateBps: number };
+  booking?: {
+    service?: { title: string };
+    traveler?: { email: string };
+  };
+}
+
+export const commissionsApi = {
+  listRules: () => api.get("/commissions/rules").then((r) => r.data as CommissionRule[]),
+  createRule: (data: Partial<CommissionRule>) => api.post("/commissions/rules", data).then((r) => r.data),
+  updateRule: (id: string, data: Partial<CommissionRule>) => api.patch(`/commissions/rules/${id}`, data).then((r) => r.data),
+  listEntries: () => api.get("/commissions/entries").then((r) => r.data as CommissionEntry[]),
+  markEligible: (id: string) => api.post(`/commissions/entries/${id}/eligible`).then((r) => r.data),
+  markPaid: (id: string) => api.post(`/commissions/entries/${id}/paid`).then((r) => r.data),
+};

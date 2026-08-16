@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name": "Kemraa",
+    "slug": "kemraa",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": { "supportsTablet": true },
+    "android": { "package": "com.kemraa.mobile" },
+    "plugins": [
+      ["expo-location", { "locationAlwaysAndWhenInUsePermission": "Allow Kemraa to track your trip location." }]
+    ]
+  }
+}
