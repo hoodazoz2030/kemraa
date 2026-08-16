@@ -351,3 +351,28 @@ export const usersApi = {
     api.patch(`/users/${id}/status`, { status, reason }).then((r) => r.data),
   setRoles: (id: string, roles: string[]) => api.patch(`/users/${id}/roles`, { roles }).then((r) => r.data),
 };
+// ============ Locations ============
+export interface LiveLocation {
+  id: string;
+  userId: string;
+  latitude: number;
+  longitude: number;
+  accuracy: number | null;
+  source: string | null;
+  battery: number | null;
+  updatedAt: string;
+  displayName: string;
+  user: {
+    id: string;
+    email: string | null;
+    phone: string | null;
+    status: string;
+    profile: { firstName: string | null; lastName: string | null; avatarUrl: string | null } | null;
+  };
+}
+
+export const locationsApi = {
+  list: (activeMinutes = 60) =>
+    api.get(`/locations/admin?activeMinutes=${activeMinutes}`).then((r) => r.data as LiveLocation[]),
+  getOne: (userId: string) => api.get(`/locations/admin/${userId}`).then((r) => r.data as LiveLocation | null),
+};
