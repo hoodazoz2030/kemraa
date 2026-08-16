@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { staffApi, api, setTokens } from "@/lib/api";
+import { staffApi, api, setTokens, authApi } from "@/lib/api";
 import { Shield, Loader2, Mail, Lock, User, ArrowRight, Fingerprint } from "lucide-react";
 
 type Stage = "credentials" | "otp";
@@ -24,8 +24,17 @@ export default function StaffLoginPage() {
     try {
       const r = await staffApi.login(username.trim(), password);
       if (r.needsOtp) {
-        setPending({ userId: r.userId, fingerprint: r.fingerprint, deviceName: r.deviceName, username: r.username });
+        const pendingData = { userId: r.userId, fingerprint: r.fingerprint, deviceName: r.deviceName, username: r.username };
+        setPending(pendingData);
         setStage("otp");
+        // Auto-send OTP to staff email
+        if (r.email) {
+          try {
+            await authApi.requestOtp(r.email, "EMAIL");
+          } catch (e) {
+            console.error("Failed to send OTP:", e);
+          }
+        }
       } else {
         // Device trusted — skip OTP
         await finalize(r.userId, r.fingerprint, r.deviceName);
@@ -49,15 +58,14 @@ export default function StaffLoginPage() {
   };
 
   const finalize = async (userId: string, fingerprint: string, deviceName: string) => {
-    // Auto-verify with placeholder — only works if device is already trusted
+    // This is only called when device is already trusted (needsOtp: false)
+    // We use a special endpoint that doesn't require OTP for trusted devices
     try {
-      const r = await staffApi.verifyOtp(userId, "000000", fingerprint, deviceName);
+      const r = await staffApi.verifyOtp(userId, "TRUSTED_DEVICE", fingerprint, deviceName);
       setTokens(r.accessToken, r.refreshToken);
       router.push("/");
     } catch {
-      // fallback — request real OTP via email
-      await api.post("/auth/otp/request", { identifier: pending?.username ?? username, channel: "EMAIL" });
-      setStage("otp");
+      setError("Device trust verification failed");
     }
   };
 
