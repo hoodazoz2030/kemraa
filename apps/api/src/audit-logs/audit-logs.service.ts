@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+﻿import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
 import { ListAuditLogsDto } from "./dto/audit-logs.dto.js";
 
@@ -19,20 +19,40 @@ export class AuditLogsService {
     }
     const limit = Math.min(q.limit ?? 50, 200);
     const offset = q.offset ?? 0;
+
     const [items, total] = await Promise.all([
       this.prisma.auditLog.findMany({
-      where,
-      include: {
-        actor: {
-          select: { email: true, profile: { select: { firstName: true, lastName: true, avatarUrl: true } } }
-        }
-      },
-      orderBy: { createdAt: "desc" },
+        where,
+        orderBy: { createdAt: "desc" },
         take: limit,
-        skip: q.offset ?? 0,
+        skip: offset,
       }),
       this.prisma.auditLog.count({ where }),
     ]);
-    return { items, total, limit, offset };
+
+    // Manual join: fetch actor info for unique actorIds
+    const actorIds = Array.from(new Set(items.map((l) => l.actorId).filter(Boolean))) as string[];
+    const actors: Record<string, any> = {};
+    if (actorIds.length > 0) {
+      const actorUsers = await this.prisma.user.findMany({
+        where: { id: { in: actorIds } },
+        select: {
+          id: true,
+          email: true,
+          profile: { select: { firstName: true, lastName: true, avatarUrl: true } },
+        },
+      });
+      for (const u of actorUsers) actors[u.id] = u;
+    }
+
+    return {
+      items: items.map((l) => ({
+        ...l,
+        actor: l.actorId ? actors[l.actorId] ?? null : null,
+      })),
+      total,
+      limit,
+      offset,
+    };
   }
 }

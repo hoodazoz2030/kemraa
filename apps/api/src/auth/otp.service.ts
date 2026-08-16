@@ -1,5 +1,4 @@
 ﻿import { Inject, Injectable, Logger } from "@nestjs/common";
-import { Inject as _i } from "@nestjs/common";
 import type { Queue } from "bullmq";
 import type Redis from "ioredis";
 import { REDIS_CLIENT } from "../redis/redis.module.js";
@@ -31,7 +30,6 @@ export class OtpService {
     const ttl = this.config.otpTtlSeconds;
     const key = this.key(identifier, channel);
 
-    // Persist in Redis (survives restarts) with memory fallback
     try {
       await this.redis.set(key, JSON.stringify({ code, attempts: 0 }), "EX", ttl);
       this.logger.log("[OTP] stored in Redis: " + key);
@@ -40,7 +38,6 @@ export class OtpService {
       this.fallback.set(key, { code, attempts: 0, expiresAt: Date.now() + ttl * 1000 });
     }
 
-    // Send email via BullMQ worker (async + retries)
     if (channel === "EMAIL" && identifier.includes("@")) {
       try {
         await this.emailQueue.add(
