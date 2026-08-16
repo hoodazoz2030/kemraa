@@ -376,3 +376,45 @@ export const locationsApi = {
     api.get(`/locations/admin?activeMinutes=${activeMinutes}`).then((r) => r.data as LiveLocation[]),
   getOne: (userId: string) => api.get(`/locations/admin/${userId}`).then((r) => r.data as LiveLocation | null),
 };
+// ============ Bookings ============
+export interface BookingItem {
+  id: string;
+  description: string;
+  quantity: number;
+  unitMinor: number;
+  taxMinor: number;
+  feeMinor: number;
+}
+
+export interface Booking {
+  id: string;
+  tripId?: string | null;
+  travelerId: string;
+  serviceId: string;
+  providerId: string;
+  status: string;
+  externalRef?: string | null;
+  totalMinor: number;
+  currency: string;
+  createdAt: string;
+  updatedAt: string;
+  service?: { title: string; type: string };
+  traveler?: { email: string; profile?: { firstName: string | null; lastName: string | null } | null };
+  items?: BookingItem[];
+  payments?: any[];
+}
+
+export const bookingsApi = {
+  list: (params?: { status?: string; limit?: number }) => {
+    const q = new URLSearchParams();
+    if (params?.status) q.set("status", params.status);
+    q.set("limit", String(params?.limit ?? 200));
+    return api.get(`/bookings?${q.toString()}`).then((r) => r.data as { items: Booking[]; total: number } | Booking[]);
+  },
+  get: (id: string) => api.get(`/bookings/${id}`).then((r) => r.data as Booking),
+  approve: (id: string) => api.post(`/bookings/${id}/approve`).then((r) => r.data),
+  reject: (id: string, reason: string) => api.post(`/bookings/${id}/reject`, { reason }).then((r) => r.data),
+  confirm: (id: string) => api.post(`/bookings/${id}/confirm`, {}).then((r) => r.data),
+  complete: (id: string) => api.post(`/bookings/${id}/complete`).then((r) => r.data),
+  cancel: (id: string, reason?: string) => api.post(`/bookings/${id}/cancel`, { reason }).then((r) => r.data),
+};
