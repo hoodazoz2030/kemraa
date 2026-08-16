@@ -35,10 +35,11 @@ model User {
   supportReplies SupportReply[] @relation("SupportReplies")
   liveLocation   UserLocation?
   @@index([status])
-  accountType  AccountType @default(TRAVELER) @map("account_type")
   username     String?     @unique @map("username")
-  passwordHash String?     @map("password_hash")
   trustedDevices TrustedDevice[]
+
+  accountType  AccountType @default(TRAVELER) @map("account_type")
+
 
   @@map("users")
 }
