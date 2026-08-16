@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Home, Map, MapPin, ShoppingBag, Calendar, Bell, HelpCircle, Users, BarChart3, ScrollText, Flag, CreditCard, Percent, ArrowRightLeft } from "lucide-react";
+import { Home, Map, MapPin, ShoppingBag, Calendar, Bell, HelpCircle, Users, BarChart3, ScrollText, Flag, CreditCard, Percent, ArrowRightLeft, Shield } from "lucide-react";
 import clsx from "clsx";
 import Image from "next/image";
 import { notificationsApi, supportApi } from "@/lib/api";
@@ -16,6 +16,7 @@ const navItems = [
   { href: "/support", label: "Support", icon: HelpCircle, badgeType: "tickets" },
   { href: "/users", label: "Users", icon: Users },
   { href: "/users/map", label: "Live Map", icon: MapPin },
+  { href: "/staff", label: "Staff", icon: Shield },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/audit-logs", label: "Audit Logs", icon: ScrollText },
   { href: "/feature-flags", label: "Feature Flags", icon: Flag },

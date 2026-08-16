@@ -1,13 +1,24 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4001/api/v1";
 
 export const api = axios.create({
   baseURL: API_BASE,
   timeout: 10000,
   headers: { "Content-Type": "application/json" },
 });
+
+// Helper to store tokens
+export const setTokens = (accessToken: string, refreshToken?: string) => {
+  Cookies.set("access_token", accessToken, { expires: 1 });
+  if (refreshToken) Cookies.set("refresh_token", refreshToken, { expires: 30 });
+};
+
+export const clearTokens = () => {
+  Cookies.remove("access_token");
+  Cookies.remove("refresh_token");
+};
 
 // Request interceptor: attach token
 api.interceptors.request.use((config: any) => {
@@ -27,13 +38,11 @@ api.interceptors.response.use(
       if (refreshToken) {
         try {
           const { data } = await axios.post(`${API_BASE}/auth/refresh`, { refreshToken });
-          Cookies.set("access_token", data.accessToken, { expires: 1 });
-          Cookies.set("refresh_token", data.refreshToken, { expires: 30 });
+          setTokens(data.accessToken, data.refreshToken);
           original.headers.Authorization = `Bearer ${data.accessToken}`;
           return api(original);
         } catch {
-          Cookies.remove("access_token");
-          Cookies.remove("refresh_token");
+          clearTokens();
           window.location.href = "/login";
         }
       } else {
@@ -44,7 +53,7 @@ api.interceptors.response.use(
   }
 );
 
-// Auth API
+// ============ Auth ============
 export const authApi = {
   requestOtp: (identifier: string, channel: "EMAIL" | "SMS") =>
     api.post("/auth/otp/request", { identifier, channel }),
@@ -53,6 +62,7 @@ export const authApi = {
   logout: () => api.post("/auth/logout"),
   me: () => api.get("/users/me"),
 };
+
 // ============ Audit Logs ============
 export interface AuditLog {
   id: string;
@@ -63,31 +73,24 @@ export interface AuditLog {
   metadata: Record<string, any>;
   ip: string | null;
   createdAt: string;
+  actor?: {
+    email: string | null;
+    profile?: { firstName: string | null; lastName: string | null; avatarUrl: string | null } | null;
+  } | null;
 }
 
-export interface ListAuditLogsResponse {
-  items: AuditLog[];
-  total: number;
-  limit: number;
-  offset: number;
-}
+export const auditLogsApi = {
+  list: (params?: { action?: string; resourceType?: string; from?: string; to?: string; limit?: number }) => {
+    const q = new URLSearchParams();
+    if (params?.action) q.set("action", params.action);
+    if (params?.resourceType) q.set("resourceType", params.resourceType);
+    if (params?.from) q.set("from", params.from);
+    if (params?.to) q.set("to", params.to);
+    q.set("limit", String(params?.limit ?? 200));
+    return api.get(`/audit-logs?${q.toString()}`).then((r) => r.data as { items: AuditLog[]; total: number });
+  },
+};
 
-export async function listAuditLogs(params: {
-  action?: string;
-  resourceType?: string;
-  actorId?: string;
-  from?: string;
-  to?: string;
-  limit?: number;
-  offset?: number;
-} = {}): Promise<ListAuditLogsResponse> {
-  const qs = new URLSearchParams();
-  Object.entries(params).forEach(([k, v]) => {
-    if (v !== undefined && v !== null && v !== "") qs.append(k, String(v));
-  });
-  const res = await api.get("/admin/audit-logs?" + qs.toString());
-  return res.data;
-}
 // ============ Feature Flags ============
 export interface FeatureFlag {
   key: string;
@@ -100,23 +103,16 @@ export const featureFlagsApi = {
   get: (key: string) => api.get("/feature-flags/" + key).then((r) => r.data),
   set: (key: string, enabled: boolean) => api.put("/feature-flags/" + key, { enabled }).then((r) => r.data),
 };
+
 // ============ Search ============
-export interface SearchHit {
-  document: any;
-  text_match: number;
-}
-export interface SearchCollectionResult {
-  collection: string;
-  found: number;
-  hits: SearchHit[];
-}
-export interface SearchResponse {
-  results: SearchCollectionResult[];
-}
+export interface SearchHit { document: any; text_match: number; }
+export interface SearchCollectionResult { collection: string; found: number; hits: SearchHit[]; }
+export interface SearchResponse { results: SearchCollectionResult[]; }
 export const searchApi = {
   query: (q: string) => api.get("/search", { params: { q } }).then((r) => r.data as SearchResponse),
   reindex: () => api.post("/search/reindex").then((r) => r.data),
 };
+
 // ============ Payments ============
 export interface Payment {
   id: string;
@@ -129,25 +125,16 @@ export interface Payment {
   currency: string;
   methodType: string;
   createdAt: string;
-  booking?: {
-    id: string;
-    status: string;
-    traveler?: { email: string };
-    service?: { name: string; type: string };
-  };
+  booking?: { id: string; status: string; traveler?: { email: string }; service?: { name: string; type: string }; };
 }
 
 export const paymentsApi = {
   adminList: () => api.get("/payments/admin").then((r) => r.data as Payment[]),
 };
+
 // ============ Analytics ============
 export interface AnalyticsOverview {
-  totals: {
-    revenue: number;
-    bookings: number;
-    users: number;
-    tickets: number;
-  };
+  totals: { revenue: number; bookings: number; users: number; tickets: number; };
   revenueByDay: { date: string; total: number }[];
   paymentsByProvider: { provider: string; count: number; total: number }[];
   bookingsByStatus: { status: string; count: number }[];
@@ -155,20 +142,13 @@ export interface AnalyticsOverview {
 }
 
 export const analyticsApi = {
-  overview: (days = 14) =>
-    api.get(`/analytics/overview?days=${days}`).then((r) => r.data as AnalyticsOverview),
+  overview: (days = 14) => api.get(`/analytics/overview?days=${days}`).then((r) => r.data as AnalyticsOverview),
 };
+
 // ============ Notifications ============
 export interface Notification {
-  id: string;
-  userId: string;
-  channel: string;
-  type: string;
-  title: string;
-  body: string;
-  status: string;
-  sentAt: string | null;
-  readAt: string | null;
+  id: string; userId: string; channel: string; type: string;
+  title: string; body: string; status: string; sentAt: string | null; readAt: string | null;
 }
 
 export const notificationsApi = {
@@ -186,37 +166,21 @@ export const notificationsApi = {
     const q = new URLSearchParams();
     if (params?.type) q.set("type", params.type);
     if (params?.userId) q.set("userId", params.userId);
-    const qs = q.toString();
-    return api.get(`/notifications/admin${qs ? `?${qs}` : ""}`).then((r) => r.data as Notification[]);
+    return api.get(`/notifications/admin${q.toString() ? `?${q.toString()}` : ""}`).then((r) => r.data as Notification[]);
   },
 };
+
 // ============ Support ============
 export interface SupportReply {
-  id: string;
-  ticketId: string;
-  authorId: string;
-  body: string;
-  isStaff: boolean;
-  createdAt: string;
+  id: string; ticketId: string; authorId: string; body: string; isStaff: boolean; createdAt: string;
   author: { email: string; profile: { firstName: string | null; lastName: string | null } | null };
 }
 
 export interface SupportTicket {
-  id: string;
-  userId: string;
-  tripId?: string | null;
-  category: string;
-  priority: string;
-  status: string;
-  assignedTo?: string | null;
-  subject: string;
-  body: string;
-  createdAt: string;
-  updatedAt: string;
-  customerName?: string;
+  id: string; userId: string; tripId?: string | null; category: string; priority: string; status: string;
+  assignedTo?: string | null; subject: string; body: string; createdAt: string; updatedAt: string; customerName?: string;
   user: { email: string; profile: { firstName: string | null; lastName: string | null } | null };
-  replies?: SupportReply[];
-  _count?: { replies: number };
+  replies?: SupportReply[]; _count?: { replies: number };
 }
 
 export const supportApi = {
@@ -224,26 +188,18 @@ export const supportApi = {
     const q = new URLSearchParams();
     if (params?.status) q.set("status", params.status);
     if (params?.priority) q.set("priority", params.priority);
-    const qs = q.toString();
-    return api.get(`/support/admin${qs ? `?${qs}` : ""}`).then((r) => r.data as SupportTicket[]);
+    return api.get(`/support/admin${q.toString() ? `?${q.toString()}` : ""}`).then((r) => r.data as SupportTicket[]);
   },
   adminDetail: (id: string) => api.get(`/support/admin/${id}`).then((r) => r.data as SupportTicket),
   adminReply: (id: string, body: string) => api.post(`/support/admin/${id}/reply`, { body }).then((r) => r.data),
   adminUpdate: (id: string, update: { status?: string; priority?: string; assignedTo?: string | null }) =>
     api.patch(`/support/admin/${id}`, update).then((r) => r.data),
 };
+
 // ============ Services ============
 export interface Service {
-  id: string;
-  title: string;
-  description?: string | null;
-  type: string;
-  currency: string;
-  priceMinor: number;
-  status: string;
-  metadata?: Record<string, unknown>;
-  createdAt: string;
-  updatedAt: string;
+  id: string; title: string; description?: string | null; type: string; currency: string;
+  priceMinor: number; status: string; metadata?: Record<string, unknown>; createdAt: string; updatedAt: string;
 }
 
 export const servicesApi = {
@@ -262,36 +218,13 @@ export const servicesApi = {
   deactivate: (id: string) => api.post(`/services/${id}/status`, { status: "INACTIVE" }).then((r) => r.data),
   delete: (id: string) => api.delete(`/services/${id}`).then((r) => r.data),
 };
+
 // ============ Trips ============
-export interface ItineraryItem {
-  id: string;
-  type: string;
-  title: string;
-  startAt?: string;
-  endAt?: string;
-  location?: Record<string, unknown>;
-  estimatedMinor?: number;
-}
-
-export interface Itinerary {
-  id: string;
-  version: number;
-  items: ItineraryItem[];
-  createdAt: string;
-}
-
+export interface ItineraryItem { id: string; type: string; title: string; startAt?: string; endAt?: string; location?: Record<string, unknown>; estimatedMinor?: number; }
+export interface Itinerary { id: string; version: number; items: ItineraryItem[]; createdAt: string; }
 export interface Trip {
-  id: string;
-  travelerId: string;
-  title: string;
-  destinationCountry: string;
-  startAt?: string;
-  endAt?: string;
-  currency: string;
-  budgetMinor: number;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
+  id: string; travelerId: string; title: string; destinationCountry: string;
+  startAt?: string; endAt?: string; currency: string; budgetMinor: number; status: string; createdAt: string; updatedAt: string;
   traveler?: { email: string; profile?: { firstName: string | null; lastName: string | null } | null };
   itineraries?: Itinerary[];
 }
@@ -310,30 +243,16 @@ export const tripsApi = {
   reject: (id: string, reason: string) => api.post(`/trips/${id}/reject`, { reason }).then((r) => r.data),
   requestReview: (id: string) => api.post(`/trips/${id}/request`).then((r) => r.data),
 };
+
 // ============ Users ============
 export interface UserSummary {
-  id: string;
-  email: string | null;
-  phone: string | null;
-  status: string;
-  mfaEnabled: boolean;
-  createdAt: string;
-  firstName: string | null;
-  lastName: string | null;
-  avatarUrl: string | null;
-  roles: string[];
-  organization: string | null;
-  tripsCount: number;
-  bookingsCount: number;
-  ticketsCount: number;
+  id: string; email: string | null; phone: string | null; status: string; mfaEnabled: boolean; createdAt: string;
+  firstName: string | null; lastName: string | null; avatarUrl: string | null; roles: string[];
+  organization: string | null; tripsCount: number; bookingsCount: number; ticketsCount: number;
 }
 
 export interface UserDetail extends UserSummary {
-  profile: any;
-  trips: any[];
-  bookings: any[];
-  tickets: any[];
-  notifications: any[];
+  profile: any; trips: any[]; bookings: any[]; tickets: any[]; notifications: any[];
   _count: { trips: number; bookings: number; tickets: number; notifications: number };
 }
 
@@ -351,24 +270,13 @@ export const usersApi = {
     api.patch(`/users/${id}/status`, { status, reason }).then((r) => r.data),
   setRoles: (id: string, roles: string[]) => api.patch(`/users/${id}/roles`, { roles }).then((r) => r.data),
 };
+
 // ============ Locations ============
 export interface LiveLocation {
-  id: string;
-  userId: string;
-  latitude: number;
-  longitude: number;
-  accuracy: number | null;
-  source: string | null;
-  battery: number | null;
-  updatedAt: string;
-  displayName: string;
-  user: {
-    id: string;
-    email: string | null;
-    phone: string | null;
-    status: string;
-    profile: { firstName: string | null; lastName: string | null; avatarUrl: string | null } | null;
-  };
+  id: string; userId: string; latitude: number; longitude: number;
+  accuracy: number | null; source: string | null; battery: number | null; updatedAt: string; displayName: string;
+  user: { id: string; email: string | null; phone: string | null; status: string;
+    profile: { firstName: string | null; lastName: string | null; avatarUrl: string | null } | null; };
 }
 
 export const locationsApi = {
@@ -376,32 +284,15 @@ export const locationsApi = {
     api.get(`/locations/admin?activeMinutes=${activeMinutes}`).then((r) => r.data as LiveLocation[]),
   getOne: (userId: string) => api.get(`/locations/admin/${userId}`).then((r) => r.data as LiveLocation | null),
 };
-// ============ Bookings ============
-export interface BookingItem {
-  id: string;
-  description: string;
-  quantity: number;
-  unitMinor: number;
-  taxMinor: number;
-  feeMinor: number;
-}
 
+// ============ Bookings ============
+export interface BookingItem { id: string; description: string; quantity: number; unitMinor: number; taxMinor: number; feeMinor: number; }
 export interface Booking {
-  id: string;
-  tripId?: string | null;
-  travelerId: string;
-  serviceId: string;
-  providerId: string;
-  status: string;
-  externalRef?: string | null;
-  totalMinor: number;
-  currency: string;
-  createdAt: string;
-  updatedAt: string;
+  id: string; tripId?: string | null; travelerId: string; serviceId: string; providerId: string; status: string;
+  externalRef?: string | null; totalMinor: number; currency: string; createdAt: string; updatedAt: string;
   service?: { title: string; type: string };
   traveler?: { email: string; profile?: { firstName: string | null; lastName: string | null } | null };
-  items?: BookingItem[];
-  payments?: any[];
+  items?: BookingItem[]; payments?: any[];
 }
 
 export const bookingsApi = {
@@ -418,26 +309,13 @@ export const bookingsApi = {
   complete: (id: string) => api.post(`/bookings/${id}/complete`).then((r) => r.data),
   cancel: (id: string, reason?: string) => api.post(`/bookings/${id}/cancel`, { reason }).then((r) => r.data),
 };
+
 // ============ Refunds ============
 export interface Refund {
-  id: string;
-  paymentId: string;
-  amountMinor: number;
-  reason: string | null;
-  status: string;
-  createdAt: string;
+  id: string; paymentId: string; amountMinor: number; reason: string | null; status: string; createdAt: string;
   payment?: {
-    id: string;
-    provider: string;
-    methodType: string;
-    status: string;
-    amountMinor: number;
-    currency: string;
-    booking?: {
-      id: string;
-      service?: { title: string; type: string };
-      traveler?: { email: string };
-    };
+    id: string; provider: string; methodType: string; status: string; amountMinor: number; currency: string;
+    booking?: { id: string; service?: { title: string; type: string }; traveler?: { email: string }; };
   };
 }
 
@@ -452,32 +330,14 @@ export const refundsApi = {
 
 // ============ Commissions ============
 export interface CommissionRule {
-  id: string;
-  scopeType: string;
-  scopeId: string | null;
-  basis: string;
-  rateBps: number;
-  fixedMinor: number;
-  currency: string;
-  activeFrom: string;
-  activeTo: string | null;
+  id: string; scopeType: string; scopeId: string | null; basis: string;
+  rateBps: number; fixedMinor: number; currency: string; activeFrom: string; activeTo: string | null;
 }
 
 export interface CommissionEntry {
-  id: string;
-  ruleId: string;
-  bookingId: string;
-  beneficiaryType: string;
-  beneficiaryId: string;
-  amountMinor: number;
-  currency: string;
-  status: string;
-  createdAt: string;
-  rule?: { rateBps: number };
-  booking?: {
-    service?: { title: string };
-    traveler?: { email: string };
-  };
+  id: string; ruleId: string; bookingId: string; beneficiaryType: string; beneficiaryId: string;
+  amountMinor: number; currency: string; status: string; createdAt: string;
+  rule?: { rateBps: number }; booking?: { service?: { title: string }; traveler?: { email: string }; };
 }
 
 export const commissionsApi = {
@@ -488,27 +348,28 @@ export const commissionsApi = {
   markEligible: (id: string) => api.post(`/commissions/entries/${id}/eligible`).then((r) => r.data),
   markPaid: (id: string) => api.post(`/commissions/entries/${id}/paid`).then((r) => r.data),
 };
-// ============ Audit Logs ============
-export interface AuditLog {
-  id: string;
-  actorId: string | null;
-  action: string;
-  resourceType: string;
-  resourceId: string | null;
-  metadata: any;
-  ip: string | null;
-  createdAt: string;
-  actor?: { email: string | null; profile?: { firstName: string | null; lastName: string | null; avatarUrl: string | null } | null } | null;
+
+// ============ Staff Auth (username + password) ============
+export interface StaffLoginResponse {
+  needsOtp: boolean; userId: string; email: string | null; username: string;
+  roles: string[]; fingerprint: string; deviceName: string;
 }
 
-export const auditLogsApi = {
-  list: (params?: { action?: string; resourceType?: string; from?: string; to?: string; limit?: number }) => {
-    const q = new URLSearchParams();
-    if (params?.action) q.set("action", params.action);
-    if (params?.resourceType) q.set("resourceType", params.resourceType);
-    if (params?.from) q.set("from", params.from);
-    if (params?.to) q.set("to", params.to);
-    q.set("limit", String(params?.limit ?? 200));
-    return api.get(`/audit-logs?${q.toString()}`).then((r) => r.data as { items: AuditLog[]; total: number });
-  },
+export interface StaffMember {
+  id: string; username: string; email: string | null; status: string; createdAt: string;
+  profile: { firstName: string | null; lastName: string | null; avatarUrl: string | null } | null;
+  orgMembers: { role: string }[];
+}
+
+export const staffApi = {
+  login: (username: string, password: string) =>
+    api.post("/staff/login", { username, password }).then((r) => r.data as StaffLoginResponse),
+  verifyOtp: (userId: string, code: string, fingerprint: string, deviceName: string) =>
+    api.post("/staff/verify-otp", { userId, code, fingerprint, deviceName }).then((r) => r.data as { accessToken: string; refreshToken: string }),
+  list: () => api.get("/staff").then((r) => r.data as StaffMember[]),
+  create: (data: { username: string; password: string; email: string; fullName?: string }) =>
+    api.post("/staff", data).then((r) => r.data),
+  update: (id: string, data: { status?: string; role?: string; password?: string }) =>
+    api.patch(`/staff/${id}`, data).then((r) => r.data),
+  delete: (id: string) => api.delete(`/staff/${id}`).then((r) => r.data),
 };
