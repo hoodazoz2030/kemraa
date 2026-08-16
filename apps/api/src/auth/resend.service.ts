@@ -61,14 +61,14 @@ export class ResendService {
     }
 
     try {
-      const result = await this.client.emails.send({
+      const { data, error } = await this.client.emails.send({
         from: this.fromEmail,
         to: email,
         subject: `Your Kemraa code: ${code}`,
         html,
         text,
       });
-      this.logger.log(`[OTP][EMAIL-RESEND] ${email} -> ${code} (id: ${result.id})`);
+      this.logger.log(`[OTP][EMAIL-RESEND] ${email} -> ${code} (id: ${data?.id ?? "unknown"})`);
       return { sent: true, mode: "resend" };
     } catch (e: any) {
       this.logger.error(`Failed to send OTP via Resend: ${e.message}`);
