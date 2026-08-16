@@ -12,6 +12,8 @@ import { BookingsModule } from "./bookings/bookings.module.js";
 import { NotificationsModule } from "./notifications/notifications.module.js";
 import { SupportModule } from "./support/support.module.js";
 import { LocationsModule } from "./locations/locations.module.js";
+import { RefundsModule } from "./refunds/refunds.module.js";
+import { CommissionsModule } from "./commissions/commissions.module.js";
 import { AuditLogsModule } from "./audit-logs/audit-logs.module.js";
 import { FeatureFlagsModule } from "./feature-flags/feature-flags.module.js";
 import { SearchModule } from "./search/search.module.js";
@@ -31,7 +33,7 @@ import { AuditInterceptor } from "./common/interceptors/audit.interceptor.js";
     }]),
     PrismaModule, AppConfigModule, AuthModule, HealthModule,
     UsersModule, TripsModule, ServicesModule, BookingsModule,
-    NotificationsModule, SupportModule, LocationsModule, AuditLogsModule, FeatureFlagsModule, SearchModule, PaymentsModule, AnalyticsModule,
+    NotificationsModule, SupportModule, LocationsModule, RefundsModule, CommissionsModule, AuditLogsModule, FeatureFlagsModule, SearchModule, PaymentsModule, AnalyticsModule,
   ],
   providers: [
         { provide: APP_GUARD, useClass: ThrottlerGuard },
