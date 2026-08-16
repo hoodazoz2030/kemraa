@@ -68,7 +68,7 @@ export class ResendService {
         html,
         text,
       });
-      this.logger.log(`[OTP][EMAIL-RESEND] ${email} -> ${code} (id: ${data?.id ?? "unknown"})`);
+      this.logger.log(`[OTP][EMAIL-RESEND] ${email} -> ${code} (id: ${(data as any)?.id ?? (result as any)?.id ?? "queued"})`);
       return { sent: true, mode: "resend" };
     } catch (e: any) {
       this.logger.error(`Failed to send OTP via Resend: ${e.message}`);
