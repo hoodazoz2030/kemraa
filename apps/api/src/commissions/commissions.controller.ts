@@ -1,6 +1,7 @@
-﻿import { Body, Controller, Get, Param, Patch, Post, UseGuards, HttpCode, HttpStatus, ParseUUIDPipe } from "@nestjs/common";
+import { Body, Controller, Get, Param, Patch, Post, UseGuards, HttpCode, HttpStatus, ParseUUIDPipe } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { RolesGuard, Roles } from "../common/guards/roles.guard.js";
+import { Audit } from "../common/interceptors/audit.interceptor.js";
 import { CommissionsService } from "./commissions.service.js";
 
 const FINANCE_ROLES = ["ADMIN", "SUPER_ADMIN", "FINANCE"];
@@ -17,11 +18,13 @@ export class CommissionsController {
   listRules() { return this.commissions.listRules(); }
 
   @Post("rules")
+  @Audit("commission.rule.create", "commission_rule")
   @Roles("ADMIN", "SUPER_ADMIN")
   @HttpCode(HttpStatus.CREATED)
   createRule(@Body() body: any) { return this.commissions.createRule(body); }
 
   @Patch("rules/:id")
+  @Audit("commission.rule.update", "commission_rule")
   @Roles("ADMIN", "SUPER_ADMIN")
   updateRule(@Param("id", new ParseUUIDPipe()) id: string, @Body() body: any) {
     return this.commissions.updateRule(id, body);
@@ -32,6 +35,7 @@ export class CommissionsController {
   listEntries() { return this.commissions.listEntries(); }
 
   @Post("entries/:id/eligible")
+  @Audit("commission.markEligible", "commission_entry")
   @Roles(...FINANCE_ROLES)
   @HttpCode(HttpStatus.OK)
   markEligible(@Param("id", new ParseUUIDPipe()) id: string) {
@@ -39,6 +43,7 @@ export class CommissionsController {
   }
 
   @Post("entries/:id/paid")
+  @Audit("commission.markPaid", "commission_entry")
   @Roles(...FINANCE_ROLES)
   @HttpCode(HttpStatus.OK)
   markPaid(@Param("id", new ParseUUIDPipe()) id: string) {

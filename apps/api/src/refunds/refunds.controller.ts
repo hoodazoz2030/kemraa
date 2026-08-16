@@ -1,6 +1,7 @@
-﻿import { Body, Controller, Get, Param, Post, Req, UseGuards, HttpCode, HttpStatus, ParseUUIDPipe } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Req, UseGuards, HttpCode, HttpStatus, ParseUUIDPipe } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { RolesGuard, Roles } from "../common/guards/roles.guard.js";
+import { Audit } from "../common/interceptors/audit.interceptor.js";
 import { RefundsService } from "./refunds.service.js";
 
 const FINANCE_ROLES = ["ADMIN", "SUPER_ADMIN", "FINANCE"];
@@ -19,6 +20,7 @@ export class RefundsController {
   }
 
   @Post()
+  @Audit("refund.create", "refund")
   @Roles(...FINANCE_ROLES)
   @HttpCode(HttpStatus.CREATED)
   create(@Body() body: { paymentId: string; amountMinor: number; reason?: string }) {
@@ -26,6 +28,7 @@ export class RefundsController {
   }
 
   @Post(":id/process")
+  @Audit("refund.process", "refund")
   @Roles(...FINANCE_ROLES)
   @HttpCode(HttpStatus.OK)
   process(@Param("id", new ParseUUIDPipe()) id: string) {
@@ -33,6 +36,7 @@ export class RefundsController {
   }
 
   @Post(":id/succeed")
+  @Audit("refund.succeed", "refund")
   @Roles(...FINANCE_ROLES)
   @HttpCode(HttpStatus.OK)
   succeed(@Param("id", new ParseUUIDPipe()) id: string) {
@@ -40,6 +44,7 @@ export class RefundsController {
   }
 
   @Post(":id/fail")
+  @Audit("refund.fail", "refund")
   @Roles(...FINANCE_ROLES)
   @HttpCode(HttpStatus.OK)
   fail(@Param("id", new ParseUUIDPipe()) id: string) {

@@ -21,10 +21,15 @@ export class AuditLogsService {
     const offset = q.offset ?? 0;
     const [items, total] = await Promise.all([
       this.prisma.auditLog.findMany({
-        where,
-        orderBy: { createdAt: "desc" },
+      where,
+      include: {
+        actor: {
+          select: { email: true, profile: { select: { firstName: true, lastName: true, avatarUrl: true } } }
+        }
+      },
+      orderBy: { createdAt: "desc" },
         take: limit,
-        skip: offset,
+        skip: q.offset ?? 0,
       }),
       this.prisma.auditLog.count({ where }),
     ]);

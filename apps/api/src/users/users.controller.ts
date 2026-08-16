@@ -2,6 +2,7 @@ import { Controller, Get, Patch, Param, Query, Req, Body, UseGuards, HttpCode, H
 import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { UsersService } from "./users.service.js";
 import { RolesGuard, Roles } from "../common/guards/roles.guard.js";
+import { Audit } from "../common/interceptors/audit.interceptor.js";
 import { ListUsersQueryDto, UpdateUserDto, UpdateRolesDto } from "./dto/users.dto.js";
 import { Request } from "express";
 
@@ -36,6 +37,7 @@ export class UsersController {
   }
 
   @Patch(":id/status")
+  @Audit("user.status.update", "user")
   @Roles(...ADMIN_ROLES)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Suspend/Activate/Deactivate user" })
@@ -48,6 +50,7 @@ export class UsersController {
   }
 
   @Patch(":id/roles")
+  @Audit("user.roles.update", "user")
   @Roles("ADMIN", "SUPER_ADMIN")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Update user roles" })

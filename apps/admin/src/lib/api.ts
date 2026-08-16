@@ -488,3 +488,27 @@ export const commissionsApi = {
   markEligible: (id: string) => api.post(`/commissions/entries/${id}/eligible`).then((r) => r.data),
   markPaid: (id: string) => api.post(`/commissions/entries/${id}/paid`).then((r) => r.data),
 };
+// ============ Audit Logs ============
+export interface AuditLog {
+  id: string;
+  actorId: string | null;
+  action: string;
+  resourceType: string;
+  resourceId: string | null;
+  metadata: any;
+  ip: string | null;
+  createdAt: string;
+  actor?: { email: string | null; profile?: { firstName: string | null; lastName: string | null; avatarUrl: string | null } | null } | null;
+}
+
+export const auditLogsApi = {
+  list: (params?: { action?: string; resourceType?: string; from?: string; to?: string; limit?: number }) => {
+    const q = new URLSearchParams();
+    if (params?.action) q.set("action", params.action);
+    if (params?.resourceType) q.set("resourceType", params.resourceType);
+    if (params?.from) q.set("from", params.from);
+    if (params?.to) q.set("to", params.to);
+    q.set("limit", String(params?.limit ?? 200));
+    return api.get(`/audit-logs?${q.toString()}`).then((r) => r.data as { items: AuditLog[]; total: number });
+  },
+};
