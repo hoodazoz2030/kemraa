@@ -35,6 +35,11 @@ model User {
   supportReplies SupportReply[] @relation("SupportReplies")
   liveLocation   UserLocation?
   @@index([status])
+  accountType  AccountType @default(TRAVELER) @map("account_type")
+  username     String?     @unique @map("username")
+  passwordHash String?     @map("password_hash")
+  trustedDevices TrustedDevice[]
+
   @@map("users")
 }
 
@@ -689,4 +694,23 @@ model UserLocation {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_locations")
+}
+enum AccountType {
+  STAFF
+  TRAVELER
+  PARTNER
+}
+
+model TrustedDevice {
+  id                String   @id @db.Uuid @default(uuid())
+  userId            String   @map("user_id") @db.Uuid
+  deviceFingerprint String   @map("device_fingerprint")
+  deviceName        String?  @map("device_name")
+  lastSeenAt        DateTime @default(now()) @map("last_seen_at")
+  createdAt         DateTime @default(now()) @map("created_at")
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, deviceFingerprint])
+  @@index([userId])
+  @@map("trusted_devices")
 }
