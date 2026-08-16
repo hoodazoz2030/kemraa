@@ -3,7 +3,7 @@ import { Roles } from "../common/guards/roles.guard.js";
 import { AuditLogsService } from "./audit-logs.service.js";
 import { ListAuditLogsDto } from "./dto/audit-logs.dto.js";
 
-@Controller("admin/audit-logs")
+@Controller("audit-logs")
 export class AuditLogsController {
   constructor(private readonly service: AuditLogsService) {}
 
