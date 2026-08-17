@@ -19,6 +19,7 @@ import { CommissionsModule } from "./commissions/commissions.module.js";
 import { SettingsModule } from "./settings/settings.module.js";
 import { ReviewsModule } from "./reviews/reviews.module.js";
 import { PartnersModule } from "./partners/partners.module.js";
+import { ContractsModule } from "./contracts/contracts.module.js";
 import { DriversModule } from "./drivers/drivers.module.js";
 import { PromosModule } from "./promos/promos.module.js";
 import { StaffModule } from "./staff/staff.module.js";
@@ -41,7 +42,7 @@ import { AuditInterceptor } from "./common/interceptors/audit.interceptor.js";
     }]),
     PrismaModule, AppConfigModule, AuthModule, HealthModule,
     UsersModule, TripsModule, ServicesModule, BookingsModule,
-    NotificationsModule, SupportModule, LocationsModule, RedisModule, QueuesModule, RefundsModule, CommissionsModule, StaffModule, SettingsModule, PromosModule, ReviewsModule, DriversModule, PartnersModule, AuditLogsModule, FeatureFlagsModule, SearchModule, PaymentsModule, AnalyticsModule,
+    NotificationsModule, SupportModule, LocationsModule, RedisModule, QueuesModule, RefundsModule, CommissionsModule, StaffModule, SettingsModule, PromosModule, ReviewsModule, DriversModule, PartnersModule, ContractsModule, AuditLogsModule, FeatureFlagsModule, SearchModule, PaymentsModule, AnalyticsModule,
   ],
   providers: [
         { provide: APP_GUARD, useClass: ThrottlerGuard },

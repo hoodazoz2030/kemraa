@@ -1,7 +1,7 @@
-﻿"use client";
+"use client";
 import { useEffect, useState } from "react";
-import { partnersApi, type Partner } from "@/lib/api";
-import { Building2, Loader2, Plus, X, Save, Search, Check, Ban, Eye } from "lucide-react";
+import { partnersApi, contractsApi, type Partner } from "@/lib/api";
+import { Building2, Loader2, Plus, X, Save, Search, Check, Ban, Eye, FileDown } from "lucide-react";
 import clsx from "clsx";
 
 const TYPES = [
@@ -26,6 +26,15 @@ export default function PartnersPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [detail, setDetail] = useState<any>(null);
+  const [downloading, setDownloading] = useState(false);
+  const downloadContract = async (p: any) => {
+    setDownloading(true);
+    try {
+      await contractsApi.downloadPartnerPdf(p.id, p.displayName);
+    } catch (e: any) {
+      alert("Failed to download: " + (e?.message || e));
+    } finally { setDownloading(false); }
+  };
 
   const load = async () => {
     setLoading(true);

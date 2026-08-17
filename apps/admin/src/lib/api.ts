@@ -516,3 +516,17 @@ export const financeApi = {
     URL.revokeObjectURL(url);
   },
 };
+
+
+// ============ Contracts ============
+export const contractsApi = {
+  downloadPartnerPdf: async (partnerId: string, displayName: string) => {
+    const res = await api.get(`/contracts/partners/${partnerId}/pdf`, { responseType: "blob" });
+    const url = URL.createObjectURL((res as any).data);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `kemraa-contract-${displayName.replace(/[^a-z0-9]/gi, "-")}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  },
+};
