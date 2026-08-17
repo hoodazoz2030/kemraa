@@ -52,7 +52,7 @@ export default function LoginPage() {
 
         {/* Logo */}
         <div className="flex justify-center mb-5">
-          {"" !== "/logo-dark.png" ? (
+          {true ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src="/logo-dark.png" alt="Kemraa" className="w-24 h-24 rounded-full border-2 border-[#C9A227]/60 shadow-[0_0_30px_rgba(201,162,39,0.35)]" />
           ) : (
