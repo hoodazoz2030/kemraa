@@ -7,7 +7,7 @@ import clsx from "clsx";
 import Image from "next/image";
 import { notificationsApi, supportApi } from "@/lib/api";
 
-const navItems = [
+const __ALL_ITEMS = [
   { href: "/", label: "Dashboard", icon: Home },
   { href: "/trips", label: "Trips", icon: Map },
   { href: "/services", label: "Services", icon: ShoppingBag },
@@ -24,6 +24,17 @@ const navItems = [
   { href: "/refunds", label: "Refunds", icon: ArrowRightLeft },
   { href: "/commissions", label: "Commissions", icon: Percent },
 ];
+const FEATURE_MAP: Record<string, string> = {
+  "/": "dashboard", "/analytics": "analytics", "/services": "services",
+  "/trips": "trips", "/bookings": "bookings", "/payments": "payments",
+  "/refunds": "refunds", "/commissions": "commissions", "/users": "users",
+  "/users/map": "map", "/notifications": "notifications", "/support": "support",
+  "/feature-flags": "flags", "/audit-logs": "audit", "/staff": "staff",
+};
+const __features = typeof window !== "undefined"
+  ? (() => { try { return JSON.parse(localStorage.getItem("kemraa_features") || "null"); } catch { return null; } })()
+  : null;
+const navItems = __ALL_ITEMS.filter((i: any) => !Array.isArray(__features) || __features.includes(FEATURE_MAP[i.href] ?? "dashboard"));
 
 export default function Sidebar() {
   const pathname = usePathname();

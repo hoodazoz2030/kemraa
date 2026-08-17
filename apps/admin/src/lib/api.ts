@@ -323,6 +323,7 @@ export const commissionsApi = {
 // ============ Staff Members ============
 export interface StaffMember {
   id: string;
+  accessCode: string | null;
   username: string;
   email: string | null;
   status: string;

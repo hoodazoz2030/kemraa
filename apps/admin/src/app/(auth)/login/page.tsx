@@ -51,7 +51,7 @@ export default function LoginPage() {
       style={{ background: "linear-gradient(rgba(12,10,6,0.45), rgba(12,10,6,0.65)), url('/login-bg.png') center/cover no-repeat, #0C0A06" }}>
       <div className="w-full max-w-md bg-[#0C0A06]/85 backdrop-blur-sm border border-[#C9A227]/40 rounded-2xl p-8 shadow-2xl">
         <div className="text-center mb-6">
-          {"" !== "/logo-dark.png" ? (
+          {true ? (
             <img src="/logo-dark.png" alt="Kemraa" className="w-24 h-24 rounded-full border-2 border-[#C9A227]/60 mx-auto mb-4 shadow-[0_0_30px_rgba(201,162,39,0.35)]" />
           ) : (
             <div className="w-24 h-24 rounded-full border-2 border-[#C9A227]/60 bg-gradient-to-br from-[#C9A227] to-[#8C6D1F] flex items-center justify-center mx-auto mb-4 shadow-[0_0_30px_rgba(201,162,39,0.35)]">
