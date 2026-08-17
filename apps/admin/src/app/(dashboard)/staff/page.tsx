@@ -19,7 +19,9 @@ export default function StaffPage() {
 
   const load = async () => {
     setLoading(true);
-    try { setStaff(await staffApi.list()); } catch (e) { console.error(e); }
+    try { setStaff(await staffApi.list()); } catch (e: any) {
+      if (e?.response?.status === 401) { window.location.href = "/login"; }
+    }
     finally { setLoading(false); }
   };
 
