@@ -45,7 +45,7 @@ export default function StaffPage() {
     setBusy(true); setError("");
     try {
       if (modal === "create") {
-        const r = await staffApi.create(form);
+        const r = await staffApi.create({ fullName: form.fullName, features: form.features });
         alert(`✅ Staff created!\n\nAccess Code: ${r.accessCode}\n\n⚠️ Share this code securely — it is the only way they can log in.`);
       } else if (selected) {
         await staffApi.update(selected.id, form);
@@ -231,13 +231,6 @@ export default function StaffPage() {
                     <input value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} required
                       placeholder="Ahmed Hassan"
                       className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227]" />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Email (optional)</label>
-                    <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} dir="ltr"
-                      placeholder="ahmed@kemraa.com"
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227]" />
-                    <p className="text-[10px] text-gray-500 mt-1">Used for notifications & audit logs only</p>
                   </div>
                 </>
               )}

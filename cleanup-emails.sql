@@ -1,0 +1,1 @@
+UPDATE users SET email = NULL WHERE email = ''; SELECT username, email, access_code FROM users WHERE account_type = 'STAFF';

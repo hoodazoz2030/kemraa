@@ -100,8 +100,8 @@ export class StaffService {
   // ===== SUPER_ADMIN: Staff management =====
   async createStaff(data: { fullName?: string; email?: string; features?: string[]; avatarUrl?: string }) {
     // Check username (if provided)
-    if (data.email) {
-      const emailExists = await this.prisma.user.findUnique({ where: { email: data.email.toLowerCase() } });
+    if (data.email?.trim()) {
+      const emailExists = await this.prisma.user.findUnique({ where: { email: data.email.trim().toLowerCase() } });
       if (emailExists) throw new BadRequestException({ code: "EMAIL_TAKEN", message: "This email is already registered" });
     }
 
@@ -118,7 +118,7 @@ export class StaffService {
     try {
       user = await this.prisma.user.create({
         data: {
-          email: data.email?.toLowerCase() ?? null,
+          email: data.email?.trim() ? data.email.trim().toLowerCase() : null,
           accessCode: code,
           accountType: "STAFF",
           status: "ACTIVE",
