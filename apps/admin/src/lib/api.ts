@@ -354,6 +354,7 @@ export const ALL_FEATURES = [
   { key: "settings", label: "Settings" },
   { key: "reviews", label: "Reviews" },
   { key: "drivers", label: "Drivers" },
+  { key: "finance", label: "Finance" },
 ];
 
 // ============ Staff API (access code system) ============
@@ -425,4 +426,15 @@ export const driversApi = {
   verify: (id: string, licenseRef?: string) => api.post(`/drivers/${id}/verify`, { licenseRef }).then((r) => r.data),
   reject: (id: string, reason: string) => api.post(`/drivers/${id}/reject`, { reason }).then((r) => r.data),
   setStatus: (id: string, status: string) => api.patch(`/drivers/${id}/status`, { status }).then((r) => r.data),
+};
+// ============ Finance ============
+export const financeApi = {
+  summary: (from?: string, to?: string) => {
+    const q = new URLSearchParams();
+    if (from) q.set("from", from);
+    if (to) q.set("to", to);
+    return api.get(`/payments/admin/summary?${q.toString()}`).then((r) => r.data);
+  },
+  testWebhook: (provider: string) =>
+    api.post(`/payments/test-webhook`, { provider }).then((r) => r.data),
 };

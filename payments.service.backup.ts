@@ -24,10 +24,13 @@ export class PaymentsService {
     if (!this.stripe) {
       throw new BadRequestException({ code: "PAYMENTS_DISABLED", message: "Stripe not configured" });
     }
+
+    // Verify booking belongs to user
     const booking = await this.prisma.booking.findUnique({ where: { id: dto.bookingId } });
     if (!booking) throw new NotFoundException({ code: "BOOKING_NOT_FOUND" });
     if (booking.travelerId !== userId) throw new BadRequestException({ code: "BOOKING_NOT_OWNED" });
 
+    // Create Stripe PaymentIntent
     const intent = await this.stripe.paymentIntents.create({
       amount: dto.amountMinor,
       currency: dto.currency.toLowerCase(),
@@ -35,6 +38,7 @@ export class PaymentsService {
       description: dto.description ?? `Booking ${dto.bookingId.slice(0, 8)}`,
     });
 
+    // Save to DB — matches actual Payment schema
     const payment = await this.prisma.payment.create({
       data: {
         bookingId: dto.bookingId,
@@ -73,14 +77,17 @@ export class PaymentsService {
     if (event.type === "payment_intent.succeeded") {
       const intent = event.data.object as Stripe.PaymentIntent;
       const bookingId = intent.metadata.bookingId;
+      
       await this.prisma.payment.updateMany({
         where: { providerPaymentId: intent.id },
         data: { status: "CAPTURED" },
       });
+
+      // Update booking status
       if (bookingId) {
         await this.prisma.booking.update({
           where: { id: bookingId },
-          data: { status: "CONFIRMED" as any },
+          data: { status: "CONFIRMED" },
         }).catch(() => {});
       }
     } else if (event.type === "payment_intent.payment_failed") {
@@ -96,7 +103,9 @@ export class PaymentsService {
 
   async listPayments(userId: string, limit = 20) {
     return this.prisma.payment.findMany({
-      where: { booking: { travelerId: userId } },
+      where: {
+        booking: { travelerId: userId },
+      },
       orderBy: { createdAt: "desc" },
       take: limit,
       include: { booking: true },
@@ -109,7 +118,9 @@ export class PaymentsService {
     if (!booking) throw new NotFoundException({ code: "BOOKING_NOT_FOUND" });
     if (booking.travelerId !== userId) throw new BadRequestException({ code: "BOOKING_NOT_OWNED" });
 
+    // Generate a Fawry-like reference code (10 digits)
     const reference = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+
     const payment = await this.prisma.payment.create({
       data: {
         bookingId: dto.bookingId,
@@ -144,15 +155,17 @@ export class PaymentsService {
       throw new BadRequestException({ code: "PAYMENT_ALREADY_PROCESSED", status: payment.status });
     }
 
+    // Simulate successful Fawry payment
     const updated = await this.prisma.payment.update({
       where: { id: payment.id },
       data: { status: "CAPTURED" },
     });
 
+    // Update booking to CONFIRMED
     if (payment.bookingId) {
       await this.prisma.booking.update({
         where: { id: payment.bookingId },
-        data: { status: "CONFIRMED" as any },
+        data: { status: "CONFIRMED" },
       }).catch(() => {});
     }
 
@@ -165,15 +178,36 @@ export class PaymentsService {
     };
   }
 
-  // ============ Admin endpoints ============
   async adminListAll(limit = 50) {
     return this.prisma.payment.findMany({
       orderBy: { createdAt: "desc" },
       take: limit,
       include: { booking: { include: { traveler: true, service: true } } },
     });
-  }
-
+    const payments = await this.prisma.payment.findMany({ where });
+    const byStatus: Record<string, { count: number; total: number }> = {};
+    const byProvider: Record<string, { count: number; total: number }> = {};
+    let gross = 0, captured = 0, refunded = 0;
+    for (const p of payments) {
+      byStatus[p.status] = byStatus[p.status] ?? { count: 0, total: 0 };
+      byStatus[p.status].count++;
+      byStatus[p.status].total += p.amountMinor;
+      byProvider[p.provider] = byProvider[p.provider] ?? { count: 0, total: 0 };
+      byProvider[p.provider].count++;
+      byProvider[p.provider].total += p.amountMinor;
+      gross += p.amountMinor;
+      if (["CAPTURED", "SETTLED", "PARTIALLY_REFUNDED"].includes(p.status)) captured += p.amountMinor;
+    }
+    const refunds = await this.prisma.refund.aggregate({ _sum: { amountMinor: true } });
+    refunded = refunds._sum.amountMinor ?? 0;
+    const taxBps = 1400;
+    const tax = Math.round((captured * taxBps) / 10000);
+    const net = captured - tax - refunded;
+    return {
+      total: payments.length, gross, captured, refunded, tax, net,
+      byStatus, byProvider,
+    };
+  
   async adminSummary(from?: string, to?: string) {
     const where: any = {};
     if (from || to) {
@@ -185,7 +219,6 @@ export class PaymentsService {
     const byStatus: Record<string, { count: number; total: number }> = {};
     const byProvider: Record<string, { count: number; total: number }> = {};
     let gross = 0, captured = 0, refunded = 0;
-
     for (const p of payments) {
       byStatus[p.status] = byStatus[p.status] ?? { count: 0, total: 0 };
       byStatus[p.status].count++;
@@ -196,22 +229,14 @@ export class PaymentsService {
       gross += p.amountMinor;
       if (["CAPTURED", "SETTLED", "PARTIALLY_REFUNDED"].includes(p.status)) captured += p.amountMinor;
     }
-
     const refunds = await this.prisma.refund.aggregate({ _sum: { amountMinor: true } });
     refunded = refunds._sum.amountMinor ?? 0;
-    const taxBps = 1400; // 14%
+    const taxBps = 1400;
     const tax = Math.round((captured * taxBps) / 10000);
     const net = captured - tax - refunded;
-
     return {
-      total: payments.length,
-      gross,
-      captured,
-      refunded,
-      tax,
-      net,
-      byStatus,
-      byProvider,
+      total: payments.length, gross, captured, refunded, tax, net,
+      byStatus, byProvider,
     };
   }
 }
