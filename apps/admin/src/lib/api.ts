@@ -355,6 +355,7 @@ export const ALL_FEATURES = [
   { key: "reviews", label: "Reviews" },
   { key: "drivers", label: "Drivers" },
   { key: "finance", label: "Finance" },
+  { key: "partners", label: "Partners" },
 ];
 
 // ============ Staff API (access code system) ============
@@ -458,4 +459,26 @@ export const financeApi = {
     a.click();
     URL.revokeObjectURL(url);
   },
+};
+// ============ Partners ============
+export interface Partner {
+  id: string; legalName: string; displayName: string; type: string; status: string;
+  country: string; metadata: any; createdAt: string;
+  partner: {
+    organizationId: string; partnerType: string; contractStatus: string; settlementTerms: any;
+    _count: { services: number; drivers: number; vehicles: number; settlements: number };
+  } | null;
+}
+export const partnersApi = {
+  list: (params?: any) => {
+    const q = new URLSearchParams();
+    Object.entries(params ?? {}).forEach(([k, v]: any) => v !== undefined && v !== "" && q.set(k, String(v)));
+    return api.get(`/partners?${q.toString()}`).then((r) => r.data as { items: Partner[]; total: number });
+  },
+  detail: (id: string) => api.get(`/partners/${id}`).then((r) => r.data),
+  stats: () => api.get("/partners/stats").then((r) => r.data),
+  create: (data: any) => api.post("/partners", data).then((r) => r.data),
+  update: (id: string, data: any) => api.patch(`/partners/${id}`, data).then((r) => r.data),
+  activate: (id: string) => api.post(`/partners/${id}/activate`).then((r) => r.data),
+  suspend: (id: string) => api.post(`/partners/${id}/suspend`).then((r) => r.data),
 };
