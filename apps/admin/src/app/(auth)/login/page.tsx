@@ -30,9 +30,13 @@ export default function LoginPage() {
     try {
       const r = await staffApi.accessLogin(code.trim(), deviceId);
       setTokens(r.accessToken, r.refreshToken);
+      localStorage.setItem("access_token", r.accessToken);
+      localStorage.setItem("refresh_token", r.refreshToken);
       localStorage.setItem("kemraa_features", JSON.stringify(r.user.features ?? []));
       localStorage.setItem("kemraa_user", JSON.stringify(r.user));
-      router.push("/");
+      localStorage.setItem("kemraa_features", JSON.stringify(r.user.features ?? []));
+      localStorage.setItem("kemraa_user", JSON.stringify(r.user));
+      window.location.href = "/";
     } catch (e: any) {
       const c = e?.response?.data?.code;
       const msg = e?.response?.data?.message;
