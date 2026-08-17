@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { settlementsApi, type Settlement } from "@/lib/api";
-import { Receipt, Loader2, Check, DollarSign, Eye } from "lucide-react";
+import { settlementsApi, contractsApi, type Settlement } from "@/lib/api";
+import { Receipt, Loader2, Check, DollarSign, Eye, FileText } from "lucide-react";
 import clsx from "clsx";
 
 export default function SettlementsPage() {
@@ -11,6 +11,13 @@ export default function SettlementsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState({ status: "", partnerId: "" });
   const [detail, setDetail] = useState<Settlement | null>(null);
+  const downloadInvoice = async (s: Settlement) => {
+    try {
+      await contractsApi.downloadSettlementInvoice(s.id, s.partner?.organization?.displayName ?? "partner");
+    } catch (e: any) {
+      alert("Failed to download invoice: " + (e?.message || e));
+    }
+  };
 
   const load = async () => {
     setLoading(true);
@@ -131,6 +138,7 @@ export default function SettlementsPage() {
                           <DollarSign size={15} />
                         </button>
                       )}
+                      <button onClick={() => downloadInvoice(s)} className="p-1.5 rounded hover:bg-amber-50 text-amber-600" title="Download Invoice"><FileText size={15} /></button>
                       <button onClick={() => setDetail(s)} className="p-1.5 rounded hover:bg-gray-100 text-gray-600" title="View">
                         <Eye size={15} />
                       </button>

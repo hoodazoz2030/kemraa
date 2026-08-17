@@ -219,4 +219,167 @@ export class ContractsService {
   private humanize(key: string): string {
     return key.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
   }
+
+  async generateInvoice(settlementId: string): Promise<Buffer> {
+    const settlement = await this.prisma.settlement.findUnique({
+      where: { id: settlementId },
+      include: {
+        partner: {
+          include: {
+            organization: true,
+            services: { take: 5 },
+          },
+        },
+      },
+    });
+    if (!settlement) throw new NotFoundException("Settlement not found");
+
+    const org = settlement.partner.organization;
+    const generatedAt = new Date();
+    const invoiceNo = `INV-${generatedAt.getFullYear()}${String(generatedAt.getMonth() + 1).padStart(2, "0")}-${settlementId.slice(0, 6).toUpperCase()}`;
+
+    const doc = new PDFDocument({
+      size: "A4",
+      margin: 50,
+      info: {
+        Title: `Invoice ${invoiceNo} - ${org.displayName}`,
+        Author: "Kemraa Travel Platform",
+        Creator: "Kemraa Invoice Generator",
+      },
+    });
+
+    const buffers: Buffer[] = [];
+    doc.on("data", (chunk: Buffer) => buffers.push(chunk));
+
+    const gold = "#C9A227";
+    const darkGold = "#8B7420";
+    const dark = "#0C0A06";
+    const gray = "#6B7280";
+
+    // ===== HEADER =====
+    doc.rect(0, 0, 595, 100).fill(gold);
+
+    doc.fontSize(32).fillColor(dark).font("Helvetica-Bold")
+      .text("INVOICE", 50, 25);
+    doc.fontSize(12).fillColor("#4A3817").font("Helvetica")
+      .text(`#${invoiceNo}`, 50, 60);
+
+    doc.fontSize(14).fillColor(dark).font("Helvetica-Bold")
+      .text("KEMRAA", 0, 30, { align: "right", width: 545 });
+    doc.fontSize(9).fillColor("#4A3817").font("Helvetica")
+      .text("Travel Platform", 0, 48, { align: "right", width: 545 })
+      .text(generatedAt.toLocaleDateString(), 0, 60, { align: "right", width: 545 });
+
+    let y = 130;
+
+    // ===== BILL TO =====
+    doc.fontSize(10).fillColor(gray).font("Helvetica-Bold")
+      .text("BILL TO", 50, y);
+    doc.fontSize(12).fillColor(dark).font("Helvetica-Bold")
+      .text(org.legalName, 50, y + 16);
+    doc.fontSize(10).fillColor(gray).font("Helvetica")
+      .text(`Trading as: ${org.displayName}`, 50, y + 32)
+      .text(`Country: ${org.country}`, 50, y + 46)
+      .text(`Type: ${org.type}`, 50, y + 60);
+
+    doc.fontSize(10).fillColor(gray).font("Helvetica-Bold")
+      .text("INVOICE DATE", 0, y, { align: "right", width: 545 });
+    doc.fontSize(11).fillColor(dark).font("Helvetica")
+      .text(generatedAt.toLocaleDateString(), 0, y + 16, { align: "right", width: 545 });
+
+    doc.fontSize(10).fillColor(gray).font("Helvetica-Bold")
+      .text("PERIOD", 0, y + 36, { align: "right", width: 545 });
+    doc.fontSize(11).fillColor(dark).font("Helvetica")
+      .text(
+        `${settlement.periodStart.toLocaleDateString()} - ${settlement.periodEnd.toLocaleDateString()}`,
+        0, y + 52, { align: "right", width: 545 }
+      );
+    y += 85;
+
+    // ===== LINE ITEMS TABLE =====
+    doc.moveTo(50, y).lineTo(545, y).strokeColor(gold).lineWidth(2).stroke();
+    y += 8;
+
+    // Table header
+    doc.fontSize(10).fillColor(dark).font("Helvetica-Bold");
+    doc.text("DESCRIPTION", 60, y, { width: 250 });
+    doc.text("AMOUNT", 0, y, { align: "right", width: 485 });
+    y += 20;
+
+    doc.moveTo(50, y).lineTo(545, y).strokeColor(gold).lineWidth(1).stroke();
+    y += 12;
+
+    // Line items
+    doc.fontSize(11).fillColor(dark).font("Helvetica");
+    const fmtMoney = (minor: number) => `${settlement.currency} ${(minor / 100).toFixed(2)}`;
+
+    doc.text("Gross Revenue", 60, y, { width: 250 });
+    doc.text(fmtMoney(settlement.grossMinor), 0, y, { align: "right", width: 485 });
+    y += 18;
+
+    doc.text(`Commission & Platform Fees`, 60, y, { width: 250 });
+    doc.fillColor("#B91C1C").text(`- ${fmtMoney(settlement.commissionMinor)}`, 0, y, { align: "right", width: 485 });
+    doc.fillColor(dark);
+    y += 18;
+
+    // Tax row (14% on commission)
+    const taxMinor = Math.round(settlement.commissionMinor * 0.14);
+    doc.fontSize(9).fillColor(gray).font("Helvetica-Oblique");
+    doc.text(`   (Incl. 14% VAT on commission: ${fmtMoney(taxMinor)})`, 60, y, { width: 250 });
+    doc.fillColor(dark);
+    y += 20;
+
+    // Total line
+    doc.moveTo(50, y).lineTo(545, y).strokeColor(darkGold).lineWidth(1.5).stroke();
+    y += 12;
+
+    doc.fontSize(14).fillColor(darkGold).font("Helvetica-Bold");
+    doc.text("NET PAYABLE", 60, y, { width: 250 });
+    doc.fontSize(16).fillColor(dark).font("Helvetica-Bold");
+    doc.text(fmtMoney(settlement.netMinor), 0, y, { align: "right", width: 485 });
+    y += 40;
+
+    // ===== PAYMENT DETAILS =====
+    doc.fontSize(12).fillColor(darkGold).font("Helvetica-Bold")
+      .text("PAYMENT INSTRUCTIONS", 50, y);
+    doc.moveTo(50, y + 18).lineTo(545, y + 18).strokeColor(gold).lineWidth(1).stroke();
+    y += 30;
+
+    doc.roundedRect(50, y, 495, 85, 6).fill("#FFFBF0").strokeColor(gold).stroke();
+    doc.fontSize(10).fillColor(gray).font("Helvetica-Bold")
+      .text("BANK TRANSFER", 65, y + 10);
+    doc.fontSize(10).fillColor(dark).font("Helvetica")
+      .text("Beneficiary: Kemraa Travel Platform LLC", 65, y + 28)
+      .text("Account: 1234-5678-9012 (CIB Egypt)", 65, y + 44)
+      .text("Reference: " + invoiceNo, 65, y + 60);
+    y += 100;
+
+    // ===== STATUS BADGE =====
+    const statusColors: Record<string, string> = {
+      OPEN: "#EAB308", APPROVED: "#3B82F6", PAID: "#22C55E"
+    };
+    const badgeColor = statusColors[settlement.status] ?? "#6B7280";
+    doc.roundedRect(50, y, 140, 28, 14).fill(badgeColor);
+    doc.fontSize(11).fillColor("#FFFFFF").font("Helvetica-Bold")
+      .text(`STATUS: ${settlement.status}`, 50, y + 8, { align: "center", width: 140 });
+
+    // ===== FOOTER =====
+    doc.fontSize(8).fillColor(gray).font("Helvetica")
+      .text("Kemraa Travel Platform — Confidential", 50, 780, { align: "center", width: 495 })
+      .text(`Generated: ${generatedAt.toISOString()} — Invoice #: ${invoiceNo}`, 50, 792, { align: "center", width: 495 });
+
+    doc.end();
+
+    return new Promise((resolve, reject) => {
+      doc.on("error", (err: any) => {
+        this.logger.error(`Invoice PDF error: ${err.message}`);
+        reject(err);
+      });
+      doc.on("end", () => {
+        const result = Buffer.concat(buffers);
+        this.logger.log(`Invoice PDF generated: ${result.length} bytes for ${org.displayName}`);
+        resolve(result);
+      });
+    });
+  }
 }
