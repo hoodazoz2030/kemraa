@@ -7,6 +7,14 @@ import { DollarSign, Calendar, Users, MessageSquare, CreditCard, ArrowRight } fr
 import Link from "next/link";
 
 export default function HomePage() {
+  const [displayName, setDisplayName] = useState("Admin");
+  useEffect(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem("kemraa_user") || "null");
+      const n = [u?.profile?.firstName, u?.profile?.lastName].filter(Boolean).join(" ") || u?.username;
+      if (n) setDisplayName(n);
+    } catch {}
+  }, []);
   const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
   const [payments, setPayments] = useState<Payment[]>([]);
 
@@ -54,7 +62,7 @@ export default function HomePage() {
         <div className="relative">
           <p className="text-[11px] tracking-[0.35em] uppercase text-[#C9A227]/80">The Land of the Sun</p>
           <h1 className="mt-2 text-3xl font-bold bg-gradient-to-r from-[#F0D78C] to-[#C9A227] bg-clip-text text-transparent">
-            Welcome back, Admin
+            Welcome back, {displayName}
           </h1>
           <p className="mt-2 text-sm text-[#d8c9a0]/80 max-w-lg">
             Monitor your kingdom — bookings, revenue, and travelers across Egypt. Powered by Thoth.
