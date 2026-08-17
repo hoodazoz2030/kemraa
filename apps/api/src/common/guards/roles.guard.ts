@@ -31,7 +31,8 @@ export class RolesGuard implements CanActivate {
     // لو الـ endpoint محدد roles، تأكد إن المستخدم عنده واحدة منهم
     if (requiredRoles && requiredRoles.length > 0) {
       const user = (req as any).user;
-      if (!user || !user.roles || !user.roles.some((r: string) => requiredRoles.includes(r))) {
+      const isSuperAdmin = user?.roles?.includes("SUPER_ADMIN") ?? false;
+      if (!isSuperAdmin && (!user || !user.roles || !user.roles.some((r: string) => requiredRoles.includes(r)))) {
         throw new UnauthorizedException({ code: "FORBIDDEN", message: "Insufficient roles" });
       }
     }
