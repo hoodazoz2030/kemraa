@@ -352,6 +352,8 @@ export const ALL_FEATURES = [
   { key: "staff", label: "Staff Management" },
   { key: "promos", label: "Promo Codes" },
   { key: "settings", label: "Settings" },
+  { key: "reviews", label: "Reviews" },
+  { key: "drivers", label: "Drivers" },
 ];
 
 // ============ Staff API (access code system) ============
@@ -384,4 +386,43 @@ export const promosApi = {
   update: (id: string, data: any) => api.patch(`/promos/${id}`, data).then((r) => r.data),
   delete: (id: string) => api.delete(`/promos/${id}`).then((r) => r.data),
   validate: (code: string, amountMinor: number) => api.post("/promos/validate", { code, amountMinor }).then((r) => r.data),
+};
+// ============ Reviews ============
+export interface Review {
+  id: string; rating: number; comment: string | null; targetType: string; createdAt: string;
+  reviewer: { id: string; email: string | null; profile: { firstName: string | null; lastName: string | null; avatarUrl: string | null } | null } | null;
+  booking: { id: string; service: { title: string; type: string } | null } | null;
+}
+export const reviewsApi = {
+  list: (params?: any) => {
+    const q = new URLSearchParams();
+    Object.entries(params ?? {}).forEach(([k, v]: any) => v !== undefined && v !== "" && q.set(k, String(v)));
+    return api.get(`/reviews?${q.toString()}`).then((r) => r.data as { items: Review[]; total: number });
+  },
+  detail: (id: string) => api.get(`/reviews/${id}`).then((r) => r.data),
+  stats: () => api.get("/reviews/stats").then((r) => r.data),
+  approve: (id: string) => api.post(`/reviews/${id}/approve`).then((r) => r.data),
+  hide: (id: string) => api.post(`/reviews/${id}/hide`).then((r) => r.data),
+  delete: (id: string) => api.delete(`/reviews/${id}`).then((r) => r.data),
+};
+
+// ============ Drivers ============
+export interface Driver {
+  userId: string; verificationStatus: string; licenseRef: string | null; rating: number | null; status: string;
+  user: { id: string; email: string | null; phone: string | null; profile: { firstName: string | null; lastName: string | null; avatarUrl: string | null } | null };
+  partner: { organizationId: string; legalName: string } | null;
+  vehicles: any[];
+  _count: { rides: number };
+}
+export const driversApi = {
+  list: (params?: any) => {
+    const q = new URLSearchParams();
+    Object.entries(params ?? {}).forEach(([k, v]: any) => v !== undefined && v !== "" && q.set(k, String(v)));
+    return api.get(`/drivers?${q.toString()}`).then((r) => r.data as { items: Driver[]; total: number });
+  },
+  detail: (id: string) => api.get(`/drivers/${id}`).then((r) => r.data),
+  stats: () => api.get("/drivers/stats").then((r) => r.data),
+  verify: (id: string, licenseRef?: string) => api.post(`/drivers/${id}/verify`, { licenseRef }).then((r) => r.data),
+  reject: (id: string, reason: string) => api.post(`/drivers/${id}/reject`, { reason }).then((r) => r.data),
+  setStatus: (id: string, status: string) => api.patch(`/drivers/${id}/status`, { status }).then((r) => r.data),
 };
