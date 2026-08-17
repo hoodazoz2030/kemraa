@@ -1,4 +1,4 @@
-﻿import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException, Logger } from "@nestjs/common";
 import { createHash } from "node:crypto";
 import { PrismaService } from "../prisma/prisma.service.js";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -6,6 +6,7 @@ const PDFDocument = require("pdfkit");
 
 @Injectable()
 export class ContractsService {
+  private readonly logger = new Logger(ContractsService.name);
   constructor(private readonly prisma: PrismaService) {}
 
   async generatePartnerContract(partnerId: string): Promise<Buffer> {
@@ -194,10 +195,24 @@ export class ContractsService {
         );
     }
 
-    doc.end();
+    try {
+      this.logger.log(`Generating PDF for ${org.displayName} (${org.id})`);
+      doc.end();
+    } catch (err: any) {
+      this.logger.error(`PDF generation error: ${err.message}`, err.stack);
+      throw err;
+    }
 
-    return new Promise((resolve) => {
-      doc.on("end", () => resolve(Buffer.concat(buffers)));
+    return new Promise((resolve, reject) => {
+      doc.on("error", (err: any) => {
+        this.logger.error(`PDF stream error: ${err.message}`);
+        reject(err);
+      });
+      doc.on("end", () => {
+        const result = Buffer.concat(buffers);
+        this.logger.log(`PDF generated: ${result.length} bytes for ${org.displayName}`);
+        resolve(result);
+      });
     });
   }
 
