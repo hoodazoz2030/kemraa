@@ -539,3 +539,36 @@ export const contractsApi = {
     URL.revokeObjectURL(url);
   },
 };
+
+
+// ============ Signing ============
+export interface SigningRequest {
+  id: string;
+  partnerId: string;
+  contractType: string;
+  signingToken: string;
+  status: string;
+  signerName: string | null;
+  signerEmail: string;
+  signerTitle: string | null;
+  sentAt: string | null;
+  viewedAt: string | null;
+  signedAt: string | null;
+  completedAt: string | null;
+  expiresAt: string;
+  signerIp: string | null;
+  signerUserAgent: string | null;
+  contractHash: string | null;
+  createdAt: string;
+  partner?: { organizationId: string; organization: { displayName: string; legalName: string } };
+}
+
+export const signingApi = {
+  stats: () => api.get("/signing/stats").then((r: any) => r.data),
+  listByPartner: (partnerId: string) =>
+    api.get(`/signing/partners/${partnerId}`).then((r: any) => r.data as SigningRequest[]),
+  create: (data: { partnerId: string; signerEmail: string; signerName?: string; signerTitle?: string }) =>
+    api.post("/signing/request", data).then((r: any) => r.data),
+  send: (id: string) => api.post(`/signing/${id}/send`).then((r: any) => r.data),
+  cancel: (id: string) => api.post(`/signing/${id}/cancel`).then((r: any) => r.data),
+};

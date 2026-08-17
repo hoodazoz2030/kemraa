@@ -103,6 +103,7 @@ model Partner {
   drivers         Driver[]
   vehicles        Vehicle[]
   settlements     Settlement[]
+  signingRequests SigningRequest[]
 
   @@map("partners")
 }
@@ -744,4 +745,59 @@ model PromoCode {
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
   @@map("promo_codes")
+}
+
+enum SigningStatus {
+  DRAFT
+  SENT
+  VIEWED
+  SIGNED
+  COMPLETED
+  CANCELLED
+  EXPIRED
+}
+
+model SigningRequest {
+  id                String        @id @db.Uuid @default(uuid())
+  partnerId         String        @map("partner_id") @db.Uuid
+  contractType      String        @map("contract_type") @default("PARTNERSHIP")
+  signingToken      String        @unique @map("signing_token") @db.VarChar(64)
+  status            SigningStatus @default(DRAFT)
+
+  // Signer info
+  signerName        String?       @map("signer_name")
+  signerEmail       String        @map("signer_email")
+  signerTitle       String?       @map("signer_title")
+
+  // Tracking
+  sentAt            DateTime?     @map("sent_at")
+  viewedAt          DateTime?     @map("viewed_at")
+  signedAt          DateTime?     @map("signed_at")
+  completedAt       DateTime?     @map("completed_at")
+  expiresAt         DateTime      @map("expires_at")
+
+  // Signature data
+  signatureData     Json?         @map("signature_data_json")
+  signerIp          String?       @map("signer_ip")
+  signerUserAgent   String?       @map("signer_user_agent")
+  signerFingerprint String?       @map("signer_fingerprint")
+
+  // Metadata
+  contractHash      String?       @map("contract_hash")
+  certificatePdfId  String?       @map("certificate_pdf_id")
+  metadata          Json          @default("{}") @map("metadata_json")
+
+  // Timestamps
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+  issuedBy          String?       @map("issued_by") @db.Uuid
+
+  // Relations
+  partner           Partner       @relation(fields: [partnerId], references: [organizationId], onDelete: Cascade)
+
+  @@index([partnerId])
+  @@index([status])
+  @@index([signingToken])
+  @@index([expiresAt])
+  @@map("signing_requests")
 }
