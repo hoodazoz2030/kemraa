@@ -10,24 +10,14 @@ import { Request } from "express";
 export class StaffController {
   constructor(private readonly staff: StaffService) {}
 
-  @Post("check-device")
+  // ===== PUBLIC: single-field access login =====
+  @Post("access-login")
   @HttpCode(HttpStatus.OK)
-  checkDevice(@Body() b: { email: string; deviceId: string }, @Req() req: Request) {
-    return this.staff.checkDevice(b.email, b.deviceId, req.headers["user-agent"] ?? "unknown");
+  accessLogin(@Body() b: { code: string; deviceId: string }, @Req() req: Request) {
+    return this.staff.accessLogin(b.code, b.deviceId, req.headers["user-agent"] ?? "unknown");
   }
 
-  @Post("verify-otp")
-  @HttpCode(HttpStatus.OK)
-  verifyOtp(@Body() b: { email: string; code: string; deviceId: string; deviceName: string }) {
-    return this.staff.verifyOtp(b.email, b.code, b.deviceId, b.deviceName);
-  }
-
-  @Post("login")
-  @HttpCode(HttpStatus.OK)
-  login(@Body() b: { username: string; password: string; deviceId: string; preToken?: string }, @Req() req: Request) {
-    return this.staff.login(b.username, b.password, b.deviceId, req.headers["user-agent"] ?? "unknown", b.preToken);
-  }
-
+  // ===== SUPER_ADMIN only: management =====
   @Get()
   @ApiBearerAuth() @UseGuards(RolesGuard) @Roles("SUPER_ADMIN")
   list() { return this.staff.listStaff(); }
@@ -35,6 +25,18 @@ export class StaffController {
   @Post()
   @ApiBearerAuth() @UseGuards(RolesGuard) @Roles("SUPER_ADMIN") @Audit("staff.create", "user") @HttpCode(HttpStatus.CREATED)
   create(@Body() b: any) { return this.staff.createStaff(b); }
+
+  @Post(":id/regenerate-code")
+  @ApiBearerAuth() @UseGuards(RolesGuard) @Roles("SUPER_ADMIN") @Audit("staff.regen_code", "user")
+  regenerate(@Param("id", new ParseUUIDPipe()) id: string) { return this.staff.regenerateCode(id); }
+
+  @Post(":id/suspend")
+  @ApiBearerAuth() @UseGuards(RolesGuard) @Roles("SUPER_ADMIN") @Audit("staff.suspend", "user")
+  suspend(@Param("id", new ParseUUIDPipe()) id: string) { return this.staff.toggleLock(id, true); }
+
+  @Post(":id/reactivate")
+  @ApiBearerAuth() @UseGuards(RolesGuard) @Roles("SUPER_ADMIN") @Audit("staff.reactivate", "user")
+  reactivate(@Param("id", new ParseUUIDPipe()) id: string) { return this.staff.toggleLock(id, false); }
 
   @Patch(":id")
   @ApiBearerAuth() @UseGuards(RolesGuard) @Roles("SUPER_ADMIN") @Audit("staff.update", "user")

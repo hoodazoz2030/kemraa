@@ -39,6 +39,10 @@ model User {
   trustedDevices TrustedDevice[]
 
   features       Json         @default("[]")
+  accessCode            String?    @unique @map("access_code")
+  accessCodeLockedUntil DateTime?  @map("access_code_locked_until")
+  accessCodeAttempts    Int        @default(0) @map("access_code_attempts")
+
 
 
   accountType  AccountType @default(TRAVELER) @map("account_type")

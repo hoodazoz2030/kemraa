@@ -351,16 +351,15 @@ export const ALL_FEATURES = [
   { key: "staff", label: "Staff Management" },
 ];
 
-// ============ Staff API (3-step auth + management) ============
+// ============ Staff API (access code system) ============
 export const staffApi = {
-  checkDevice: (email: string, deviceId: string) =>
-    api.post("/staff/check-device", { email, deviceId }).then((r) => r.data as { needsOtp: boolean; sent: boolean }),
-  verifyOtp: (email: string, code: string, deviceId: string, deviceName: string) =>
-    api.post("/staff/verify-otp", { email, code, deviceId, deviceName }).then((r) => r.data as { preToken: string; userId: string }),
-  login: (username: string, password: string, deviceId: string, preToken?: string) =>
-    api.post("/staff/login", { username, password, deviceId, preToken }).then((r) => r.data as { accessToken: string; refreshToken: string; user: any }),
+  accessLogin: (code: string, deviceId: string) =>
+    api.post("/staff/access-login", { code, deviceId }).then((r) => r.data as { accessToken: string; refreshToken: string; user: any }),
   list: () => api.get("/staff").then((r) => r.data as StaffMember[]),
-  create: (data: any) => api.post("/staff", data).then((r) => r.data),
+  create: (data: any) => api.post("/staff", data).then((r) => r.data as { id: string; accessCode: string }),
   update: (id: string, data: any) => api.patch(`/staff/${id}`, data).then((r) => r.data),
+  regenerateCode: (id: string) => api.post(`/staff/${id}/regenerate-code`).then((r) => r.data as string),
+  suspend: (id: string) => api.post(`/staff/${id}/suspend`).then((r) => r.data),
+  reactivate: (id: string) => api.post(`/staff/${id}/reactivate`).then((r) => r.data),
   delete: (id: string) => api.delete(`/staff/${id}`).then((r) => r.data),
 };

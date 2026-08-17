@@ -1,99 +1,75 @@
-﻿import { Injectable, UnauthorizedException, BadRequestException, Inject } from "@nestjs/common";
+import { Injectable, UnauthorizedException, BadRequestException, Inject } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
 import { JwtService } from "../auth/jwt.service.js";
-import { REDIS_CLIENT } from "../redis/redis.module.js";
-import { EMAIL_QUEUE } from "../queues/queues.module.js";
 import type Redis from "ioredis";
-import type { Queue } from "bullmq";
-import * as bcrypt from "bcryptjs";
+import { REDIS_CLIENT } from "../redis/redis.module.js";
 import * as crypto from "crypto";
 
 @Injectable()
 export class StaffService {
+  private readonly MAX_ATTEMPTS = 5;
+  private readonly LOCK_MINUTES = 15;
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
     @Inject(REDIS_CLIENT) private readonly redis: Redis,
-    @Inject(EMAIL_QUEUE) private readonly emailQueue: Queue,
   ) {}
 
-  private fingerprint(deviceId: string, ua: string): string {
+  // Generate random code: krt + 5 random digits
+  private generateCode(): string {
+    const digits = Math.floor(10000 + Math.random() * 90000).toString();
+    return "krt" + digits;
+  }
+
+  private deviceFingerprint(deviceId: string, ua: string): string {
     return crypto.createHash("sha256").update(deviceId + "|" + ua).digest("hex").slice(0, 16);
   }
 
-  // Step 1: check device + auto-send OTP if new device
-  async checkDevice(email: string, deviceId: string, ua: string) {
-    const user = await this.prisma.user.findUnique({ where: { email: email.toLowerCase() } });
-    if (!user || user.accountType !== "STAFF" || user.status !== "ACTIVE") {
-      return { needsOtp: true, sent: false };
+  // ===== SINGLE-FIELD LOGIN: access code only =====
+  async accessLogin(code: string, deviceId: string, ua: string) {
+    if (!code || code.trim().length < 3) {
+      throw new UnauthorizedException({ code: "INVALID_CODE" });
     }
-    const fp = this.fingerprint(deviceId, ua);
-    const trusted = await this.prisma.trustedDevice.findUnique({
-      where: { userId_deviceFingerprint: { userId: user.id, deviceFingerprint: fp } },
+    const normalized = code.trim();
+    const ip = ua.slice(0, 100);
+
+    const user = await this.prisma.user.findUnique({ where: { accessCode: normalized }, include: { profile: true } });
+    if (!user || user.accountType !== "STAFF") {
+      // Audit failed attempt (no user found)
+      await this.prisma.auditLog.create({
+        data: { action: "ACCESS_LOGIN_FAILED", resourceType: "USER", metadata: { attemptedCode: normalized.slice(0, 4) + "...", reason: "code_not_found" } },
+      });
+      throw new UnauthorizedException({ code: "INVALID_CODE", message: "Invalid access code" });
+    }
+    if (user.status !== "ACTIVE") {
+      await this.prisma.auditLog.create({
+        data: { actorId: user.id, action: "ACCESS_LOGIN_FAILED", resourceType: "USER", metadata: { reason: "account_suspended" } },
+      });
+      throw new UnauthorizedException({ code: "ACCOUNT_SUSPENDED", message: "Account is suspended" });
+    }
+
+    // Check lock
+    if (user.accessCodeLockedUntil && new Date(user.accessCodeLockedUntil) > new Date()) {
+      const minutesLeft = Math.ceil((new Date(user.accessCodeLockedUntil).getTime() - Date.now()) / 60000);
+      throw new UnauthorizedException({
+        code: "CODE_LOCKED",
+        message: `Too many attempts. Try again in ${minutesLeft} minute(s).`,
+      });
+    }
+
+    // Code matched! Reset attempts + trust device
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { accessCodeAttempts: 0, accessCodeLockedUntil: null },
     });
-    if (trusted) return { needsOtp: false, sent: false };
 
-    // New device: generate + send OTP
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    const key = "otp:EMAIL:" + email.toLowerCase();
-    await this.redis.set(key, JSON.stringify({ code, attempts: 0 }), "EX", 600);
-    await this.emailQueue.add("send-otp", { email: email.toLowerCase(), code, ttl: 600 }, { attempts: 3 });
-    return { needsOtp: true, sent: true };
-  }
-
-  // Step 2: verify OTP -> preToken + trust device
-  async verifyOtp(email: string, code: string, deviceId: string, deviceName: string) {
-    const user = await this.prisma.user.findUnique({ where: { email: email.toLowerCase() } });
-    if (!user) throw new UnauthorizedException({ code: "OTP_INVALID" });
-    const key = "otp:EMAIL:" + email.toLowerCase();
-    const raw = await this.redis.get(key);
-    if (!raw) throw new UnauthorizedException({ code: "OTP_EXPIRED" });
-    const stored = JSON.parse(raw);
-    if (stored.code !== code) throw new UnauthorizedException({ code: "OTP_INVALID" });
-    await this.redis.del(key);
-
-    const fp = this.fingerprint(deviceId, deviceName);
+    const fp = this.deviceFingerprint(deviceId, ua);
     await this.prisma.trustedDevice.upsert({
       where: { userId_deviceFingerprint: { userId: user.id, deviceFingerprint: fp } },
-      update: { lastSeenAt: new Date(), deviceName },
-      create: { userId: user.id, deviceFingerprint: fp, deviceName },
+      update: { lastSeenAt: new Date(), deviceName: ua.slice(0, 100) },
+      create: { userId: user.id, deviceFingerprint: fp, deviceName: ua.slice(0, 100) },
     });
-
-    const preToken = this.jwt.signAccess(user.id, ["PREAUTH"]);
-    return { preToken, userId: user.id };
-  }
-
-  // Step 3: username + password (+ preToken or trusted device)
-  async login(username: string, password: string, deviceId: string, ua: string, preToken?: string) {
-    const user = await this.prisma.user.findUnique({ where: { username } });
-    if (!user || !user.passwordHash || user.accountType !== "STAFF" || user.status !== "ACTIVE") {
-      throw new UnauthorizedException({ code: "INVALID_CREDENTIALS" });
-    }
-    const valid = await bcrypt.compare(password, user.passwordHash);
-    if (!valid) throw new UnauthorizedException({ code: "INVALID_CREDENTIALS" });
-
-    const fp = this.fingerprint(deviceId, ua);
-    const trusted = await this.prisma.trustedDevice.findUnique({
-      where: { userId_deviceFingerprint: { userId: user.id, deviceFingerprint: fp } },
-    });
-
-    if (!trusted) {
-      // Must have valid preToken (OTP was verified)
-      if (!preToken) throw new UnauthorizedException({ code: "OTP_REQUIRED" });
-      try {
-        const payload: any = this.jwt.verifyAccess(preToken);
-        if (payload.sub !== user.id) throw new Error("mismatch");
-      } catch {
-        throw new UnauthorizedException({ code: "OTP_REQUIRED" });
-      }
-      await this.prisma.trustedDevice.upsert({
-        where: { userId_deviceFingerprint: { userId: user.id, deviceFingerprint: fp } },
-        update: { lastSeenAt: new Date(), deviceName: ua.slice(0, 100) },
-        create: { userId: user.id, deviceFingerprint: fp, deviceName: ua.slice(0, 100) },
-      });
-    } else {
-      await this.prisma.trustedDevice.update({ where: { id: trusted.id }, data: { lastSeenAt: new Date() } });
-    }
 
     const memberships = await this.prisma.organizationMember.findMany({ where: { userId: user.id } });
     const roles = memberships.map((m) => m.role);
@@ -103,29 +79,44 @@ export class StaffService {
     const { token: refreshToken } = this.jwt.signRefresh(user.id);
 
     await this.prisma.auditLog.create({
-      data: { actorId: user.id, action: "STAFF_LOGIN", resourceType: "USER", resourceId: user.id, metadata: { trusted: !!trusted } },
+      data: { actorId: user.id, action: "ACCESS_LOGIN", resourceType: "USER", resourceId: user.id, metadata: { codePrefix: normalized.slice(0, 5) + "...", device: fp } },
     });
 
     return {
       accessToken, refreshToken,
       user: {
-        id: user.id, username: user.username, email: user.email, roles,
+        id: user.id, email: user.email, roles,
+        username: user.username,
         features: (user.features as string[]) ?? [],
-        avatarUrl: null,
+        profile: user.profile ? {
+          firstName: (user.profile as any).firstName,
+          lastName: (user.profile as any).lastName,
+          avatarUrl: (user.profile as any).avatarUrl,
+        } : null,
       },
     };
   }
 
   // ===== SUPER_ADMIN: Staff management =====
-  async createStaff(data: { username: string; password: string; email: string; fullName?: string; features?: string[]; avatarUrl?: string }) {
-    if (await this.prisma.user.findUnique({ where: { username: data.username } })) throw new BadRequestException({ code: "USERNAME_TAKEN" });
-    if (await this.prisma.user.findUnique({ where: { email: data.email.toLowerCase() } })) throw new BadRequestException({ code: "EMAIL_TAKEN" });
+  async createStaff(data: { fullName?: string; email?: string; features?: string[]; avatarUrl?: string }) {
+    // Generate unique code (retry if collision)
+    let code = "";
+    for (let i = 0; i < 10; i++) {
+      code = this.generateCode();
+      const exists = await this.prisma.user.findUnique({ where: { accessCode: code } });
+      if (!exists) break;
+    }
+    const emailExists = data.email ? await this.prisma.user.findUnique({ where: { email: data.email.toLowerCase() } }) : null;
+    if (emailExists) throw new BadRequestException({ code: "EMAIL_TAKEN" });
 
-    const hash = await bcrypt.hash(data.password, 10);
     const user = await this.prisma.user.create({
       data: {
-        email: data.email.toLowerCase(), username: data.username, passwordHash: hash,
-        accountType: "STAFF", status: "ACTIVE", locale: "ar-EG", timezone: "Africa/Cairo",
+        email: data.email?.toLowerCase() ?? null,
+        accessCode: code,
+        accountType: "STAFF",
+        status: "ACTIVE",
+        locale: "ar-EG",
+        timezone: "Africa/Cairo",
         features: data.features ?? ["dashboard", "bookings", "notifications", "support"],
         profile: {
           create: {
@@ -138,15 +129,16 @@ export class StaffService {
     });
     const org = await this.prisma.organization.findFirst({ where: { legalName: "Kemraa" } });
     if (org) await this.prisma.organizationMember.create({ data: { organizationId: org.id, userId: user.id, role: "ADMIN" } });
-    await this.prisma.auditLog.create({ data: { action: "STAFF_CREATE", resourceType: "USER", resourceId: user.id, metadata: { username: data.username } } });
-    return { id: user.id, username: user.username, email: user.email };
+    await this.prisma.auditLog.create({ data: { action: "STAFF_CREATE", resourceType: "USER", resourceId: user.id, metadata: { code } } });
+    return { id: user.id, accessCode: code };
   }
 
   async listStaff() {
     return this.prisma.user.findMany({
       where: { accountType: "STAFF" },
       select: {
-        id: true, username: true, email: true, status: true, createdAt: true, features: true,
+        id: true, username: true, email: true, accessCode: true, status: true, createdAt: true, features: true,
+        accessCodeLockedUntil: true, accessCodeAttempts: true,
         profile: { select: { firstName: true, lastName: true, avatarUrl: true } },
         orgMembers: { select: { role: true } },
       },
@@ -154,10 +146,40 @@ export class StaffService {
     });
   }
 
-  async updateStaff(id: string, data: { status?: string; role?: string; password?: string; features?: string[]; avatarUrl?: string; fullName?: string }) {
+  async regenerateCode(id: string): Promise<string> {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) throw new BadRequestException("User not found");
+    let newCode = "";
+    for (let i = 0; i < 10; i++) {
+      newCode = this.generateCode();
+      const exists = await this.prisma.user.findUnique({ where: { accessCode: newCode } });
+      if (!exists) break;
+    }
+    await this.prisma.user.update({
+      where: { id },
+      data: { accessCode: newCode, accessCodeAttempts: 0, accessCodeLockedUntil: null },
+    });
+    await this.prisma.auditLog.create({ data: { action: "STAFF_CODE_REGEN", resourceType: "USER", resourceId: id } });
+    // Invalidate all trusted devices for this user (old code no longer valid anyway, but clean slate)
+    await this.prisma.trustedDevice.deleteMany({ where: { userId: id } });
+    return newCode;
+  }
+
+  async toggleLock(id: string, suspended: boolean) {
+    await this.prisma.user.update({
+      where: { id },
+      data: {
+        status: suspended ? ("SUSPENDED" as any) : "ACTIVE",
+        accessCodeAttempts: 0,
+        accessCodeLockedUntil: null,
+      },
+    });
+    await this.prisma.auditLog.create({ data: { action: suspended ? "STAFF_SUSPEND" : "STAFF_REACTIVATE", resourceType: "USER", resourceId: id } });
+    return { ok: true };
+  }
+
+  async updateStaff(id: string, data: { features?: string[]; fullName?: string; avatarUrl?: string; role?: string }) {
     const updates: any = {};
-    if (data.status) updates.status = data.status;
-    if (data.password) updates.passwordHash = await bcrypt.hash(data.password, 10);
     if (data.features) updates.features = data.features;
     if (Object.keys(updates).length > 0) await this.prisma.user.update({ where: { id }, data: updates });
 
