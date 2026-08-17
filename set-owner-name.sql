@@ -1,1 +1,0 @@
-UPDATE user_profiles SET first_name = 'Mahmoud Hassan', last_name = '' WHERE user_id = (SELECT id FROM users WHERE email = 'hoodazoz2030@gmail.com');
