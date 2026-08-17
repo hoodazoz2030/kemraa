@@ -1,4 +1,4 @@
-﻿import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards, HttpCode, HttpStatus, ParseUUIDPipe } from "@nestjs/common";
+﻿import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, HttpCode, HttpStatus, ParseUUIDPipe } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { RolesGuard, Roles } from "../common/guards/roles.guard.js";
 import { Audit } from "../common/interceptors/audit.interceptor.js";
@@ -11,9 +11,14 @@ import { PartnersService } from "./partners.service.js";
 export class PartnersController {
   constructor(private readonly svc: PartnersService) {}
 
-  @Get() list(@Query() q: any) { return this.svc.list(q); }
-  @Get("stats") stats() { return this.svc.stats(); }
-  @Get(":id") detail(@Param("id", new ParseUUIDPipe()) id: string) { return this.svc.detail(id); }
+  @Get()
+  list(@Query() q: any) { return this.svc.list(q); }
+
+  @Get("stats")
+  stats() { return this.svc.stats(); }
+
+  @Get(":id")
+  detail(@Param("id", new ParseUUIDPipe()) id: string) { return this.svc.detail(id); }
 
   @Post()
   @Roles("SUPER_ADMIN", "ADMIN")
@@ -40,4 +45,33 @@ export class PartnersController {
   @Roles("SUPER_ADMIN", "ADMIN")
   @Audit("partner.vehicle.add", "vehicle")
   addVehicle(@Param("id", new ParseUUIDPipe()) id: string, @Body() b: any) { return this.svc.addVehicle(id, b); }
+
+  @Post(":id/drivers")
+  @Roles("SUPER_ADMIN", "ADMIN")
+  @Audit("partner.driver.assign", "driver")
+  assignDriver(@Param("id", new ParseUUIDPipe()) id: string, @Body() b: { driverUserId: string }) {
+    return this.svc.assignDriver(id, b.driverUserId);
+  }
+
+  @Delete(":id/drivers/:driverId")
+  @Roles("SUPER_ADMIN", "ADMIN")
+  @Audit("partner.driver.unassign", "driver")
+  unassignDriver(@Param("driverId", new ParseUUIDPipe()) driverId: string) {
+    return this.svc.unassignDriver(driverId);
+  }
+
+  @Post(":id/services")
+  @Roles("SUPER_ADMIN", "ADMIN")
+  @Audit("partner.service.assign", "service")
+  assignService(@Param("id", new ParseUUIDPipe()) id: string, @Body() b: { serviceId: string }) {
+    return this.svc.assignService(id, b.serviceId);
+  }
+
+  @Post(":id/settlements")
+  @Roles("SUPER_ADMIN", "ADMIN")
+  @Audit("partner.settlement.create", "settlement")
+  @HttpCode(HttpStatus.CREATED)
+  createSettlement(@Param("id", new ParseUUIDPipe()) id: string, @Body() b: any) {
+    return this.svc.createSettlement({ ...b, partnerId: id });
+  }
 }

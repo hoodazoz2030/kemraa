@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, NotFoundException } from "@nestjs/common";
+﻿import { Injectable, BadRequestException, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
 
 @Injectable()
@@ -129,5 +129,111 @@ export class PartnersService {
         capacity: data.capacity,
       },
     });
+  }
+
+  // ============ Drivers assignment ============
+  async assignDriver(partnerId: string, driverUserId: string) {
+    const driver = await this.prisma.driver.findUnique({ where: { userId: driverUserId } });
+    if (!driver) throw new NotFoundException("Driver not found");
+    return this.prisma.driver.update({
+      where: { userId: driverUserId },
+      data: { partnerId },
+      include: { user: { select: { email: true, profile: true } } },
+    });
+  }
+
+  async unassignDriver(driverUserId: string) {
+    return this.prisma.driver.update({
+      where: { userId: driverUserId },
+      data: { partnerId: null },
+    });
+  }
+
+  // ============ Services assignment (Service uses providerId) ============
+  async assignService(partnerId: string, serviceId: string) {
+    const svc = await this.prisma.service.findUnique({ where: { id: serviceId } });
+    if (!svc) throw new NotFoundException("Service not found");
+    return this.prisma.service.update({
+      where: { id: serviceId },
+      data: { providerId: partnerId },
+    });
+  }
+
+  // ============ Settlements ============
+  async listSettlements(params: { partnerId?: string; status?: string; limit?: number } = {}) {
+    const where: any = {};
+    if (params.partnerId) where.partnerId = params.partnerId;
+    if (params.status) where.status = params.status as any;
+    const items = await this.prisma.settlement.findMany({
+      where,
+      include: {
+        partner: { include: { organization: true } },
+      },
+      take: Math.min(params.limit ?? 50, 200),
+    });
+    return { items, total: await this.prisma.settlement.count({ where }) };
+  }
+
+  async createSettlement(data: {
+    partnerId: string;
+    periodStart: string;
+    periodEnd: string;
+    netMinor: number;
+    grossMinor?: number;
+    commissionMinor?: number;
+    currency?: string;
+  }) {
+    return this.prisma.settlement.create({
+      data: {
+        partnerId: data.partnerId,
+        periodStart: new Date(data.periodStart),
+        periodEnd: new Date(data.periodEnd),
+        grossMinor: data.grossMinor ?? data.netMinor,
+        commissionMinor: data.commissionMinor ?? 0,
+        netMinor: data.netMinor,
+        currency: data.currency ?? "EGP",
+        status: "OPEN",
+      },
+      include: { partner: { include: { organization: true } } },
+    });
+  }
+
+  async approveSettlement(id: string) {
+    return this.prisma.settlement.update({
+      where: { id },
+      data: { status: "APPROVED" },
+      include: { partner: { include: { organization: true } } },
+    });
+  }
+
+  async paySettlement(id: string) {
+    return this.prisma.settlement.update({
+      where: { id },
+      data: { status: "PAID" },
+      include: { partner: { include: { organization: true } } },
+    });
+  }
+
+  async settlementsStats() {
+    const total = await this.prisma.settlement.count();
+    const open = await this.prisma.settlement.count({ where: { status: "OPEN" as any } });
+    const approved = await this.prisma.settlement.count({ where: { status: "APPROVED" as any } });
+    const paid = await this.prisma.settlement.count({ where: { status: "PAID" as any } });
+    const pendingSum = await this.prisma.settlement.aggregate({
+      where: { status: { in: ["OPEN", "APPROVED"] as any } },
+      _sum: { netMinor: true },
+    });
+    const paidSum = await this.prisma.settlement.aggregate({
+      where: { status: "PAID" as any },
+      _sum: { netMinor: true },
+    });
+    return {
+      total,
+      open,
+      approved,
+      paid,
+      pendingAmountMinor: pendingSum._sum?.netMinor ?? 0,
+      paidAmountMinor: paidSum._sum?.netMinor ?? 0,
+    };
   }
 }

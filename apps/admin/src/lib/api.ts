@@ -355,7 +355,6 @@ export const ALL_FEATURES = [
   { key: "reviews", label: "Reviews" },
   { key: "drivers", label: "Drivers" },
   { key: "finance", label: "Finance" },
-  { key: "partners", label: "Partners" },
 ];
 
 // ============ Staff API (access code system) ============
@@ -429,6 +428,63 @@ export const driversApi = {
   setStatus: (id: string, status: string) => api.patch(`/drivers/${id}/status`, { status }).then((r) => r.data),
 };
 
+
+
+
+// ============ Partners ============
+export interface Partner {
+  id: string; legalName: string; displayName: string; type: string; status: string;
+  country: string; metadata: any; createdAt: string;
+  partner: {
+    organizationId: string; partnerType: string; contractStatus: string; settlementTerms: any;
+    _count: { services: number; drivers: number; vehicles: number; settlements: number };
+  } | null;
+}
+export const partnersApi = {
+  list: (params?: any) => {
+    const q = new URLSearchParams();
+    Object.entries(params ?? {}).forEach(([k, v]: any) => v !== undefined && v !== "" && q.set(k, String(v)));
+    return api.get(`/partners?${q.toString()}`).then((r: any) => r.data as { items: Partner[]; total: number });
+  },
+  detail: (id: string) => api.get(`/partners/${id}`).then((r: any) => r.data),
+  stats: () => api.get("/partners/stats").then((r: any) => r.data),
+  create: (data: any) => api.post("/partners", data).then((r: any) => r.data),
+  update: (id: string, data: any) => api.patch(`/partners/${id}`, data).then((r: any) => r.data),
+  activate: (id: string) => api.post(`/partners/${id}/activate`).then((r: any) => r.data),
+  suspend: (id: string) => api.post(`/partners/${id}/suspend`).then((r: any) => r.data),
+};
+
+export const partnersAssignApi = {
+  assignDriver: (partnerId: string, driverUserId: string) =>
+    api.post(`/partners/${partnerId}/drivers`, { driverUserId }).then((r: any) => r.data),
+  unassignDriver: (partnerId: string, driverId: string) =>
+    api.delete(`/partners/${partnerId}/drivers/${driverId}`).then((r: any) => r.data),
+  assignService: (partnerId: string, serviceId: string) =>
+    api.post(`/partners/${partnerId}/services`, { serviceId }).then((r: any) => r.data),
+  createSettlement: (partnerId: string, data: any) =>
+    api.post(`/partners/${partnerId}/settlements`, data).then((r: any) => r.data),
+};
+
+
+// ============ Settlements ============
+export interface Settlement {
+  id: string; periodStart: string; periodEnd: string;
+  grossMinor: number; commissionMinor: number; netMinor: number;
+  currency: string; status: string;
+  partner: { organizationId: string; organization: { displayName: string; legalName: string } };
+}
+export const settlementsApi = {
+  list: (params?: any) => {
+    const q = new URLSearchParams();
+    Object.entries(params ?? {}).forEach(([k, v]: any) => v !== undefined && v !== "" && q.set(k, String(v)));
+    return api.get(`/settlements?${q.toString()}`).then((r: any) => r.data as { items: Settlement[]; total: number });
+  },
+  stats: () => api.get("/settlements/stats").then((r: any) => r.data),
+  approve: (id: string) => api.post(`/settlements/${id}/approve`).then((r: any) => r.data),
+  pay: (id: string) => api.post(`/settlements/${id}/pay`).then((r: any) => r.data),
+};
+
+
 // ============ Finance ============
 export const financeApi = {
   summary: (from?: string, to?: string) => {
@@ -459,26 +515,4 @@ export const financeApi = {
     a.click();
     URL.revokeObjectURL(url);
   },
-};
-// ============ Partners ============
-export interface Partner {
-  id: string; legalName: string; displayName: string; type: string; status: string;
-  country: string; metadata: any; createdAt: string;
-  partner: {
-    organizationId: string; partnerType: string; contractStatus: string; settlementTerms: any;
-    _count: { services: number; drivers: number; vehicles: number; settlements: number };
-  } | null;
-}
-export const partnersApi = {
-  list: (params?: any) => {
-    const q = new URLSearchParams();
-    Object.entries(params ?? {}).forEach(([k, v]: any) => v !== undefined && v !== "" && q.set(k, String(v)));
-    return api.get(`/partners?${q.toString()}`).then((r) => r.data as { items: Partner[]; total: number });
-  },
-  detail: (id: string) => api.get(`/partners/${id}`).then((r) => r.data),
-  stats: () => api.get("/partners/stats").then((r) => r.data),
-  create: (data: any) => api.post("/partners", data).then((r) => r.data),
-  update: (id: string, data: any) => api.patch(`/partners/${id}`, data).then((r) => r.data),
-  activate: (id: string) => api.post(`/partners/${id}/activate`).then((r) => r.data),
-  suspend: (id: string) => api.post(`/partners/${id}/suspend`).then((r) => r.data),
 };
