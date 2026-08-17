@@ -99,6 +99,12 @@ export class StaffService {
 
   // ===== SUPER_ADMIN: Staff management =====
   async createStaff(data: { fullName?: string; email?: string; features?: string[]; avatarUrl?: string }) {
+    // Check username (if provided)
+    if (data.email) {
+      const emailExists = await this.prisma.user.findUnique({ where: { email: data.email.toLowerCase() } });
+      if (emailExists) throw new BadRequestException({ code: "EMAIL_TAKEN", message: "This email is already registered" });
+    }
+
     // Generate unique code (retry if collision)
     let code = "";
     for (let i = 0; i < 10; i++) {
@@ -106,32 +112,44 @@ export class StaffService {
       const exists = await this.prisma.user.findUnique({ where: { accessCode: code } });
       if (!exists) break;
     }
-    const emailExists = data.email ? await this.prisma.user.findUnique({ where: { email: data.email.toLowerCase() } }) : null;
-    if (emailExists) throw new BadRequestException({ code: "EMAIL_TAKEN" });
 
-    const user = await this.prisma.user.create({
-      data: {
-        email: data.email?.toLowerCase() ?? null,
-        accessCode: code,
-        accountType: "STAFF",
-        status: "ACTIVE",
-        locale: "ar-EG",
-        timezone: "Africa/Cairo",
-        features: data.features ?? ["dashboard", "bookings", "notifications", "support"],
-        profile: {
-          create: {
-            firstName: data.fullName?.split(" ")[0] ?? "",
-            lastName: data.fullName?.split(" ").slice(1).join(" ") ?? "",
-            avatarUrl: data.avatarUrl ?? null,
+    // Create user with try/catch for Prisma errors
+    let user;
+    try {
+      user = await this.prisma.user.create({
+        data: {
+          email: data.email?.toLowerCase() ?? null,
+          accessCode: code,
+          accountType: "STAFF",
+          status: "ACTIVE",
+          locale: "ar-EG",
+          timezone: "Africa/Cairo",
+          features: data.features ?? ["dashboard", "bookings", "notifications", "support"],
+          profile: {
+            create: {
+              firstName: data.fullName?.split(" ")[0] ?? "",
+              lastName: data.fullName?.split(" ").slice(1).join(" ") ?? "",
+              avatarUrl: data.avatarUrl ?? null,
+            },
           },
         },
-      },
-    });
+      });
+    } catch (e: any) {
+      if (e?.code === "P2002") {
+        const field = e.meta?.target?.[0] ?? "unknown";
+        throw new BadRequestException({ code: `${field.toUpperCase()}_TAKEN`, message: `This ${field} is already registered` });
+      }
+      throw e;
+    }
+
+    // Add to Kemraa org
     const org = await this.prisma.organization.findFirst({ where: { legalName: "Kemraa" } });
     if (org) await this.prisma.organizationMember.create({ data: { organizationId: org.id, userId: user.id, role: "ADMIN" } });
+    
     await this.prisma.auditLog.create({ data: { action: "STAFF_CREATE", resourceType: "USER", resourceId: user.id, metadata: { code } } });
     return { id: user.id, accessCode: code };
   }
+
 
   async listStaff() {
     return this.prisma.user.findMany({

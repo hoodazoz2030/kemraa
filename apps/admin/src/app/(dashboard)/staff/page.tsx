@@ -53,7 +53,8 @@ export default function StaffPage() {
       setModal(null);
       await load();
     } catch (e: any) {
-      setError(e?.response?.data?.message || "Failed");
+      const msg = e?.response?.data?.message || e?.response?.data?.error?.message || "Failed to create staff";
+      setError(msg);
     } finally { setBusy(false); }
   };
 
