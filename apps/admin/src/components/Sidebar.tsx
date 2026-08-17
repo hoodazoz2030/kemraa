@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Home, Map, MapPin, ShoppingBag, Calendar, Bell, HelpCircle, Users, BarChart3, ScrollText, Flag, CreditCard, Percent, ArrowRightLeft, Shield } from "lucide-react";
+import { Home, Map, MapPin, ShoppingBag, Calendar, Bell, HelpCircle, Users, BarChart3, ScrollText, Flag, CreditCard, Percent, ArrowRightLeft, Shield, TicketPercent, Settings as SettingsIcon } from "lucide-react";
 import clsx from "clsx";
 import Image from "next/image";
 import { notificationsApi, supportApi } from "@/lib/api";
@@ -17,6 +17,8 @@ const __ALL_ITEMS = [
   { href: "/users", label: "Users", icon: Users },
   { href: "/users/map", label: "Live Map", icon: MapPin },
   { href: "/staff", label: "Staff", icon: Shield },
+  { href: "/promos", label: "Promo Codes", icon: TicketPercent },
+  { href: "/settings", label: "Settings", icon: SettingsIcon },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/audit-logs", label: "Audit Logs", icon: ScrollText },
   { href: "/feature-flags", label: "Feature Flags", icon: Flag },
@@ -29,7 +31,7 @@ const FEATURE_MAP: Record<string, string> = {
   "/trips": "trips", "/bookings": "bookings", "/payments": "payments",
   "/refunds": "refunds", "/commissions": "commissions", "/users": "users",
   "/users/map": "map", "/notifications": "notifications", "/support": "support",
-  "/feature-flags": "flags", "/audit-logs": "audit", "/staff": "staff",
+  "/feature-flags": "flags", "/audit-logs": "audit", "/staff": "staff", "/promos": "promos", "/settings": "settings",
 };
 const __features = typeof window !== "undefined"
   ? (() => { try { return JSON.parse(localStorage.getItem("kemraa_features") || "null"); } catch { return null; } })()

@@ -16,6 +16,8 @@ import { RedisModule } from "./redis/redis.module.js";
 import { QueuesModule } from "./queues/queues.module.js";
 import { RefundsModule } from "./refunds/refunds.module.js";
 import { CommissionsModule } from "./commissions/commissions.module.js";
+import { SettingsModule } from "./settings/settings.module.js";
+import { PromosModule } from "./promos/promos.module.js";
 import { StaffModule } from "./staff/staff.module.js";
 import { AuditLogsModule } from "./audit-logs/audit-logs.module.js";
 import { FeatureFlagsModule } from "./feature-flags/feature-flags.module.js";
@@ -36,7 +38,7 @@ import { AuditInterceptor } from "./common/interceptors/audit.interceptor.js";
     }]),
     PrismaModule, AppConfigModule, AuthModule, HealthModule,
     UsersModule, TripsModule, ServicesModule, BookingsModule,
-    NotificationsModule, SupportModule, LocationsModule, RedisModule, QueuesModule, RefundsModule, CommissionsModule, StaffModule, AuditLogsModule, FeatureFlagsModule, SearchModule, PaymentsModule, AnalyticsModule,
+    NotificationsModule, SupportModule, LocationsModule, RedisModule, QueuesModule, RefundsModule, CommissionsModule, StaffModule, SettingsModule, PromosModule, AuditLogsModule, FeatureFlagsModule, SearchModule, PaymentsModule, AnalyticsModule,
   ],
   providers: [
         { provide: APP_GUARD, useClass: ThrottlerGuard },

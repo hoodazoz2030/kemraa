@@ -350,6 +350,8 @@ export const ALL_FEATURES = [
   { key: "flags", label: "Feature Flags" },
   { key: "audit", label: "Audit Logs" },
   { key: "staff", label: "Staff Management" },
+  { key: "promos", label: "Promo Codes" },
+  { key: "settings", label: "Settings" },
 ];
 
 // ============ Staff API (access code system) ============
@@ -363,4 +365,23 @@ export const staffApi = {
   suspend: (id: string) => api.post(`/staff/${id}/suspend`).then((r) => r.data),
   reactivate: (id: string) => api.post(`/staff/${id}/reactivate`).then((r) => r.data),
   delete: (id: string) => api.delete(`/staff/${id}`).then((r) => r.data),
+};
+// ============ Settings ============
+export const settingsApi = {
+  get: () => api.get("/settings").then((r) => r.data as Record<string, any>),
+  update: (data: Record<string, any>) => api.patch("/settings", data).then((r) => r.data),
+};
+
+// ============ Promo Codes ============
+export interface PromoCode {
+  id: string; code: string; kind: string; valueBps: number; amountMinor: number;
+  currency: string; maxUses: number; usedCount: number; active: boolean;
+  activeFrom: string; activeTo: string | null; createdAt: string;
+}
+export const promosApi = {
+  list: () => api.get("/promos").then((r) => r.data as PromoCode[]),
+  create: (data: any) => api.post("/promos", data).then((r) => r.data as PromoCode),
+  update: (id: string, data: any) => api.patch(`/promos/${id}`, data).then((r) => r.data),
+  delete: (id: string) => api.delete(`/promos/${id}`).then((r) => r.data),
+  validate: (code: string, amountMinor: number) => api.post("/promos/validate", { code, amountMinor }).then((r) => r.data),
 };

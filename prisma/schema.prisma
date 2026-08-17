@@ -722,3 +722,26 @@ model TrustedDevice {
   @@index([userId])
   @@map("trusted_devices")
 }
+model AppSettings {
+  id        Int      @id @default(1)
+  data      Json     @default("{}")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  @@map("app_settings")
+}
+
+model PromoCode {
+  id          String    @id @db.Uuid @default(uuid())
+  code        String    @unique
+  kind        String    @default("PERCENT")
+  valueBps    Int       @default(0) @map("value_bps")
+  amountMinor Int       @default(0) @map("amount_minor")
+  currency    String    @default("EGP")
+  maxUses     Int       @default(0) @map("max_uses")
+  usedCount   Int       @default(0) @map("used_count")
+  active      Boolean   @default(true)
+  activeFrom  DateTime  @default(now()) @map("active_from")
+  activeTo    DateTime? @map("active_to")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  @@map("promo_codes")
+}
