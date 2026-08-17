@@ -427,14 +427,35 @@ export const driversApi = {
   reject: (id: string, reason: string) => api.post(`/drivers/${id}/reject`, { reason }).then((r) => r.data),
   setStatus: (id: string, status: string) => api.patch(`/drivers/${id}/status`, { status }).then((r) => r.data),
 };
+
 // ============ Finance ============
 export const financeApi = {
   summary: (from?: string, to?: string) => {
     const q = new URLSearchParams();
     if (from) q.set("from", from);
     if (to) q.set("to", to);
-    return api.get(`/payments/admin/summary?${q.toString()}`).then((r) => r.data);
+    return api.get(`/payments/admin/summary?${q.toString()}`).then((r: any) => r.data);
   },
+  commissions: (from?: string, to?: string) => {
+    const q = new URLSearchParams();
+    if (from) q.set("from", from);
+    if (to) q.set("to", to);
+    return api.get(`/payments/admin/commissions?${q.toString()}`).then((r: any) => r.data);
+  },
+  taxFiling: (month: string) =>
+    api.get(`/payments/admin/tax-filing?month=${month}`).then((r: any) => r.data),
   testWebhook: (provider: string) =>
-    api.post(`/payments/test-webhook`, { provider }).then((r) => r.data),
+    api.post(`/payments/test-webhook`, { provider }).then((r: any) => r.data),
+  exportCsv: async (from?: string, to?: string) => {
+    const q = new URLSearchParams();
+    if (from) q.set("from", from);
+    if (to) q.set("to", to);
+    const res = await api.get(`/payments/admin/export/csv?${q.toString()}`, { responseType: "blob" });
+    const url = URL.createObjectURL((res as any).data);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `kemraa-finance-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  },
 };

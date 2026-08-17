@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Headers, RawBodyRequest, Req, UseGuards, Query } from "@nestjs/common";
+import { Controller, Post, Get, Body, Headers, RawBodyRequest, Req, UseGuards, Query, Res } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Request } from "express";
@@ -60,5 +60,26 @@ export class PaymentsController {
   @Roles("SUPER_ADMIN", "ADMIN")
   summary(@Query("from") from?: string, @Query("to") to?: string) {
     return this.payments.adminSummary(from, to);
+  }
+
+  @Get("admin/commissions")
+  @Roles("SUPER_ADMIN", "ADMIN")
+  commissions(@Query("from") from?: string, @Query("to") to?: string) {
+    return this.payments.commissionPayout(from, to);
+  }
+
+  @Get("admin/tax-filing")
+  @Roles("SUPER_ADMIN", "ADMIN")
+  taxFiling(@Query("month") month: string) {
+    return this.payments.taxFiling(month);
+  }
+
+  @Get("admin/export/csv")
+  @Roles("SUPER_ADMIN", "ADMIN")
+  async exportCsv(@Res() res: any, @Query("from") from?: string, @Query("to") to?: string) {
+    const csv = await this.payments.exportFinanceCSV(from, to);
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader("Content-Disposition", `attachment; filename="kemraa-finance-${new Date().toISOString().slice(0,10)}.csv"`);
+    res.send(csv);
   }
 }

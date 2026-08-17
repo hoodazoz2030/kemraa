@@ -214,4 +214,89 @@ export class PaymentsService {
       byProvider,
     };
   }
+
+  // ============ Finance extended ============
+  async commissionPayout(from?: string, to?: string) {
+    const where: any = {};
+    if (from || to) {
+      where.createdAt = {};
+      if (from) where.createdAt.gte = new Date(from);
+      if (to) where.createdAt.lte = new Date(to);
+    }
+    const entries = await this.prisma.commissionEntry.findMany({
+      where,
+      include: {
+        rule: { select: { rateBps: true, basis: true } },
+        booking: { select: { id: true, totalMinor: true, traveler: { select: { email: true } }, service: { select: { title: true } } } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 500,
+    });
+
+    const byBeneficiary: Record<string, { count: number; total: number; beneficiaryType: string; beneficiaryId: string }> = {};
+    let grandTotal = 0;
+    const paid = 0;
+    const pending = 0;
+    for (const e of entries) {
+      const key = `${e.beneficiaryType}:${e.beneficiaryId}`;
+      byBeneficiary[key] = byBeneficiary[key] ?? { count: 0, total: 0, beneficiaryType: e.beneficiaryType, beneficiaryId: e.beneficiaryId };
+      byBeneficiary[key].count++;
+      byBeneficiary[key].total += e.amountMinor;
+      grandTotal += e.amountMinor;
+    }
+    return { totalEntries: entries.length, grandTotal, byBeneficiary, entries };
+  }
+
+  async taxFiling(month: string) {
+    // month = "2026-08"
+    const from = new Date(`${month}-01T00:00:00Z`);
+    const to = new Date(from);
+    to.setMonth(to.getMonth() + 1);
+    to.setDate(0); // last day
+
+    const where = { createdAt: { gte: from, lte: to } };
+    const captured = await this.prisma.payment.findMany({ where: { ...where, status: "CAPTURED" } });
+    const refunds = await this.prisma.refund.findMany({ where });
+    const gross = captured.reduce((s, p) => s + p.amountMinor, 0);
+    const refunded = refunds.reduce((s, r) => s + r.amountMinor, 0);
+    const taxable = gross - refunded;
+    const taxBps = 1400;
+    const tax = Math.max(0, Math.round((taxable * taxBps) / 10000));
+    return {
+      month,
+      from: from.toISOString(),
+      to: to.toISOString(),
+      gross, refunded, taxable, tax,
+      transactions: captured.length,
+      refunds: refunds.length,
+    };
+  }
+
+  async exportFinanceCSV(from?: string, to?: string) {
+    const where: any = {};
+    if (from || to) {
+      where.createdAt = {};
+      if (from) where.createdAt.gte = new Date(from);
+      if (to) where.createdAt.lte = new Date(to);
+    }
+    const payments = await this.prisma.payment.findMany({
+      where,
+      include: { booking: { include: { service: true, traveler: true } } },
+      orderBy: { createdAt: "desc" },
+      take: 5000,
+    });
+    const headers = ["date","provider","method","status","amount_minor","currency","booking_id","service","customer_email"];
+    const rows = payments.map((p) => [
+      p.createdAt.toISOString(),
+      p.provider,
+      p.methodType,
+      p.status,
+      p.amountMinor,
+      p.currency,
+      p.bookingId ?? "",
+      p.booking?.service?.title ?? "",
+      p.booking?.traveler?.email ?? "",
+    ].map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","));
+    return [headers.join(","), ...rows].join("\n");
+  }
 }
