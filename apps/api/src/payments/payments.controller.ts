@@ -53,4 +53,12 @@ export class PaymentsController {
     const rawBody = req.rawBody ?? Buffer.from("");
     return this.payments.handleWebhook(rawBody, sig);
   }
+
+  @Get("admin/summary")
+
+
+  @Roles("SUPER_ADMIN", "ADMIN")
+  summary(@Query("from") from?: string, @Query("to") to?: string) {
+    return this.payments.adminSummary(from, to);
+  }
 }
