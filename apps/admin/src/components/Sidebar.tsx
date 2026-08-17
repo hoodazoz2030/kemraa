@@ -39,7 +39,16 @@ const FEATURE_MAP: Record<string, string> = {
 const __features = typeof window !== "undefined"
   ? (() => { try { return JSON.parse(localStorage.getItem("kemraa_features") || "null"); } catch { return null; } })()
   : null;
-const navItems = __ALL_ITEMS.filter((i: any) => !Array.isArray(__features) || __features.includes(FEATURE_MAP[i.href] ?? "dashboard"));
+const __user = typeof window !== "undefined" ? (() => {
+    try { return JSON.parse(localStorage.getItem("kemraa_user") || "null"); } catch { return null; }
+  })() : null;
+  const __isSuperAdmin = __user?.roles?.includes("SUPER_ADMIN") || __user?.accountType === "OWNER";
+  const navItems = __ALL_ITEMS.filter((i: any) => {
+    if (__isSuperAdmin) return true;             // Owner يشوف كل حاجة
+    if (!Array.isArray(__features)) return true; // مفيش features = كل حاجة
+    if (__features.length === 0) return true;    // features فاضية = كل حاجة
+    return __features.includes(FEATURE_MAP[i.href] ?? "dashboard");
+  });
 
 export default function Sidebar() {
   const pathname = usePathname();
