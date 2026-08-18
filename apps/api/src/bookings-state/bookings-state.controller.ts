@@ -1,4 +1,5 @@
-﻿import { Body, Controller, Get, Param, Post, Query, Req, UseGuards, ParseUUIDPipe, HttpCode, HttpStatus } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Query, Req, UseGuards, ParseUUIDPipe, HttpCode, HttpStatus } from "@nestjs/common";
+import { BookingTransitionDto } from "./dto/booking.dto.js";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { RolesGuard, Roles } from "../common/guards/roles.guard.js";
 import { Audit } from "../common/interceptors/audit.interceptor.js";
@@ -36,7 +37,7 @@ export class BookingsStateController {
   @HttpCode(HttpStatus.OK)
   transition(
     @Param("id", new ParseUUIDPipe()) id: string,
-    @Body() b: { toStatus: string; reason?: string; metadata?: any },
+    @Body() b: BookingTransitionDto,
     @Req() req: any,
   ) {
     return this.svc.transition(id, b.toStatus, {

@@ -1,8 +1,9 @@
 import { NestFactory } from "@nestjs/core";
+import { ValidationPipe } from "@nestjs/common";
+import { UnifiedExceptionFilter } from "./common/filters/unified-exception.filter.js";
 import helmet from "helmet";
 import compression from "compression";
 import express from "express";
-import { ValidationPipe } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { AppModule } from "./app.module.js";
 import { validateEnv } from "./config/env.config.js";
