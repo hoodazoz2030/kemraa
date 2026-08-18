@@ -269,21 +269,6 @@ export interface Booking {
   traveler?: { email: string; profile?: { firstName: string | null; lastName: string | null } | null };
   items?: BookingItem[]; payments?: any[];
 }
-export const bookingsApi = {
-  list: (params?: { status?: string; limit?: number }) => {
-    const q = new URLSearchParams();
-    if (params?.status) q.set("status", params.status);
-    q.set("limit", String(params?.limit ?? 200));
-    return api.get(`/bookings?${q.toString()}`).then((r) => r.data as { items: Booking[]; total: number } | Booking[]);
-  },
-  get: (id: string) => api.get(`/bookings/${id}`).then((r) => r.data as Booking),
-  approve: (id: string) => api.post(`/bookings/${id}/approve`).then((r) => r.data),
-  reject: (id: string, reason: string) => api.post(`/bookings/${id}/reject`, { reason }).then((r) => r.data),
-  confirm: (id: string) => api.post(`/bookings/${id}/confirm`, {}).then((r) => r.data),
-  complete: (id: string) => api.post(`/bookings/${id}/complete`).then((r) => r.data),
-  cancel: (id: string, reason?: string) => api.post(`/bookings/${id}/cancel`, { reason }).then((r) => r.data),
-};
-
 // ============ Refunds ============
 export interface Refund {
   id: string; paymentId: string; amountMinor: number; reason: string | null; status: string; createdAt: string;
@@ -641,10 +626,33 @@ export const bookingsStateApi = {
   transition: (id: string, toStatus: string, reason?: string, metadata?: any) =>
     api.post(`/admin/bookings-state/${id}/transition`, { toStatus, reason, metadata }).then((r: any) => r.data),
 };
+// ============ Payments State Machine + Ledger ============
+export const paymentsStateApi = {
+  machine: () => api.get("/admin/payments-state/machine").then((r: any) => r.data),
+  stats: () => api.get("/admin/payments-state/stats").then((r: any) => r.data),
+  list: (params?: any) => {
+    const q = new URLSearchParams();
+    Object.entries(params ?? {}).forEach(([k, v]: any) => v !== undefined && v !== "" && q.set(k, String(v)));
+    return api.get(`/admin/payments-state?${q.toString()}`).then((r: any) => r.data);
+  },
+  detail: (id: string) => api.get(`/admin/payments-state/${id}`).then((r: any) => r.data),
+  history: (id: string) => api.get(`/admin/payments-state/${id}/history`).then((r: any) => r.data),
+  ledger: (id: string) => api.get(`/admin/payments-state/${id}/ledger`).then((r: any) => r.data),
+  transition: (id: string, toStatus: string, reason?: string, metadata?: any, refundAmountMinor?: number) =>
+    api.post(`/admin/payments-state/${id}/transition`, { toStatus, reason, metadata, refundAmountMinor }).then((r: any) => r.data),
+};
+
+// ============ Bookings ============
 export const bookingsApi = {
   list: (params?: any) => {
     const q = new URLSearchParams();
     Object.entries(params ?? {}).forEach(([k, v]: any) => v !== undefined && v !== "" && q.set(k, String(v)));
     return api.get(`/bookings?${q.toString()}`).then((r: any) => r.data);
   },
+  get: (id: string) => api.get(`/bookings/${id}`).then((r: any) => r.data),
+  approve: (id: string) => api.post(`/bookings/${id}/approve`).then((r: any) => r.data),
+  confirm: (id: string) => api.post(`/bookings/${id}/confirm`).then((r: any) => r.data),
+  complete: (id: string) => api.post(`/bookings/${id}/complete`).then((r: any) => r.data),
+  reject: (id: string, reason?: string) => api.post(`/bookings/${id}/reject`, { reason }).then((r: any) => r.data),
+  cancel: (id: string, reason?: string) => api.post(`/bookings/${id}/cancel`, { reason }).then((r: any) => r.data),
 };

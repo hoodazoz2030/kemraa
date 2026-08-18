@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -7,7 +7,7 @@ import {
   BarChart3, ScrollText, Flag, CreditCard, Percent, ArrowRightLeft,
   Shield, TicketPercent, Settings as SettingsIcon, Star, Car, DollarSign,
   Building2, Receipt, FileSignature, Newspaper, Sparkles, Layers,
-  Building, AlertTriangle, Wallet, Headphones
+  Building, AlertTriangle, GitBranch, BookOpen
 } from "lucide-react";
 import clsx from "clsx";
 import Image from "next/image";
@@ -35,6 +35,7 @@ const __ALL_ITEMS = [
   { href: "/finance", label: "Finance", icon: DollarSign },
   { href: "/commissions", label: "Commissions", icon: Percent },
   { href: "/payments", label: "Payments", icon: CreditCard },
+  { href: "/payments-state", label: "Payments State", icon: BookOpen },
   { href: "/refunds", label: "Refunds", icon: ArrowRightLeft },
   { href: "/content", label: "Content", icon: Newspaper },
   { href: "/thoth", label: "THOTH", icon: Sparkles },
@@ -50,8 +51,10 @@ const FEATURE_MAP: Record<string, string> = {
   "/analytics": "analytics",
   "/services": "services",
   "/trips": "trips",
-  "/bookings": "bookings", "/bookings-state": "bookings",
+  "/bookings": "bookings",
+  "/bookings-state": "bookings",
   "/payments": "payments",
+  "/payments-state": "payments",
   "/refunds": "refunds",
   "/commissions": "commissions",
   "/users": "users",

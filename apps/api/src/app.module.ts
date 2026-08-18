@@ -26,6 +26,7 @@ import { OpsModule } from "./ops/ops.module.js";
 import { FinanceAdminModule } from "./finance-admin/finance-admin.module.js";
 import { IncidentsModule } from "./incidents/incidents.module.js";
 import { BookingsStateModule } from "./bookings-state/bookings-state.module.js";
+import { PaymentsStateModule } from "./payments-state/payments-state.module.js";
 import { DriversModule } from "./drivers/drivers.module.js";
 import { PromosModule } from "./promos/promos.module.js";
 import { StaffModule } from "./staff/staff.module.js";
@@ -48,7 +49,7 @@ import { AuditInterceptor } from "./common/interceptors/audit.interceptor.js";
     }]),
     PrismaModule, AppConfigModule, AuthModule, HealthModule,
     UsersModule, TripsModule, ServicesModule, BookingsModule,
-    NotificationsModule, SupportModule, LocationsModule, RedisModule, QueuesModule, RefundsModule, CommissionsModule, StaffModule, SettingsModule, PromosModule, ReviewsModule, DriversModule, PartnersModule, ContractsModule, SigningModule, PartnerPortalModule, OpsModule, FinanceAdminModule, IncidentsModule, BookingsStateModule, AuditLogsModule, FeatureFlagsModule, SearchModule, PaymentsModule, AnalyticsModule,
+    NotificationsModule, SupportModule, LocationsModule, RedisModule, QueuesModule, RefundsModule, CommissionsModule, StaffModule, SettingsModule, PromosModule, ReviewsModule, DriversModule, PartnersModule, ContractsModule, SigningModule, PartnerPortalModule, OpsModule, FinanceAdminModule, IncidentsModule, BookingsStateModule, PaymentsStateModule, AuditLogsModule, FeatureFlagsModule, SearchModule, PaymentsModule, AnalyticsModule,
   ],
   providers: [
         { provide: APP_GUARD, useClass: ThrottlerGuard },

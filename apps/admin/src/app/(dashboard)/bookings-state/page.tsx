@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useEffect, useState } from "react";
 import { bookingsApi, bookingsStateApi } from "@/lib/api";
 import { Calendar, Loader2, Eye, ArrowRight, X } from "lucide-react";
@@ -29,8 +29,8 @@ export default function BookingsStatePage() {
   const load = async () => {
     setLoading(true);
     try {
-      const [b, s] = await Promise.all([bookingsApi.list({ limit: 50 }), bookingsStateApi.stats()]);
-      setBookings(b.items ?? []);
+      const [b, s] = await Promise.all([bookingsApi.list({ limit: 50 } as any), bookingsStateApi.stats()]);
+      setBookings(Array.isArray(b) ? b : (b.items ?? []));
       setStats(s);
     } finally { setLoading(false); }
   };
