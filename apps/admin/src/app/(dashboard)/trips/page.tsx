@@ -273,13 +273,13 @@ export default function TripsPage() {
       {/* ===== Detail Modal ===== */}
       {selected && !showReject && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-[#C9A227]/30 shadow-[0_0_60px_rgba(201,162,39,0.25)]">
+          <div className="bg-white rounded-2xl text-gray-900 w-full max-w-2xl max-h-[90vh] flex flex-col border border-[#C9A227]/30 shadow-[0_0_60px_rgba(201,162,39,0.25)]">
             <div className="flex items-center justify-between p-5 border-b border-gray-200 bg-gradient-to-r from-[#F0D78C]/20 to-transparent">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <Map size={20} className="text-[#C9A227]" />
                 {selected.title}
               </h2>
-              <button onClick={() => setSelected(null)} className="p-1.5 rounded hover:bg-gray-100">
+              <button onClick={() => setSelected(null)} className="p-1.5 rounded hover:bg-gray-100 text-gray-700">
                 <X size={18} className="text-gray-600" />
               </button>
             </div>
@@ -377,13 +377,13 @@ export default function TripsPage() {
       {/* ===== Reject Modal ===== */}
       {showReject && selected && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-md border border-red-200 shadow-xl">
+          <div className="bg-white rounded-2xl text-gray-900 w-full max-w-md border border-red-200 shadow-xl">
             <div className="p-5 border-b border-gray-200 flex items-center justify-between">
               <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <XCircle size={20} className="text-red-600" />
                 Reject Trip
               </h3>
-              <button onClick={() => setShowReject(false)} className="p-1.5 rounded hover:bg-gray-100">
+              <button onClick={() => setShowReject(false)} className="p-1.5 rounded hover:bg-gray-100 text-gray-700">
                 <X size={16} className="text-gray-600" />
               </button>
             </div>

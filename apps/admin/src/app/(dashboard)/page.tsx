@@ -53,7 +53,7 @@ export default function HomePage() {
   return (
     <div className="space-y-6">
       {/* ===== Golden welcome banner ===== */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0C0A06] via-[#1a1206] to-[#241806] p-8 shadow-xl">
+      <div className="relative overflow-hidden rounded-2xl text-gray-900 bg-gradient-to-r from-[#0C0A06] via-[#1a1206] to-[#241806] p-8 shadow-xl">
         <div
           className="absolute inset-y-0 right-0 w-3/5 opacity-25 bg-cover bg-center pointer-events-none"
           style={{ backgroundImage: "url('/login-bg.png')" }}

@@ -307,7 +307,7 @@ export default function ServicesPage() {
       {/* ===== Create / Edit Modal ===== */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-lg border border-[#C9A227]/30 shadow-[0_0_60px_rgba(201,162,39,0.25)]">
+          <div className="bg-white rounded-2xl text-gray-900 w-full max-w-lg border border-[#C9A227]/30 shadow-[0_0_60px_rgba(201,162,39,0.25)]">
             <div className="flex items-center justify-between p-5 border-b border-gray-200">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#C9A227] to-[#E6C55C] flex items-center justify-center">
@@ -315,7 +315,7 @@ export default function ServicesPage() {
                 </div>
                 {modalMode === "create" ? "New Service" : "Edit Service"}
               </h2>
-              <button onClick={() => setModalOpen(false)} className="p-1.5 rounded hover:bg-gray-100">
+              <button onClick={() => setModalOpen(false)} className="p-1.5 rounded hover:bg-gray-100 text-gray-700">
                 <X size={18} className="text-gray-600" />
               </button>
             </div>
@@ -404,7 +404,7 @@ export default function ServicesPage() {
       {/* ===== Delete Confirmation ===== */}
       {deleteId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-sm border border-red-200 shadow-xl">
+          <div className="bg-white rounded-2xl text-gray-900 w-full max-w-sm border border-red-200 shadow-xl">
             <div className="p-6 text-center">
               <div className="w-14 h-14 mx-auto rounded-full bg-red-100 flex items-center justify-center mb-4">
                 <AlertTriangle size={28} className="text-red-600" />

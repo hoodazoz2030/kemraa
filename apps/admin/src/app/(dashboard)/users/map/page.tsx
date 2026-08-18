@@ -204,7 +204,7 @@ export default function UsersMapPage() {
                   </p>
                 </div>
               </div>
-              <button onClick={() => { setSelected(null); setUserDetail(null); }} className="p-1 rounded hover:bg-gray-100">
+              <button onClick={() => { setSelected(null); setUserDetail(null); }} className="p-1 rounded hover:bg-gray-100 text-gray-700">
                 <X size={16} className="text-gray-600" />
               </button>
             </div>

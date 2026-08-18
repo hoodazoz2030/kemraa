@@ -41,10 +41,10 @@ export default function PartnerLoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0C0A06] via-[#1a1610] to-[#0C0A06] p-4">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        <div className="bg-white rounded-2xl text-gray-900 shadow-2xl p-8">
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#C9A227] to-[#E6C55C] mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl text-gray-900 bg-gradient-to-br from-[#C9A227] to-[#E6C55C] mb-4">
               <Building2 size={32} className="text-[#0C0A06]" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900">Partner Portal</h1>

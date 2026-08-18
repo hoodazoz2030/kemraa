@@ -292,7 +292,7 @@ export default function BookingsPage() {
                   #{selected.id.slice(0, 8)} • {new Date(selected.createdAt).toLocaleString()}
                 </p>
               </div>
-              <button onClick={() => setSelected(null)} className="p-1.5 rounded hover:bg-gray-100">
+              <button onClick={() => setSelected(null)} className="p-1.5 rounded hover:bg-gray-100 text-gray-700">
                 <X size={18} className="text-gray-600" />
               </button>
             </div>
@@ -425,13 +425,13 @@ export default function BookingsPage() {
       {/* ===== Reject Modal ===== */}
       {rejectModal && selected && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-md border border-red-200 shadow-xl">
+          <div className="bg-white rounded-2xl text-gray-900 w-full max-w-md border border-red-200 shadow-xl">
             <div className="p-5 border-b flex items-center justify-between">
               <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <XCircle size={20} className="text-red-600" />
                 Reject Booking
               </h3>
-              <button onClick={() => setRejectModal(false)} className="p-1.5 rounded hover:bg-gray-100">
+              <button onClick={() => setRejectModal(false)} className="p-1.5 rounded hover:bg-gray-100 text-gray-700">
                 <X size={16} className="text-gray-600" />
               </button>
             </div>

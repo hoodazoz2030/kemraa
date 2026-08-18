@@ -172,7 +172,7 @@ export default function PortalDashboardPage() {
             {tab === "overview" && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-lg font-bold mb-3">Welcome, {user.email}</h2>
+                  <h2 className="text-lg font-bold text-gray-900 mb-3">Welcome, {user.email}</h2>
                   <p className="text-sm text-gray-600">
                     Your partnership with <strong>{me.organization.legalName}</strong> is active.
                     Use this portal to manage your bookings, drivers, vehicles, and documents.

@@ -324,7 +324,7 @@ export default function UsersPage() {
                   </p>
                 </div>
               </div>
-              <button onClick={() => setSelected(null)} className="p-1.5 rounded hover:bg-gray-100">
+              <button onClick={() => setSelected(null)} className="p-1.5 rounded hover:bg-gray-100 text-gray-700">
                 <X size={18} className="text-gray-600" />
               </button>
             </div>
@@ -556,13 +556,13 @@ export default function UsersPage() {
       {/* ===== Status Modal ===== */}
       {statusModal && selected && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-xl border border-[#C9A227]/30">
+          <div className="bg-white rounded-2xl text-gray-900 w-full max-w-md shadow-xl border border-[#C9A227]/30">
             <div className="p-5 border-b flex items-center justify-between">
               <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 {newStatus === "SUSPENDED" ? <ShieldOff size={20} className="text-red-600" /> : <Shield size={20} className="text-green-600" />}
                 {newStatus === "SUSPENDED" ? "Suspend User" : newStatus === "DEACTIVATED" ? "Deactivate User" : "Activate User"}
               </h3>
-              <button onClick={() => setStatusModal(false)} className="p-1.5 rounded hover:bg-gray-100">
+              <button onClick={() => setStatusModal(false)} className="p-1.5 rounded hover:bg-gray-100 text-gray-700">
                 <X size={16} className="text-gray-600" />
               </button>
             </div>
@@ -623,13 +623,13 @@ export default function UsersPage() {
       {/* ===== Roles Modal ===== */}
       {rolesModal && selected && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-xl border border-[#C9A227]/30">
+          <div className="bg-white rounded-2xl text-gray-900 w-full max-w-md shadow-xl border border-[#C9A227]/30">
             <div className="p-5 border-b flex items-center justify-between">
               <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <UserCog size={20} className="text-[#C9A227]" />
                 Manage Roles
               </h3>
-              <button onClick={() => setRolesModal(false)} className="p-1.5 rounded hover:bg-gray-100">
+              <button onClick={() => setRolesModal(false)} className="p-1.5 rounded hover:bg-gray-100 text-gray-700">
                 <X size={16} className="text-gray-600" />
               </button>
             </div>

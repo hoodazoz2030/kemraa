@@ -218,10 +218,10 @@ export default function StaffPage() {
 
       {modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-lg border border-[#C9A227]/30 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl text-gray-900 w-full max-w-lg border border-[#C9A227]/30 max-h-[90vh] overflow-y-auto">
             <div className="p-5 border-b sticky top-0 bg-white flex items-center justify-between">
               <h3 className="text-lg font-bold text-gray-900">{modal === "create" ? "Add Staff Member" : "Edit Features"}</h3>
-              <button onClick={() => setModal(null)} className="p-1.5 rounded hover:bg-gray-100"><X size={16} /></button>
+              <button onClick={() => setModal(null)} className="p-1.5 rounded hover:bg-gray-100 text-gray-700"><X size={16} /></button>
             </div>
             <form onSubmit={handleSubmit} className="p-5 space-y-4">
               {modal === "create" && (

@@ -82,7 +82,7 @@ export default function SettlementsPage() {
           </div>
           <div className="bg-gradient-to-br from-[#C9A227] to-[#E6C55C] p-4 rounded-xl text-[#0C0A06]">
             <p className="text-xs uppercase tracking-wider font-semibold">OPEN Amount</p>
-            <p className="text-xl font-bold mt-1">{fmt(stats.OPENAmountMinor)}</p>
+            <p className="text-xl font-bold text-gray-900 mt-1">{fmt(stats.OPENAmountMinor)}</p>
           </div>
         </div>
       )}
@@ -153,8 +153,8 @@ export default function SettlementsPage() {
 
       {detail && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-md p-6">
-            <h3 className="text-lg font-bold mb-4">Settlement Details</h3>
+          <div className="bg-white rounded-2xl text-gray-900 w-full max-w-md p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Settlement Details</h3>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between"><span className="text-gray-600">Partner:</span><span className="font-medium">{detail.partner?.organization?.displayName}</span></div>
               <div className="flex justify-between"><span className="text-gray-600">Period:</span><span>{new Date(detail.periodStart).toLocaleDateString()} → {new Date(detail.periodEnd).toLocaleDateString()}</span></div>

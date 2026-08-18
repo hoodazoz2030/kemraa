@@ -265,7 +265,7 @@ export default function AuditLogsPage() {
                   <h2 className="text-sm font-bold text-gray-900 mt-1">{selected.resourceType}</h2>
                 </div>
               </div>
-              <button onClick={() => setSelected(null)} className="p-1.5 rounded hover:bg-gray-100"><X size={18} className="text-gray-600" /></button>
+              <button onClick={() => setSelected(null)} className="p-1.5 rounded hover:bg-gray-100 text-gray-700"><X size={18} className="text-gray-600" /></button>
             </div>
             <div className="flex-1 overflow-y-auto p-5 space-y-4">
               <div className="grid grid-cols-2 gap-3">

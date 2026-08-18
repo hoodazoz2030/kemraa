@@ -103,7 +103,7 @@ export default function FinancePage() {
                     <DollarSign size={16} />
                     <p className="text-xs uppercase tracking-wider font-semibold">Net</p>
                   </div>
-                  <p className="text-2xl font-bold">{fmt(overview.net)}</p>
+                  <p className="text-2xl font-bold text-gray-900">{fmt(overview.net)}</p>
                   <p className="text-xs opacity-70 mt-1">After VAT & refunds</p>
                 </div>
               </div>
@@ -222,7 +222,7 @@ export default function FinancePage() {
                 </div>
                 <div className="bg-gradient-to-br from-red-500 to-red-600 p-5 rounded-xl text-white">
                   <p className="text-xs uppercase tracking-wider font-semibold">VAT Payable (14%)</p>
-                  <p className="text-2xl font-bold mt-2">{fmt(taxData.tax)}</p>
+                  <p className="text-2xl font-bold text-gray-900 mt-2">{fmt(taxData.tax)}</p>
                   <p className="text-xs opacity-70 mt-1">To Egyptian Tax Authority</p>
                 </div>
               </div>

@@ -162,8 +162,8 @@ export default function DriversPage() {
 
       {rejectId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-2xl w-full max-w-md p-6 space-y-4">
-            <h3 className="text-lg font-bold">Reject Driver</h3>
+          <div className="bg-white rounded-2xl text-gray-900 w-full max-w-md p-6 space-y-4">
+            <h3 className="text-lg font-bold text-gray-900">Reject Driver</h3>
             <textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)}
               placeholder="Reason for rejection..." rows={3}
               className="w-full px-3 py-2 border border-gray-200 rounded-lg" />

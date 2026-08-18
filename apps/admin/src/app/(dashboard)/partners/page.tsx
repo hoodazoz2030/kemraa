@@ -249,10 +249,10 @@ export default function PartnersPage() {
 
       {modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 ">
-          <div className="bg-white rounded-2xl w-full max-w-lg p-6">
+          <div className="bg-white rounded-2xl text-gray-900 w-full max-w-lg p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold">{editing ? "Edit Partner" : "New Partner"}</h3>
-              <button onClick={() => setModal(false)} className="p-1.5 rounded hover:bg-gray-100"><X size={16} /></button>
+              <h3 className="text-lg font-bold text-gray-900">{editing ? "Edit Partner" : "New Partner"}</h3>
+              <button onClick={() => setModal(false)} className="p-1.5 rounded hover:bg-gray-100 text-gray-700"><X size={16} /></button>
             </div>
             <form onSubmit={save} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
@@ -305,7 +305,7 @@ export default function PartnersPage() {
 
             {detail && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60">
-          <div className="bg-white rounded-2xl w-full max-w-2xl p-6 max-h-[85vh] overflow-y-auto shadow-2xl">
+          <div className="bg-white rounded-2xl text-gray-900 w-full max-w-2xl p-6 max-h-[85vh] overflow-y-auto shadow-2xl">
             <div className="flex items-center justify-between mb-5 pb-4 border-b-2 border-[#C9A227]">
               <div>
                 <h3 className="text-xl font-bold text-gray-900">{detail.displayName}</h3>
@@ -390,13 +390,13 @@ export default function PartnersPage() {
 
       {portalModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 ">
-          <div className="bg-white rounded-2xl w-full max-w-md p-6">
+          <div className="bg-white rounded-2xl text-gray-900 w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold flex items-center gap-2">
+              <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <Key size={20} className="text-purple-600" />
                 Create Portal User for {portalModal.displayName}
               </h3>
-              <button onClick={() => setPortalModal(null)} className="p-1.5 rounded hover:bg-gray-100"><X size={16} /></button>
+              <button onClick={() => setPortalModal(null)} className="p-1.5 rounded hover:bg-gray-100 text-gray-700"><X size={16} /></button>
             </div>
 
             {portalResult ? (

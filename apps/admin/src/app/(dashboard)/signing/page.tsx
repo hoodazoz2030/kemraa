@@ -195,10 +195,10 @@ export default function SigningPage() {
 
       {createModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-md p-6">
+          <div className="bg-white rounded-2xl text-gray-900 w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold">New Signing Request</h3>
-              <button onClick={() => setCreateModal(false)} className="p-1.5 rounded hover:bg-gray-100"><X size={16} /></button>
+              <h3 className="text-lg font-bold text-gray-900">New Signing Request</h3>
+              <button onClick={() => setCreateModal(false)} className="p-1.5 rounded hover:bg-gray-100 text-gray-700"><X size={16} /></button>
             </div>
             <form onSubmit={create} className="space-y-4">
               <div>
