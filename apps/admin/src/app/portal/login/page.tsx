@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Building2 } from "lucide-react";
@@ -48,7 +48,7 @@ export default function PartnerLoginPage() {
               <Building2 size={32} className="text-[#0C0A06]" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900">Partner Portal</h1>
-            <p className="text-sm text-gray-500 mt-1">Sign in to manage your partnership</p>
+            <p className="text-sm text-gray-600 mt-1">Sign in to manage your partnership</p>
           </div>
 
           {/* Form */}
@@ -74,7 +74,7 @@ export default function PartnerLoginPage() {
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A227] focus:ring-2 focus:ring-[#C9A227]/20"
                 placeholder="••••••••"
               />
-              <p className="text-xs text-gray-400 mt-1">Or use your access code</p>
+              <p className="text-xs text-gray-500 mt-1">Or use your access code</p>
             </div>
 
             {error && (
@@ -95,13 +95,13 @@ export default function PartnerLoginPage() {
 
           {/* Footer */}
           <div className="mt-6 pt-6 border-t border-gray-200 text-center">
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-gray-500">
               Need access? Contact your Kemraa account manager.
             </p>
           </div>
         </div>
 
-        <p className="text-center text-xs text-gray-500 mt-6">
+        <p className="text-center text-xs text-gray-600 mt-6">
           © {new Date().getFullYear()} Kemraa Travel Platform · Secured Access
         </p>
       </div>

@@ -130,7 +130,7 @@ export default function BookingsPage() {
           <Calendar size={24} className="text-[#C9A227]" />
           Bookings
         </h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-gray-600 mt-1">
           {bookings.length} total
           {counts.PENDING_APPROVAL > 0 && <span className="ml-2 text-amber-700 font-medium">• {counts.PENDING_APPROVAL} awaiting approval</span>}
           {counts.CONFIRMING > 0 && <span className="ml-2 text-blue-700 font-medium">• {counts.CONFIRMING} confirming</span>}
@@ -141,7 +141,7 @@ export default function BookingsPage() {
       <div className="bg-white rounded-xl border border-gray-200 p-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[240px]">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -164,14 +164,14 @@ export default function BookingsPage() {
       {/* Table */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-400">
+          <div className="p-12 text-center text-gray-500">
             <Loader2 className="animate-spin mx-auto mb-2" size={24} />
             Loading...
           </div>
         ) : filtered.length === 0 ? (
           <div className="p-12 text-center">
             <Calendar size={40} className="mx-auto mb-3 text-gray-300" />
-            <p className="text-gray-500">No bookings found</p>
+            <p className="text-gray-600">No bookings found</p>
           </div>
         ) : (
           <table className="w-full text-sm">
@@ -196,8 +196,8 @@ export default function BookingsPage() {
                           <ShoppingBag size={16} className="text-[#8C6D1F]" />
                         </div>
                         <div className="min-w-0">
-                          <p className="font-medium text-gray-900 truncate">{b.service?.title ?? "Booking"}</p>
-                          <p className="text-xs text-gray-500">{b.service?.type}</p>
+                          <p className="font-semibold text-gray-900 truncate">{b.service?.title ?? "Booking"}</p>
+                          <p className="text-xs text-gray-600">{b.service?.type}</p>
                         </div>
                       </div>
                     </td>
@@ -257,7 +257,7 @@ export default function BookingsPage() {
                           <button
                             onClick={() => { setSelected(b); handleCancel(); }}
                             disabled={actionLoading !== null}
-                            className="p-1.5 rounded hover:bg-gray-100 text-gray-500 transition"
+                            className="p-1.5 rounded hover:bg-gray-100 text-gray-600 transition"
                             title="Cancel booking"
                           >
                             <Ban size={15} />
@@ -288,12 +288,12 @@ export default function BookingsPage() {
             <div className="p-5 border-b bg-gradient-to-r from-[#F0D78C]/30 to-transparent flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <h2 className="text-lg font-bold text-gray-900 truncate">{selected.service?.title ?? "Booking"}</h2>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-gray-600 mt-0.5">
                   #{selected.id.slice(0, 8)} • {new Date(selected.createdAt).toLocaleString()}
                 </p>
               </div>
               <button onClick={() => setSelected(null)} className="p-1.5 rounded hover:bg-gray-100">
-                <X size={18} className="text-gray-500" />
+                <X size={18} className="text-gray-600" />
               </button>
             </div>
 
@@ -306,7 +306,7 @@ export default function BookingsPage() {
                 {/* Status + total */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 bg-gray-50 rounded-lg">
-                    <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Status</p>
+                    <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Status</p>
                     <span className={clsx("inline-flex px-2 py-0.5 rounded text-xs font-semibold mt-1", statusMeta[selected.status]?.bg, statusMeta[selected.status]?.color)}>
                       {statusMeta[selected.status]?.label ?? selected.status}
                     </span>
@@ -324,44 +324,44 @@ export default function BookingsPage() {
                       {(selected.traveler.profile?.firstName?.[0] ?? selected.traveler.email?.[0] ?? "?").toUpperCase()}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-semibold text-gray-900">
                         {[selected.traveler.profile?.firstName, selected.traveler.profile?.lastName].filter(Boolean).join(" ") || "Traveler"}
                       </p>
-                      <p className="text-xs text-gray-500" dir="ltr">{selected.traveler.email}</p>
+                      <p className="text-xs text-gray-600" dir="ltr">{selected.traveler.email}</p>
                     </div>
                   </div>
                 )}
 
                 {/* Items */}
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Items</p>
+                  <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-2">Items</p>
                   <div className="space-y-2">
                     {(selected.items ?? []).map((item) => (
                       <div key={item.id} className="p-3 border border-gray-200 rounded-lg flex items-center justify-between gap-2">
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-gray-900">{item.description}</p>
-                          <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                          <p className="text-sm font-semibold text-gray-900">{item.description}</p>
+                          <p className="text-xs text-gray-600">Qty: {item.quantity}</p>
                         </div>
                         <p className="text-sm font-semibold text-gray-900 shrink-0">
                           {egp(item.unitMinor * item.quantity + item.taxMinor + item.feeMinor, selected.currency)}
                         </p>
                       </div>
                     ))}
-                    {(selected.items ?? []).length === 0 && <p className="text-sm text-gray-400 italic">No items</p>}
+                    {(selected.items ?? []).length === 0 && <p className="text-sm text-gray-500 italic">No items</p>}
                   </div>
                 </div>
 
                 {/* Payments */}
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1">
+                  <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-2 flex items-center gap-1">
                     <CreditCard size={10} /> Payments
                   </p>
                   <div className="space-y-2">
                     {(selected.payments ?? []).map((p: any) => (
                       <div key={p.id} className="p-3 border border-gray-200 rounded-lg flex items-center justify-between gap-2">
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{p.provider} • {p.methodType}</p>
-                          <p className="text-xs text-gray-500">{new Date(p.createdAt).toLocaleString()}</p>
+                          <p className="text-sm font-semibold text-gray-900">{p.provider} • {p.methodType}</p>
+                          <p className="text-xs text-gray-600">{new Date(p.createdAt).toLocaleString()}</p>
                         </div>
                         <div className="text-right">
                           <p className="text-sm font-semibold text-gray-900">{egp(p.amountMinor, p.currency)}</p>
@@ -371,7 +371,7 @@ export default function BookingsPage() {
                         </div>
                       </div>
                     ))}
-                    {(selected.payments ?? []).length === 0 && <p className="text-sm text-gray-400 italic">No payments yet</p>}
+                    {(selected.payments ?? []).length === 0 && <p className="text-sm text-gray-500 italic">No payments yet</p>}
                   </div>
                 </div>
               </div>
@@ -432,7 +432,7 @@ export default function BookingsPage() {
                 Reject Booking
               </h3>
               <button onClick={() => setRejectModal(false)} className="p-1.5 rounded hover:bg-gray-100">
-                <X size={16} className="text-gray-500" />
+                <X size={16} className="text-gray-600" />
               </button>
             </div>
             <div className="p-5">

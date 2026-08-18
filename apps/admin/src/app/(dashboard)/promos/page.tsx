@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { promosApi, type PromoCode } from "@/lib/api";
@@ -41,7 +41,7 @@ export default function PromosPage() {
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <TicketPercent size={24} className="text-[#C9A227]" /> Promo Codes
           </h1>
-          <p className="text-sm text-gray-500 mt-1">{promos.filter((p) => p.active).length} active codes</p>
+          <p className="text-sm text-gray-600 mt-1">{promos.filter((p) => p.active).length} active codes</p>
         </div>
         <button onClick={() => setModal(true)} className="px-4 py-2.5 bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06] rounded-lg font-semibold flex items-center gap-2">
           <Plus size={18} /> New Code
@@ -50,9 +50,9 @@ export default function PromosPage() {
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-400"><Loader2 className="animate-spin mx-auto" size={24} /></div>
+          <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div>
         ) : promos.length === 0 ? (
-          <div className="p-12 text-center text-gray-500"><TicketPercent size={40} className="mx-auto mb-3 text-gray-300" />No promo codes yet</div>
+          <div className="p-12 text-center text-gray-600"><TicketPercent size={40} className="mx-auto mb-3 text-gray-300" />No promo codes yet</div>
         ) : (
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b text-left text-xs uppercase tracking-wider text-gray-600">
@@ -69,7 +69,7 @@ export default function PromosPage() {
                   <td className="px-4 py-3 font-medium">{p.kind === "PERCENT" ? `${(p.valueBps / 100).toFixed(0)}%` : `EGP ${(p.amountMinor / 100).toFixed(0)}`}</td>
                   <td className="px-4 py-3 text-gray-600">{p.usedCount}{p.maxUses > 0 ? ` / ${p.maxUses}` : " / ∞"}</td>
                   <td className="px-4 py-3">
-                    <span className={clsx("px-2 py-0.5 rounded text-xs font-semibold", p.active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500")}>
+                    <span className={clsx("px-2 py-0.5 rounded text-xs font-semibold", p.active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600")}>
                       {p.active ? "ACTIVE" : "INACTIVE"}
                     </span>
                   </td>

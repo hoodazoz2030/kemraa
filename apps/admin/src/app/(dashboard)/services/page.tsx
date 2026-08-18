@@ -26,7 +26,7 @@ const statusMeta: Record<string, { color: string; bg: string }> = {
   DRAFT:    { color: "text-gray-700",   bg: "bg-gray-100" },
   ACTIVE:   { color: "text-green-700",  bg: "bg-green-100" },
   INACTIVE: { color: "text-orange-700", bg: "bg-orange-100" },
-  ARCHIVED: { color: "text-gray-500",   bg: "bg-gray-100" },
+  ARCHIVED: { color: "text-gray-600",   bg: "bg-gray-100" },
 };
 
 const egp = (minor: number, currency = "EGP") =>
@@ -157,7 +157,7 @@ export default function ServicesPage() {
             <ShoppingBag size={24} className="text-[#C9A227]" />
             Services
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-600 mt-1">
             {counts.all} total • {counts.active} active • {counts.draft} draft
           </p>
         </div>
@@ -174,7 +174,7 @@ export default function ServicesPage() {
       <div className="bg-white rounded-xl border border-gray-200 p-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[240px]">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -207,14 +207,14 @@ export default function ServicesPage() {
       {/* Table */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-400">
+          <div className="p-12 text-center text-gray-500">
             <Loader2 className="animate-spin mx-auto mb-2" size={24} />
             Loading...
           </div>
         ) : filtered.length === 0 ? (
           <div className="p-12 text-center">
             <Package size={40} className="mx-auto mb-3 text-gray-300" />
-            <p className="text-gray-500">No services found</p>
+            <p className="text-gray-600">No services found</p>
             <button onClick={openCreate} className="mt-3 text-sm text-[#8C6D1F] hover:text-[#C9A227] font-medium">
               Create your first service →
             </button>
@@ -243,8 +243,8 @@ export default function ServicesPage() {
                           <TypeIcon size={16} className={typeInfo.color} />
                         </div>
                         <div className="min-w-0">
-                          <p className="font-medium text-gray-900 truncate">{s.title}</p>
-                          {s.description && <p className="text-xs text-gray-500 truncate max-w-sm">{s.description}</p>}
+                          <p className="font-semibold text-gray-900 truncate">{s.title}</p>
+                          {s.description && <p className="text-xs text-gray-600 truncate max-w-sm">{s.description}</p>}
                         </div>
                       </div>
                     </td>
@@ -316,7 +316,7 @@ export default function ServicesPage() {
                 {modalMode === "create" ? "New Service" : "Edit Service"}
               </h2>
               <button onClick={() => setModalOpen(false)} className="p-1.5 rounded hover:bg-gray-100">
-                <X size={18} className="text-gray-500" />
+                <X size={18} className="text-gray-600" />
               </button>
             </div>
 

@@ -58,26 +58,26 @@ export default function SettlementsPage() {
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <Receipt size={24} className="text-[#C9A227]" /> Settlements
           </h1>
-          <p className="text-sm text-gray-500 mt-1">{total} settlements • Partner payouts</p>
+          <p className="text-sm text-gray-600 mt-1">{total} settlements • Partner payouts</p>
         </div>
       </div>
 
       {stats && (
         <div className="grid grid-cols-5 gap-3">
           <div className="bg-white p-4 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 uppercase tracking-wider">Total</p>
+            <p className="text-xs text-gray-600 uppercase tracking-wider">Total</p>
             <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
           </div>
           <div className="bg-white p-4 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 uppercase tracking-wider">OPEN</p>
+            <p className="text-xs text-gray-600 uppercase tracking-wider">OPEN</p>
             <p className="text-2xl font-bold text-yellow-600">{stats.OPEN}</p>
           </div>
           <div className="bg-white p-4 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 uppercase tracking-wider">Approved</p>
+            <p className="text-xs text-gray-600 uppercase tracking-wider">Approved</p>
             <p className="text-2xl font-bold text-blue-600">{stats.approved}</p>
           </div>
           <div className="bg-white p-4 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 uppercase tracking-wider">Paid</p>
+            <p className="text-xs text-gray-600 uppercase tracking-wider">Paid</p>
             <p className="text-2xl font-bold text-green-600">{stats.paid}</p>
           </div>
           <div className="bg-gradient-to-br from-[#C9A227] to-[#E6C55C] p-4 rounded-xl text-[#0C0A06]">
@@ -97,9 +97,9 @@ export default function SettlementsPage() {
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-400"><Loader2 className="animate-spin mx-auto" size={24} /></div>
+          <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div>
         ) : items.length === 0 ? (
-          <div className="p-12 text-center text-gray-500"><Receipt size={40} className="mx-auto mb-3 text-gray-300" />No settlements yet<br/><span className="text-xs">Create from Partners page</span></div>
+          <div className="p-12 text-center text-gray-600"><Receipt size={40} className="mx-auto mb-3 text-gray-300" />No settlements yet<br/><span className="text-xs">Create from Partners page</span></div>
         ) : (
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b text-left text-xs uppercase tracking-wider text-gray-600">
@@ -116,8 +116,8 @@ export default function SettlementsPage() {
               {items.map((s) => (
                 <tr key={s.id} className="hover:bg-gray-50/50">
                   <td className="px-4 py-3">
-                    <p className="font-medium text-gray-900">{s.partner?.organization?.displayName}</p>
-                    <p className="text-xs text-gray-500">{s.partner?.organization?.legalName}</p>
+                    <p className="font-semibold text-gray-900">{s.partner?.organization?.displayName}</p>
+                    <p className="text-xs text-gray-600">{s.partner?.organization?.legalName}</p>
                   </td>
                   <td className="px-4 py-3 text-xs text-gray-600">
                     {new Date(s.periodStart).toLocaleDateString()} → {new Date(s.periodEnd).toLocaleDateString()}
@@ -156,10 +156,10 @@ export default function SettlementsPage() {
           <div className="bg-white rounded-2xl w-full max-w-md p-6">
             <h3 className="text-lg font-bold mb-4">Settlement Details</h3>
             <div className="space-y-3 text-sm">
-              <div className="flex justify-between"><span className="text-gray-500">Partner:</span><span className="font-medium">{detail.partner?.organization?.displayName}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Period:</span><span>{new Date(detail.periodStart).toLocaleDateString()} → {new Date(detail.periodEnd).toLocaleDateString()}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Amount:</span><span className="font-bold text-[#C9A227]">{fmt(detail.netMinor)}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Status:</span><span className={clsx("px-2 py-0.5 rounded text-xs font-semibold", statusColor(detail.status))}>{detail.status}</span></div>
+              <div className="flex justify-between"><span className="text-gray-600">Partner:</span><span className="font-medium">{detail.partner?.organization?.displayName}</span></div>
+              <div className="flex justify-between"><span className="text-gray-600">Period:</span><span>{new Date(detail.periodStart).toLocaleDateString()} → {new Date(detail.periodEnd).toLocaleDateString()}</span></div>
+              <div className="flex justify-between"><span className="text-gray-600">Amount:</span><span className="font-bold text-[#C9A227]">{fmt(detail.netMinor)}</span></div>
+              <div className="flex justify-between"><span className="text-gray-600">Status:</span><span className={clsx("px-2 py-0.5 rounded text-xs font-semibold", statusColor(detail.status))}>{detail.status}</span></div>
               
               
             </div>

@@ -128,7 +128,7 @@ export default function PartnersPage() {
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <Building2 size={24} className="text-[#C9A227]" /> Partners
           </h1>
-          <p className="text-sm text-gray-500 mt-1">{total} partners • Hotels, tour operators, transport</p>
+          <p className="text-sm text-gray-600 mt-1">{total} partners • Hotels, tour operators, transport</p>
         </div>
         <button onClick={openCreate} className="px-4 py-2.5 bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06] rounded-lg font-semibold flex items-center gap-2">
           <Plus size={18} /> New Partner
@@ -138,19 +138,19 @@ export default function PartnersPage() {
       {stats && (
         <div className="grid grid-cols-4 gap-3">
           <div className="bg-white p-4 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 uppercase tracking-wider">Total</p>
+            <p className="text-xs text-gray-600 uppercase tracking-wider">Total</p>
             <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
           </div>
           <div className="bg-white p-4 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 uppercase tracking-wider">Active</p>
+            <p className="text-xs text-gray-600 uppercase tracking-wider">Active</p>
             <p className="text-2xl font-bold text-green-600">{stats.active}</p>
           </div>
           <div className="bg-white p-4 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 uppercase tracking-wider">Draft</p>
+            <p className="text-xs text-gray-600 uppercase tracking-wider">Draft</p>
             <p className="text-2xl font-bold text-orange-600">{stats.draft}</p>
           </div>
           <div className="bg-white p-4 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 uppercase tracking-wider">Pending</p>
+            <p className="text-xs text-gray-600 uppercase tracking-wider">Pending</p>
             <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
           </div>
         </div>
@@ -158,7 +158,7 @@ export default function PartnersPage() {
 
       <div className="bg-white rounded-xl border border-gray-200 p-4 grid grid-cols-4 gap-3">
         <div className="col-span-2 relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
           <input value={filter.search}
             onChange={(e) => { setFilter({ ...filter, search: e.target.value }); setTimeout(load, 300); }}
             placeholder="Search by name..."
@@ -178,9 +178,9 @@ export default function PartnersPage() {
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-400"><Loader2 className="animate-spin mx-auto" size={24} /></div>
+          <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div>
         ) : partners.length === 0 ? (
-          <div className="p-12 text-center text-gray-500"><Building2 size={40} className="mx-auto mb-3 text-gray-300" />No partners yet</div>
+          <div className="p-12 text-center text-gray-600"><Building2 size={40} className="mx-auto mb-3 text-gray-300" />No partners yet</div>
         ) : (
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b text-left text-xs uppercase tracking-wider text-gray-600">
@@ -204,8 +204,8 @@ export default function PartnersPage() {
                           {p.displayName[0]?.toUpperCase()}
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900">{p.displayName}</p>
-                          <p className="text-xs text-gray-500">{p.legalName}</p>
+                          <p className="font-semibold text-gray-900">{p.displayName}</p>
+                          <p className="text-xs text-gray-600">{p.legalName}</p>
                         </div>
                       </div>
                     </td>
@@ -216,7 +216,7 @@ export default function PartnersPage() {
                       <span className={clsx("px-2 py-0.5 rounded text-xs font-semibold",
                         isActive ? "bg-green-100 text-green-700" :
                         p.status === "DRAFT" ? "bg-orange-100 text-orange-700" :
-                        "bg-gray-100 text-gray-500")}>
+                        "bg-gray-100 text-gray-600")}>
                         {p.status}
                       </span>
                     </td>
@@ -311,12 +311,12 @@ export default function PartnersPage() {
               <button onClick={() => setDetail(null)} className="p-1.5 rounded hover:bg-gray-100"><X size={16} /></button>
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div><span className="text-gray-500">Legal:</span> <span className="font-medium">{detail.legalName}</span></div>
-              <div><span className="text-gray-500">Type:</span> <span className="font-medium">{detail.type}</span></div>
-              <div><span className="text-gray-500">Status:</span> <span className="font-medium">{detail.status}</span></div>
-              <div><span className="text-gray-500">Country:</span> <span className="font-medium">{detail.country}</span></div>
+              <div><span className="text-gray-600">Legal:</span> <span className="font-medium">{detail.legalName}</span></div>
+              <div><span className="text-gray-600">Type:</span> <span className="font-medium">{detail.type}</span></div>
+              <div><span className="text-gray-600">Status:</span> <span className="font-medium">{detail.status}</span></div>
+              <div><span className="text-gray-600">Country:</span> <span className="font-medium">{detail.country}</span></div>
               <div className="col-span-2">
-                <span className="text-gray-500">Settlement:</span>
+                <span className="text-gray-600">Settlement:</span>
                 <pre className="mt-1 p-2 bg-gray-50 rounded text-xs font-mono overflow-x-auto">
                   {JSON.stringify(detail.partner?.settlementTerms ?? {}, null, 2)}
                 </pre>
@@ -359,15 +359,15 @@ export default function PartnersPage() {
                 </div>
                 <div className="space-y-2 p-3 bg-gray-50 rounded-lg">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-500">Email:</span>
+                    <span className="text-xs text-gray-600">Email:</span>
                     <code className="text-sm font-mono">{portalResult.user.email}</code>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-500">Access Code:</span>
+                    <span className="text-xs text-gray-600">Access Code:</span>
                     <code className="text-sm font-mono text-purple-700">{portalResult.accessCode}</code>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-600">
                   Partner can login at: <code className="font-mono text-xs bg-gray-100 px-1.5 py-0.5 rounded">/portal/login</code>
                 </p>
                 <button onClick={() => setPortalModal(null)} className="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">
@@ -397,7 +397,7 @@ export default function PartnersPage() {
                   <label className="block text-xs font-semibold text-gray-700 uppercase mb-1.5">Password *</label>
                   <input type="text" required value={portalForm.password} onChange={(e) => setPortalForm({ ...portalForm, password: e.target.value })}
                     className="w-full px-3 py-2 border rounded-lg font-mono" />
-                  <p className="text-xs text-gray-400 mt-1">Min 8 chars. Partner can use email+password or access code.</p>
+                  <p className="text-xs text-gray-500 mt-1">Min 8 chars. Partner can use email+password or access code.</p>
                 </div>
                 {portalError && (
                   <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{portalError}</div>

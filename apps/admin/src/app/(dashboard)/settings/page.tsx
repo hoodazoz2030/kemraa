@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { settingsApi } from "@/lib/api";
@@ -25,7 +25,7 @@ export default function SettingsPage() {
 
   const set = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
 
-  if (loading) return <div className="p-12 text-center text-gray-400"><Loader2 className="animate-spin mx-auto" size={24} /></div>;
+  if (loading) return <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div>;
 
   return (
     <div className="max-w-2xl space-y-6">
@@ -33,7 +33,7 @@ export default function SettingsPage() {
         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
           <SettingsIcon size={24} className="text-[#C9A227]" /> Settings
         </h1>
-        <p className="text-sm text-gray-500 mt-1">إعدادات المنصة العامة — SUPER_ADMIN فقط</p>
+        <p className="text-sm text-gray-600 mt-1">إعدادات المنصة العامة — SUPER_ADMIN فقط</p>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">

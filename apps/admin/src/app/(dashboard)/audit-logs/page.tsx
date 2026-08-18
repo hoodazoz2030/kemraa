@@ -125,7 +125,7 @@ export default function AuditLogsPage() {
             <ScrollText size={24} className="text-[#C9A227]" />
             Audit Logs
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-600 mt-1">
             {logs.length} events • {today} today • {uniqueActors} actors
           </p>
         </div>
@@ -143,29 +143,29 @@ export default function AuditLogsPage() {
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <Activity size={18} className="text-[#C9A227] mb-2" />
           <p className="text-2xl font-bold text-gray-900">{logs.length}</p>
-          <p className="text-xs text-gray-500 mt-1">Total events</p>
+          <p className="text-xs text-gray-600 mt-1">Total events</p>
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <Calendar size={18} className="text-blue-600 mb-2" />
           <p className="text-2xl font-bold text-gray-900">{today}</p>
-          <p className="text-xs text-gray-500 mt-1">Today</p>
+          <p className="text-xs text-gray-600 mt-1">Today</p>
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <User size={18} className="text-green-600 mb-2" />
           <p className="text-2xl font-bold text-gray-900">{uniqueActors}</p>
-          <p className="text-xs text-gray-500 mt-1">Unique actors</p>
+          <p className="text-xs text-gray-600 mt-1">Unique actors</p>
         </div>
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <Filter size={18} className="text-purple-600 mb-2" />
           <p className="text-2xl font-bold text-gray-900">{actions.length}</p>
-          <p className="text-xs text-gray-500 mt-1">Action types</p>
+          <p className="text-xs text-gray-600 mt-1">Action types</p>
         </div>
       </div>
 
       {/* Filters */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
         <div className="relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
           <input value={search} onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by email, action, resource ID, IP..."
             className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#C9A227]" />
@@ -197,9 +197,9 @@ export default function AuditLogsPage() {
       {/* Timeline */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-400"><Loader2 className="animate-spin mx-auto mb-2" size={24} />Loading...</div>
+          <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto mb-2" size={24} />Loading...</div>
         ) : filtered.length === 0 ? (
-          <div className="p-12 text-center"><ScrollText size={40} className="mx-auto mb-3 text-gray-300" /><p className="text-gray-500">No audit events</p><p className="text-xs text-gray-400 mt-1">Try a booking approval or refund to generate events</p></div>
+          <div className="p-12 text-center"><ScrollText size={40} className="mx-auto mb-3 text-gray-300" /><p className="text-gray-600">No audit events</p><p className="text-xs text-gray-500 mt-1">Try a booking approval or refund to generate events</p></div>
         ) : (
           <div className="divide-y divide-gray-100">
             {filtered.map((log) => {
@@ -221,9 +221,9 @@ export default function AuditLogsPage() {
                       <span className={clsx("px-2 py-0.5 rounded text-[10px] font-semibold", style.bg, style.color)}>
                         {log.action}
                       </span>
-                      <span className="text-[10px] text-gray-500 uppercase">{log.resourceType}</span>
+                      <span className="text-[10px] text-gray-600 uppercase">{log.resourceType}</span>
                       {log.resourceId && (
-                        <span className="text-[10px] text-gray-400 font-mono" dir="ltr">#{log.resourceId.slice(0, 8)}</span>
+                        <span className="text-[10px] text-gray-500 font-mono" dir="ltr">#{log.resourceId.slice(0, 8)}</span>
                       )}
                     </div>
                     <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-600">
@@ -233,12 +233,12 @@ export default function AuditLogsPage() {
                         </div>
                         <span className="font-medium">{actorName}</span>
                       </div>
-                      {log.ip && <span className="text-gray-400">• {log.ip}</span>}
+                      {log.ip && <span className="text-gray-500">• {log.ip}</span>}
                     </div>
                   </div>
                   <div className="text-right shrink-0">
                     <p className="text-xs text-gray-900 font-medium">{fmt(log.createdAt)}</p>
-                    <p className="text-[10px] text-gray-400 mt-0.5">{timeAgo(log.createdAt)}</p>
+                    <p className="text-[10px] text-gray-500 mt-0.5">{timeAgo(log.createdAt)}</p>
                   </div>
                   <ChevronRight size={16} className="text-gray-300 shrink-0 mt-2" />
                 </button>
@@ -265,35 +265,35 @@ export default function AuditLogsPage() {
                   <h2 className="text-sm font-bold text-gray-900 mt-1">{selected.resourceType}</h2>
                 </div>
               </div>
-              <button onClick={() => setSelected(null)} className="p-1.5 rounded hover:bg-gray-100"><X size={18} className="text-gray-500" /></button>
+              <button onClick={() => setSelected(null)} className="p-1.5 rounded hover:bg-gray-100"><X size={18} className="text-gray-600" /></button>
             </div>
             <div className="flex-1 overflow-y-auto p-5 space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Timestamp</p>
+                  <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Timestamp</p>
                   <p className="text-xs text-gray-900 mt-1 font-mono" dir="ltr">{selected.createdAt}</p>
-                  <p className="text-[10px] text-gray-400 mt-0.5">{timeAgo(selected.createdAt)}</p>
+                  <p className="text-[10px] text-gray-500 mt-0.5">{timeAgo(selected.createdAt)}</p>
                 </div>
                 <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Actor</p>
+                  <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Actor</p>
                   <p className="text-xs text-gray-900 mt-1">{selected.actorId?.slice(0, 8) ?? "System"}</p>
-                  {selected.actorId && <p className="text-[10px] text-gray-400 mt-0.5 font-mono" dir="ltr">{selected.actorId.slice(0, 12)}...</p>}
+                  {selected.actorId && <p className="text-[10px] text-gray-500 mt-0.5 font-mono" dir="ltr">{selected.actorId.slice(0, 12)}...</p>}
                 </div>
               </div>
               {selected.resourceId && (
                 <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Resource ID</p>
+                  <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Resource ID</p>
                   <p className="text-xs text-gray-900 mt-1 font-mono break-all" dir="ltr">{selected.resourceId}</p>
                 </div>
               )}
               {selected.ip && (
                 <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">IP Address</p>
+                  <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">IP Address</p>
                   <p className="text-xs text-gray-900 mt-1 font-mono">{selected.ip}</p>
                 </div>
               )}
               <div>
-                <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Metadata</p>
+                <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-2">Metadata</p>
                 <pre className="p-3 bg-gray-900 text-green-400 rounded-lg text-xs overflow-auto max-h-96" dir="ltr">
                   {JSON.stringify(selected.metadata ?? {}, null, 2)}
                 </pre>

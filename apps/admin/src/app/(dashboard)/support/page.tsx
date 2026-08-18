@@ -110,13 +110,13 @@ export default function SupportPage() {
             </span>
           )}
         </h1>
-        <p className="text-sm text-gray-500 mt-1">Manage customer inquiries and resolve issues</p>
+        <p className="text-sm text-gray-600 mt-1">Manage customer inquiries and resolve issues</p>
       </div>
 
       {/* Filters */}
       <div className="flex flex-wrap gap-4">
         <div>
-          <label className="block text-xs text-gray-500 mb-1">Status</label>
+          <label className="block text-xs text-gray-600 mb-1">Status</label>
           <div className="flex flex-wrap gap-1">
             {statuses.map((s) => (
               <button
@@ -135,7 +135,7 @@ export default function SupportPage() {
           </div>
         </div>
         <div>
-          <label className="block text-xs text-gray-500 mb-1">Priority</label>
+          <label className="block text-xs text-gray-600 mb-1">Priority</label>
           <div className="flex flex-wrap gap-1">
             {priorities.map((p) => (
               <button
@@ -163,11 +163,11 @@ export default function SupportPage() {
             {tickets.length} tickets
           </div>
           {loading ? (
-            <div className="p-8 text-center text-gray-400">
+            <div className="p-8 text-center text-gray-500">
               <Loader2 className="animate-spin mx-auto" size={20} />
             </div>
           ) : tickets.length === 0 ? (
-            <div className="p-8 text-center text-gray-400 text-sm">No tickets match filters</div>
+            <div className="p-8 text-center text-gray-500 text-sm">No tickets match filters</div>
           ) : (
             <div className="divide-y max-h-[600px] overflow-y-auto">
               {tickets.map((t) => {
@@ -187,7 +187,7 @@ export default function SupportPage() {
                       <PrIcon size={14} className={clsx(priorityMeta[t.priority]?.color, "mt-0.5 shrink-0")} />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-gray-900 truncate">{t.subject}</p>
-                        <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-2">
+                        <p className="text-xs text-gray-600 mt-0.5 flex items-center gap-2">
                           <span>{t.customerName ?? t.user.email}</span>
                           <span>•</span>
                           <span>{t.category}</span>
@@ -198,7 +198,7 @@ export default function SupportPage() {
                             {t.status.replace("_", " ")}
                           </span>
                           {t._count && t._count.replies > 0 && (
-                            <span className="inline-flex items-center gap-1 text-[10px] text-gray-500">
+                            <span className="inline-flex items-center gap-1 text-[10px] text-gray-600">
                               <MessageSquare size={10} />
                               {t._count.replies}
                             </span>
@@ -217,7 +217,7 @@ export default function SupportPage() {
         {/* Ticket detail */}
         <div className="col-span-7 bg-white rounded-xl border border-gray-200 overflow-hidden">
           {!selected ? (
-            <div className="p-12 text-center text-gray-400">
+            <div className="p-12 text-center text-gray-500">
               <HelpCircle size={40} className="mx-auto mb-3 text-[#C9A227]/40" />
               <p className="text-sm">Select a ticket to view details</p>
             </div>
@@ -232,7 +232,7 @@ export default function SupportPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <h2 className="text-lg font-bold text-gray-900">{selected.subject}</h2>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-600 mt-1">
                       Ticket #{selected.id.slice(0, 8)} • {selected.category} • Opened {new Date(selected.createdAt).toLocaleString()}
                     </p>
                   </div>
@@ -240,7 +240,7 @@ export default function SupportPage() {
                 {/* Controls */}
                 <div className="flex flex-wrap gap-3 mt-3">
                   <div>
-                    <label className="block text-[10px] text-gray-500 uppercase tracking-wider mb-1">Status</label>
+                    <label className="block text-[10px] text-gray-600 uppercase tracking-wider mb-1">Status</label>
                     <select
                       value={selected.status}
                       onChange={(e) => handleStatusChange(e.target.value)}
@@ -252,7 +252,7 @@ export default function SupportPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[10px] text-gray-500 uppercase tracking-wider mb-1">Priority</label>
+                    <label className="block text-[10px] text-gray-600 uppercase tracking-wider mb-1">Priority</label>
                     <select
                       value={selected.priority}
                       onChange={(e) => handlePriorityChange(e.target.value)}
@@ -264,7 +264,7 @@ export default function SupportPage() {
                     </select>
                   </div>
                   <div className="flex-1">
-                    <label className="block text-[10px] text-gray-500 uppercase tracking-wider mb-1">Customer</label>
+                    <label className="block text-[10px] text-gray-600 uppercase tracking-wider mb-1">Customer</label>
                     <div className="px-3 py-1.5 text-xs border rounded-lg bg-gray-50 text-gray-700 flex items-center gap-1">
                       <User size={12} />
                       {selected.user.email}
@@ -278,11 +278,11 @@ export default function SupportPage() {
                 {/* Original ticket body */}
                 <div className="bg-white rounded-lg border border-gray-200 p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <User size={14} className="text-gray-500" />
+                    <User size={14} className="text-gray-600" />
                     <span className="text-xs font-semibold text-gray-700">
                       {selected.user.email}
                     </span>
-                    <span className="text-[10px] text-gray-400 ml-auto">
+                    <span className="text-[10px] text-gray-500 ml-auto">
                       {new Date(selected.createdAt).toLocaleString()}
                     </span>
                   </div>
@@ -301,11 +301,11 @@ export default function SupportPage() {
                     )}
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      {r.isStaff ? <UserCog size={14} className="text-[#8C6D1F]" /> : <User size={14} className="text-gray-500" />}
+                      {r.isStaff ? <UserCog size={14} className="text-[#8C6D1F]" /> : <User size={14} className="text-gray-600" />}
                       <span className={clsx("text-xs font-semibold", r.isStaff ? "text-[#8C6D1F]" : "text-gray-700")}>
                         {r.isStaff ? "Staff" : r.author.email}
                       </span>
-                      <span className="text-[10px] text-gray-400 ml-auto">
+                      <span className="text-[10px] text-gray-500 ml-auto">
                         {new Date(r.createdAt).toLocaleString()}
                       </span>
                     </div>

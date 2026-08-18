@@ -123,7 +123,7 @@ export default function TripsPage() {
           <Map size={24} className="text-[#C9A227]" />
           Trips
         </h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-gray-600 mt-1">
           {trips.length} total
           {counts.READY > 0 && <span className="ml-2 text-purple-700 font-medium">• {counts.READY} awaiting approval</span>}
           {counts.ACTIVE > 0 && <span className="ml-2 text-green-700 font-medium">• {counts.ACTIVE} active</span>}
@@ -133,7 +133,7 @@ export default function TripsPage() {
       {/* Filters */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-[240px]">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -162,14 +162,14 @@ export default function TripsPage() {
       {/* Table */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-400">
+          <div className="p-12 text-center text-gray-500">
             <Loader2 className="animate-spin mx-auto mb-2" size={24} />
             Loading...
           </div>
         ) : filtered.length === 0 ? (
           <div className="p-12 text-center">
             <Plane size={40} className="mx-auto mb-3 text-gray-300" />
-            <p className="text-gray-500">No trips found</p>
+            <p className="text-gray-600">No trips found</p>
           </div>
         ) : (
           <table className="w-full text-sm">
@@ -195,8 +195,8 @@ export default function TripsPage() {
                           <Plane size={16} className="text-[#8C6D1F]" />
                         </div>
                         <div className="min-w-0">
-                          <p className="font-medium text-gray-900 truncate">{t.title}</p>
-                          <p className="text-xs text-gray-500 truncate">
+                          <p className="font-semibold text-gray-900 truncate">{t.title}</p>
+                          <p className="text-xs text-gray-600 truncate">
                             {t.traveler?.profile?.firstName ? `${t.traveler.profile.firstName} ${t.traveler.profile.lastName ?? ""}` : t.traveler?.email ?? "Traveler"}
                           </p>
                         </div>
@@ -210,7 +210,7 @@ export default function TripsPage() {
                     </td>
                     <td className="px-4 py-3 text-gray-600 text-xs">
                       <div>{fmtDate(t.startAt)}</div>
-                      <div className="text-gray-400">→ {fmtDate(t.endAt)}</div>
+                      <div className="text-gray-500">→ {fmtDate(t.endAt)}</div>
                     </td>
                     <td className="px-4 py-3 font-semibold text-gray-900">
                       {egp(t.budgetMinor, t.currency)}
@@ -280,7 +280,7 @@ export default function TripsPage() {
                 {selected.title}
               </h2>
               <button onClick={() => setSelected(null)} className="p-1.5 rounded hover:bg-gray-100">
-                <X size={18} className="text-gray-500" />
+                <X size={18} className="text-gray-600" />
               </button>
             </div>
 
@@ -288,22 +288,22 @@ export default function TripsPage() {
               {/* Meta */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Status</p>
+                  <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Status</p>
                   <span className={clsx("inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold mt-1", statusMeta[selected.status]?.bg, statusMeta[selected.status]?.color)}>
                     {selected.status}
                   </span>
                 </div>
                 <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Destination</p>
-                  <p className="font-medium text-gray-900 mt-1">{selected.destinationCountry}</p>
+                  <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Destination</p>
+                  <p className="font-semibold text-gray-900 mt-1">{selected.destinationCountry}</p>
                 </div>
                 <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1"><Calendar size={10} /> Start</p>
-                  <p className="font-medium text-gray-900 mt-1">{fmtDate(selected.startAt)}</p>
+                  <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider flex items-center gap-1"><Calendar size={10} /> Start</p>
+                  <p className="font-semibold text-gray-900 mt-1">{fmtDate(selected.startAt)}</p>
                 </div>
                 <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1"><Calendar size={10} /> End</p>
-                  <p className="font-medium text-gray-900 mt-1">{fmtDate(selected.endAt)}</p>
+                  <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider flex items-center gap-1"><Calendar size={10} /> End</p>
+                  <p className="font-semibold text-gray-900 mt-1">{fmtDate(selected.endAt)}</p>
                 </div>
                 <div className="col-span-2 p-3 bg-gradient-to-br from-[#C9A227]/10 to-[#E6C55C]/10 rounded-lg border border-[#C9A227]/20">
                   <p className="text-[10px] font-semibold text-[#8C6D1F] uppercase tracking-wider flex items-center gap-1"><DollarSign size={10} /> Budget</p>
@@ -316,19 +316,19 @@ export default function TripsPage() {
                 <h3 className="text-sm font-bold text-gray-900 mb-2 flex items-center gap-2">
                   <Calendar size={14} className="text-[#C9A227]" />
                   Itinerary
-                  <span className="text-xs font-normal text-gray-500">
+                  <span className="text-xs font-normal text-gray-600">
                     ({selected.itineraries?.reduce((sum, it) => sum + it.items.length, 0) ?? 0} items)
                   </span>
                 </h3>
                 {(!selected.itineraries || selected.itineraries.length === 0) ? (
-                  <p className="text-sm text-gray-400 italic">No itinerary planned yet</p>
+                  <p className="text-sm text-gray-500 italic">No itinerary planned yet</p>
                 ) : (
                   <div className="space-y-3">
                     {selected.itineraries.map((it) => (
                       <div key={it.id} className="border border-gray-200 rounded-lg overflow-hidden">
                         <div className="px-3 py-2 bg-gray-50 text-xs font-semibold text-gray-600 flex items-center justify-between">
                           <span>Version {it.version}</span>
-                          <span className="text-gray-400">{new Date(it.createdAt).toLocaleString()}</span>
+                          <span className="text-gray-500">{new Date(it.createdAt).toLocaleString()}</span>
                         </div>
                         <div className="divide-y divide-gray-100">
                           {it.items.map((item, idx) => (
@@ -337,8 +337,8 @@ export default function TripsPage() {
                                 {idx + 1}
                               </span>
                               <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-gray-900 truncate">{item.title}</p>
-                                <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
+                                <p className="text-sm font-semibold text-gray-900 truncate">{item.title}</p>
+                                <div className="flex items-center gap-3 text-xs text-gray-600 mt-0.5">
                                   <span className="uppercase tracking-wider text-[10px]">{item.type}</span>
                                   {item.startAt && <span>{new Date(item.startAt).toLocaleString()}</span>}
                                   {item.estimatedMinor != null && <span className="font-semibold text-[#8C6D1F]">{egp(item.estimatedMinor)}</span>}
@@ -384,7 +384,7 @@ export default function TripsPage() {
                 Reject Trip
               </h3>
               <button onClick={() => setShowReject(false)} className="p-1.5 rounded hover:bg-gray-100">
-                <X size={16} className="text-gray-500" />
+                <X size={16} className="text-gray-600" />
               </button>
             </div>
             <div className="p-5">

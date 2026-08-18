@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useEffect, useState } from "react";
 import { reviewsApi, type Review } from "@/lib/api";
 import { Star, Loader2, Check, EyeOff, Trash2, Filter } from "lucide-react";
@@ -32,21 +32,21 @@ export default function ReviewsPage() {
         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
           <Star size={24} className="text-[#C9A227]" /> Reviews Moderation
         </h1>
-        <p className="text-sm text-gray-500 mt-1">Manage customer feedback across services, trips, and drivers</p>
+        <p className="text-sm text-gray-600 mt-1">Manage customer feedback across services, trips, and drivers</p>
       </div>
 
       {stats && (
         <div className="grid grid-cols-4 gap-3">
           <div className="bg-white p-4 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 uppercase tracking-wider">Total</p>
+            <p className="text-xs text-gray-600 uppercase tracking-wider">Total</p>
             <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
           </div>
           <div className="bg-white p-4 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 uppercase tracking-wider">Average</p>
+            <p className="text-xs text-gray-600 uppercase tracking-wider">Average</p>
             <p className="text-2xl font-bold text-[#C9A227]">{Number(stats.average).toFixed(1)} ★</p>
           </div>
           <div className="bg-white p-4 rounded-xl border border-gray-200 col-span-2">
-            <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Distribution</p>
+            <p className="text-xs text-gray-600 uppercase tracking-wider mb-2">Distribution</p>
             <div className="flex gap-2 items-end h-10">
               {[5, 4, 3, 2, 1].map((r) => {
                 const row: any = stats.byRating?.find((x: any) => x.rating === r);
@@ -58,7 +58,7 @@ export default function ReviewsPage() {
                     <div className="w-full bg-gray-100 rounded-t relative" style={{ height: "32px" }}>
                       <div className="absolute bottom-0 w-full bg-[#C9A227] rounded-t" style={{ height: `${pct}%` }} />
                     </div>
-                    <span className="text-[10px] text-gray-500">{r}★</span>
+                    <span className="text-[10px] text-gray-600">{r}★</span>
                   </div>
                 );
               })}
@@ -94,9 +94,9 @@ export default function ReviewsPage() {
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-400"><Loader2 className="animate-spin mx-auto" size={24} /></div>
+          <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div>
         ) : reviews.length === 0 ? (
-          <div className="p-12 text-center text-gray-500"><Star size={40} className="mx-auto mb-3 text-gray-300" />No reviews yet</div>
+          <div className="p-12 text-center text-gray-600"><Star size={40} className="mx-auto mb-3 text-gray-300" />No reviews yet</div>
         ) : (
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b text-left text-xs uppercase tracking-wider text-gray-600">
@@ -120,8 +120,8 @@ export default function ReviewsPage() {
                           {name[0]?.toUpperCase() ?? "?"}
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900">{name}</p>
-                          <p className="text-xs text-gray-500" dir="ltr">{r.reviewer?.email}</p>
+                          <p className="font-semibold text-gray-900">{name}</p>
+                          <p className="text-xs text-gray-600" dir="ltr">{r.reviewer?.email}</p>
                         </div>
                       </div>
                     </td>
@@ -133,10 +133,10 @@ export default function ReviewsPage() {
                     </td>
                     <td className="px-4 py-3">
                       <span className="px-2 py-0.5 text-xs rounded bg-gray-100 text-gray-700">{r.targetType}</span>
-                      <p className="text-xs text-gray-500 mt-0.5">{r.booking?.service?.title ?? "—"}</p>
+                      <p className="text-xs text-gray-600 mt-0.5">{r.booking?.service?.title ?? "—"}</p>
                     </td>
                     <td className="px-4 py-3 max-w-xs">
-                      <p className="text-gray-700 truncate">{r.comment ?? <span className="italic text-gray-400">(no comment)</span>}</p>
+                      <p className="text-gray-700 truncate">{r.comment ?? <span className="italic text-gray-500">(no comment)</span>}</p>
                     </td>
                     <td className="px-4 py-3 text-xs text-gray-600">{new Date(r.createdAt).toLocaleDateString()}</td>
                     <td className="px-4 py-3 text-right">

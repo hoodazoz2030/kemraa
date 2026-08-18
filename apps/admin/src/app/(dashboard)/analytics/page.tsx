@@ -48,7 +48,7 @@ export default function AnalyticsPage() {
     }).format(minor / 100);
 
   if (loading || !data) {
-    return <div className="p-12 text-center text-gray-500">Loading analytics...</div>;
+    return <div className="p-12 text-center text-gray-600">Loading analytics...</div>;
   }
 
   const statCards = [
@@ -81,7 +81,7 @@ export default function AnalyticsPage() {
             <TrendingUp size={24} className="text-[#C9A227]" />
             Analytics
           </h1>
-          <p className="text-sm text-gray-500 mt-1">Real-time business intelligence — powered by Thoth</p>
+          <p className="text-sm text-gray-600 mt-1">Real-time business intelligence — powered by Thoth</p>
         </div>
         <div className="flex items-center gap-3">
           <select
@@ -111,7 +111,7 @@ export default function AnalyticsPage() {
           <div key={label} className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-lg transition">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-gray-500">{label}</p>
+                <p className="text-sm text-gray-600">{label}</p>
                 <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
               </div>
               <div className={`w-11 h-11 rounded-lg bg-gradient-to-br ${color} flex items-center justify-center shadow-md`}>
@@ -201,7 +201,7 @@ export default function AnalyticsPage() {
             Top Services
           </h3>
           {data.topServices.length === 0 ? (
-            <p className="text-sm text-gray-400 text-center py-12">No services yet</p>
+            <p className="text-sm text-gray-500 text-center py-12">No services yet</p>
           ) : (
             <div className="space-y-2">
               {data.topServices.map((svc, idx) => {
@@ -214,8 +214,8 @@ export default function AnalyticsPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium text-gray-900 truncate">{svc.name}</span>
-                        <span className="text-xs text-gray-500 ml-2 shrink-0">{svc.count} bookings</span>
+                        <span className="text-sm font-semibold text-gray-900 truncate">{svc.name}</span>
+                        <span className="text-xs text-gray-600 ml-2 shrink-0">{svc.count} bookings</span>
                       </div>
                       <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                         <div

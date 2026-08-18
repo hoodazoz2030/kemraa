@@ -78,7 +78,7 @@ export default function PaymentsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Payments</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-600 mt-1">
             Monitor all transactions across Stripe and Fawry
           </p>
         </div>
@@ -95,19 +95,19 @@ export default function PaymentsPage() {
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4">
         <div className="bg-white rounded-lg border p-4">
-          <div className="text-sm text-gray-500">Total Transactions</div>
+          <div className="text-sm text-gray-600">Total Transactions</div>
           <div className="text-2xl font-bold text-gray-900 mt-1">{filtered.length}</div>
         </div>
         <div className="bg-white rounded-lg border p-4">
-          <div className="text-sm text-gray-500">Captured</div>
+          <div className="text-sm text-gray-600">Captured</div>
           <div className="text-2xl font-bold text-green-600 mt-1">{captured}</div>
         </div>
         <div className="bg-white rounded-lg border p-4">
-          <div className="text-sm text-gray-500">Pending</div>
+          <div className="text-sm text-gray-600">Pending</div>
           <div className="text-2xl font-bold text-yellow-600 mt-1">{pending}</div>
         </div>
         <div className="bg-white rounded-lg border p-4">
-          <div className="text-sm text-gray-500">Total Revenue</div>
+          <div className="text-sm text-gray-600">Total Revenue</div>
           <div className="text-2xl font-bold text-gray-900 mt-1">{formatAmount(totalAmount, "EGP")}</div>
         </div>
       </div>
@@ -117,7 +117,7 @@ export default function PaymentsPage() {
         <div className="flex-1 min-w-[200px]">
           <label className="text-xs font-medium text-gray-700 mb-1 block">Search</label>
           <div className="relative">
-            <Search className="absolute left-3 top-2.5 text-gray-400" size={16} />
+            <Search className="absolute left-3 top-2.5 text-gray-500" size={16} />
             <input
               type="text"
               value={search}
@@ -164,9 +164,9 @@ export default function PaymentsPage() {
       {/* Table */}
       <div className="bg-white rounded-lg border overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-500">Loading payments...</div>
+          <div className="p-12 text-center text-gray-600">Loading payments...</div>
         ) : filtered.length === 0 ? (
-          <div className="p-12 text-center text-gray-500">No payments found</div>
+          <div className="p-12 text-center text-gray-600">No payments found</div>
         ) : (
           <table className="min-w-full divide-y">
             <thead className="bg-gray-50">
@@ -190,7 +190,7 @@ export default function PaymentsPage() {
                       ) : (
                         <Banknote size={16} className="text-orange-600" />
                       )}
-                      <span className="text-sm font-medium text-gray-900">{p.provider}</span>
+                      <span className="text-sm font-semibold text-gray-900">{p.provider}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-xs font-mono text-gray-600">
@@ -211,11 +211,11 @@ export default function PaymentsPage() {
                     {p.booking?.service?.name ? (
                       <div>
                         <div>{p.booking.service.name}</div>
-                        <div className="text-xs text-gray-500">{p.booking.service.type}</div>
+                        <div className="text-xs text-gray-600">{p.booking.service.type}</div>
                       </div>
                     ) : "—"}
                   </td>
-                  <td className="px-6 py-4 text-xs text-gray-500">
+                  <td className="px-6 py-4 text-xs text-gray-600">
                     {new Date(p.createdAt).toLocaleString()}
                   </td>
                 </tr>

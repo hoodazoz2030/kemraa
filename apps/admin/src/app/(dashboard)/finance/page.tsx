@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useEffect, useState } from "react";
 import { financeApi } from "@/lib/api";
 import { DollarSign, Loader2, Calendar, TrendingUp, TrendingDown, Receipt, Download, PieChart, FileSpreadsheet } from "lucide-react";
@@ -37,7 +37,7 @@ export default function FinancePage() {
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <DollarSign size={24} className="text-[#C9A227]" /> Finance Hub
           </h1>
-          <p className="text-sm text-gray-500 mt-1">P&L • Commissions • Tax Filing • Export</p>
+          <p className="text-sm text-gray-600 mt-1">P&L • Commissions • Tax Filing • Export</p>
         </div>
         <button onClick={() => financeApi.exportCsv(range.from, range.to)}
           className="px-4 py-2.5 bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06] rounded-lg font-semibold flex items-center gap-2">
@@ -55,7 +55,7 @@ export default function FinancePage() {
           return (
             <button key={t.id} onClick={() => setTab(t.id as Tab)}
               className={clsx("px-4 py-2.5 text-sm font-semibold flex items-center gap-2 border-b-2 transition",
-                tab === t.id ? "border-[#C9A227] text-[#C9A227]" : "border-transparent text-gray-500 hover:text-gray-700")}>
+                tab === t.id ? "border-[#C9A227] text-[#C9A227]" : "border-transparent text-gray-600 hover:text-gray-700")}>
               <Icon size={16} /> {t.label}
             </button>
           );
@@ -65,36 +65,36 @@ export default function FinancePage() {
       {tab === "overview" && (
         <>
           <div className="flex gap-2 items-center bg-white p-3 rounded-xl border border-gray-200">
-            <Calendar size={14} className="text-gray-400" />
+            <Calendar size={14} className="text-gray-500" />
             <input type="date" value={range.from} onChange={(e) => setRange({ ...range, from: e.target.value })}
               className="px-2 py-1.5 border border-gray-200 rounded-lg text-sm" />
-            <span className="text-gray-400">→</span>
+            <span className="text-gray-500">→</span>
             <input type="date" value={range.to} onChange={(e) => setRange({ ...range, to: e.target.value })}
               className="px-2 py-1.5 border border-gray-200 rounded-lg text-sm" />
           </div>
 
-          {loading ? <div className="p-12 text-center text-gray-400"><Loader2 className="animate-spin mx-auto" size={24} /></div> : overview && (
+          {loading ? <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div> : overview && (
             <>
               <div className="grid grid-cols-4 gap-4">
                 <div className="bg-white p-5 rounded-xl border border-gray-200">
                   <div className="flex items-center gap-2 mb-2">
                     <TrendingUp size={16} className="text-blue-600" />
-                    <p className="text-xs text-gray-500 uppercase tracking-wider">Gross</p>
+                    <p className="text-xs text-gray-600 uppercase tracking-wider">Gross</p>
                   </div>
                   <p className="text-2xl font-bold text-gray-900">{fmt(overview.gross)}</p>
-                  <p className="text-xs text-gray-400 mt-1">{overview.total} transactions</p>
+                  <p className="text-xs text-gray-500 mt-1">{overview.total} transactions</p>
                 </div>
                 <div className="bg-white p-5 rounded-xl border border-gray-200">
                   <div className="flex items-center gap-2 mb-2">
                     <Receipt size={16} className="text-[#C9A227]" />
-                    <p className="text-xs text-gray-500 uppercase tracking-wider">Captured</p>
+                    <p className="text-xs text-gray-600 uppercase tracking-wider">Captured</p>
                   </div>
                   <p className="text-2xl font-bold text-[#C9A227]">{fmt(overview.captured)}</p>
                 </div>
                 <div className="bg-white p-5 rounded-xl border border-gray-200">
                   <div className="flex items-center gap-2 mb-2">
                     <TrendingDown size={16} className="text-red-500" />
-                    <p className="text-xs text-gray-500 uppercase tracking-wider">VAT (14%)</p>
+                    <p className="text-xs text-gray-600 uppercase tracking-wider">VAT (14%)</p>
                   </div>
                   <p className="text-2xl font-bold text-red-600">-{fmt(overview.tax)}</p>
                 </div>
@@ -135,7 +135,7 @@ export default function FinancePage() {
                         </div>
                       </div>
                     ))}
-                    {Object.keys(overview.byProvider).length === 0 && <p className="text-sm text-gray-400">No data</p>}
+                    {Object.keys(overview.byProvider).length === 0 && <p className="text-sm text-gray-500">No data</p>}
                   </div>
                 </div>
               </div>
@@ -147,22 +147,22 @@ export default function FinancePage() {
       {tab === "commissions" && (
         <>
           <div className="flex gap-2 items-center bg-white p-3 rounded-xl border border-gray-200">
-            <Calendar size={14} className="text-gray-400" />
+            <Calendar size={14} className="text-gray-500" />
             <input type="date" value={range.from} onChange={(e) => setRange({ ...range, from: e.target.value })}
               className="px-2 py-1.5 border border-gray-200 rounded-lg text-sm" />
-            <span className="text-gray-400">→</span>
+            <span className="text-gray-500">→</span>
             <input type="date" value={range.to} onChange={(e) => setRange({ ...range, to: e.target.value })}
               className="px-2 py-1.5 border border-gray-200 rounded-lg text-sm" />
           </div>
 
-          {loading ? <div className="p-12 text-center text-gray-400"><Loader2 className="animate-spin mx-auto" size={24} /></div> : commissions && (
+          {loading ? <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div> : commissions && (
             <>
               <div className="bg-white p-5 rounded-xl border border-gray-200">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="font-semibold text-gray-900">Grand Total Commissions</h3>
                   <p className="text-2xl font-bold text-[#C9A227]">{fmt(commissions.grandTotal)}</p>
                 </div>
-                <p className="text-sm text-gray-500">{commissions.totalEntries} entries</p>
+                <p className="text-sm text-gray-600">{commissions.totalEntries} entries</p>
               </div>
 
               <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -185,7 +185,7 @@ export default function FinancePage() {
                       </tr>
                     ))}
                     {Object.keys(commissions.byBeneficiary).length === 0 && (
-                      <tr><td colSpan={4} className="p-8 text-center text-gray-400">No commission entries in this period</td></tr>
+                      <tr><td colSpan={4} className="p-8 text-center text-gray-500">No commission entries in this period</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -198,26 +198,26 @@ export default function FinancePage() {
       {tab === "tax" && (
         <>
           <div className="flex gap-2 items-center bg-white p-3 rounded-xl border border-gray-200">
-            <Calendar size={14} className="text-gray-400" />
+            <Calendar size={14} className="text-gray-500" />
             <input type="month" value={month} onChange={(e) => setMonth(e.target.value)}
               className="px-2 py-1.5 border border-gray-200 rounded-lg text-sm" />
           </div>
 
-          {loading ? <div className="p-12 text-center text-gray-400"><Loader2 className="animate-spin mx-auto" size={24} /></div> : taxData && (
+          {loading ? <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div> : taxData && (
             <>
               <div className="grid grid-cols-4 gap-4">
                 <div className="bg-white p-5 rounded-xl border border-gray-200">
-                  <p className="text-xs text-gray-500 uppercase tracking-wider">Gross</p>
+                  <p className="text-xs text-gray-600 uppercase tracking-wider">Gross</p>
                   <p className="text-2xl font-bold text-gray-900 mt-2">{fmt(taxData.gross)}</p>
-                  <p className="text-xs text-gray-400 mt-1">{taxData.transactions} txns</p>
+                  <p className="text-xs text-gray-500 mt-1">{taxData.transactions} txns</p>
                 </div>
                 <div className="bg-white p-5 rounded-xl border border-gray-200">
-                  <p className="text-xs text-gray-500 uppercase tracking-wider">Refunded</p>
+                  <p className="text-xs text-gray-600 uppercase tracking-wider">Refunded</p>
                   <p className="text-2xl font-bold text-red-600 mt-2">-{fmt(taxData.refunded)}</p>
-                  <p className="text-xs text-gray-400 mt-1">{taxData.refunds} refunds</p>
+                  <p className="text-xs text-gray-500 mt-1">{taxData.refunds} refunds</p>
                 </div>
                 <div className="bg-white p-5 rounded-xl border border-gray-200">
-                  <p className="text-xs text-gray-500 uppercase tracking-wider">Taxable</p>
+                  <p className="text-xs text-gray-600 uppercase tracking-wider">Taxable</p>
                   <p className="text-2xl font-bold text-gray-900 mt-2">{fmt(taxData.taxable)}</p>
                 </div>
                 <div className="bg-gradient-to-br from-red-500 to-red-600 p-5 rounded-xl text-white">

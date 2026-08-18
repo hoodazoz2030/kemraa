@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useEffect, useState } from "react";
 import { signingApi, type SigningRequest, partnersApi, type Partner } from "@/lib/api";
 import { FileSignature, Loader2, Send, X, Mail, Copy, Check, Ban, Plus, Eye } from "lucide-react";
@@ -92,7 +92,7 @@ export default function SigningPage() {
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <FileSignature size={24} className="text-[#C9A227]" /> Contract Signing
           </h1>
-          <p className="text-sm text-gray-500 mt-1">DocuSign-style electronic signatures</p>
+          <p className="text-sm text-gray-600 mt-1">DocuSign-style electronic signatures</p>
         </div>
         <button onClick={() => setCreateModal(true)} disabled={!partners.length}
           className="px-4 py-2.5 bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06] rounded-lg font-semibold flex items-center gap-2 disabled:opacity-50">
@@ -110,7 +110,7 @@ export default function SigningPage() {
             { label: "Signed", value: stats.signed, color: "text-green-600" },
           ].map((s) => (
             <div key={s.label} className="bg-white p-4 rounded-xl border border-gray-200">
-              <p className="text-xs text-gray-500 uppercase tracking-wider">{s.label}</p>
+              <p className="text-xs text-gray-600 uppercase tracking-wider">{s.label}</p>
               <p className={clsx("text-2xl font-bold mt-1", s.color)}>{s.value}</p>
             </div>
           ))}
@@ -127,9 +127,9 @@ export default function SigningPage() {
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-400"><Loader2 className="animate-spin mx-auto" size={24} /></div>
+          <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div>
         ) : requests.length === 0 ? (
-          <div className="p-12 text-center text-gray-500">
+          <div className="p-12 text-center text-gray-600">
             <FileSignature size={40} className="mx-auto mb-3 text-gray-300" />
             No signing requests for this partner
           </div>
@@ -148,8 +148,8 @@ export default function SigningPage() {
               {requests.map((r) => (
                 <tr key={r.id} className="hover:bg-gray-50/50">
                   <td className="px-4 py-3">
-                    <p className="font-medium text-gray-900">{r.signerEmail}</p>
-                    <p className="text-xs text-gray-500">{r.signerName ?? "—"} {r.signerTitle ? `(${r.signerTitle})` : ""}</p>
+                    <p className="font-semibold text-gray-900">{r.signerEmail}</p>
+                    <p className="text-xs text-gray-600">{r.signerName ?? "—"} {r.signerTitle ? `(${r.signerTitle})` : ""}</p>
                   </td>
                   <td className="px-4 py-3">
                     <span className={clsx("px-2 py-0.5 rounded text-xs font-semibold", statusColor(r.status))}>

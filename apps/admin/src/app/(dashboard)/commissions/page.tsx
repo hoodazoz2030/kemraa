@@ -105,7 +105,7 @@ export default function CommissionsPage() {
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <Percent size={24} className="text-[#C9A227]" /> Commissions
           </h1>
-          <p className="text-sm text-gray-500 mt-1">{rules.length} active rules • {entries.length} entries</p>
+          <p className="text-sm text-gray-600 mt-1">{rules.length} active rules • {entries.length} entries</p>
         </div>
         <button onClick={openCreateRule}
           className="px-4 py-2.5 bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06] rounded-lg font-semibold hover:brightness-110 flex items-center gap-2">
@@ -116,11 +116,11 @@ export default function CommissionsPage() {
       <div className="grid grid-cols-3 gap-3">
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="flex items-center justify-between mb-2">
-            <Clock size={18} className="text-gray-500" />
+            <Clock size={18} className="text-gray-600" />
             <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-gray-700">PENDING</span>
           </div>
           <p className="text-2xl font-bold text-gray-900">{entries.filter((e) => e.status === "PENDING").length}</p>
-          <p className="text-xs text-gray-500 mt-1">{egp(totalPending)}</p>
+          <p className="text-xs text-gray-600 mt-1">{egp(totalPending)}</p>
         </div>
         <div className="bg-white border border-blue-200 rounded-xl p-4">
           <div className="flex items-center justify-between mb-2">
@@ -128,7 +128,7 @@ export default function CommissionsPage() {
             <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-100 text-blue-700">ELIGIBLE</span>
           </div>
           <p className="text-2xl font-bold text-gray-900">{entries.filter((e) => e.status === "ELIGIBLE").length}</p>
-          <p className="text-xs text-gray-500 mt-1">{egp(totalEligible)}</p>
+          <p className="text-xs text-gray-600 mt-1">{egp(totalEligible)}</p>
         </div>
         <div className="bg-gradient-to-br from-[#C9A227]/10 to-[#E6C55C]/10 border border-[#C9A227]/30 rounded-xl p-4">
           <div className="flex items-center justify-between mb-2">
@@ -143,30 +143,30 @@ export default function CommissionsPage() {
       <div className="flex gap-1 border-b border-gray-200">
         <button onClick={() => setTab("entries")}
           className={clsx("px-4 py-2.5 text-sm font-semibold border-b-2 transition flex items-center gap-1.5",
-            tab === "entries" ? "border-[#C9A227] text-[#8C6D1F]" : "border-transparent text-gray-500")}>
+            tab === "entries" ? "border-[#C9A227] text-[#8C6D1F]" : "border-transparent text-gray-600")}>
           <FileText size={14} /> Entries ({entries.length})
         </button>
         <button onClick={() => setTab("rules")}
           className={clsx("px-4 py-2.5 text-sm font-semibold border-b-2 transition flex items-center gap-1.5",
-            tab === "rules" ? "border-[#C9A227] text-[#8C6D1F]" : "border-transparent text-gray-500")}>
+            tab === "rules" ? "border-[#C9A227] text-[#8C6D1F]" : "border-transparent text-gray-600")}>
           <Percent size={14} /> Rules ({rules.length})
         </button>
       </div>
 
       {loading ? (
-        <div className="p-12 text-center text-gray-400"><Loader2 className="animate-spin mx-auto mb-2" size={24} />Loading...</div>
+        <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto mb-2" size={24} />Loading...</div>
       ) : tab === "entries" ? (
         <>
           <div className="bg-white rounded-xl border border-gray-200 p-4">
             <div className="relative">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
               <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by service or traveler..."
                 className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#C9A227]" />
             </div>
           </div>
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             {filtered.length === 0 ? (
-              <div className="p-12 text-center"><Percent size={40} className="mx-auto mb-3 text-gray-300" /><p className="text-gray-500">No entries</p></div>
+              <div className="p-12 text-center"><Percent size={40} className="mx-auto mb-3 text-gray-300" /><p className="text-gray-600">No entries</p></div>
             ) : (
               <table className="w-full text-sm">
                 <thead className="bg-gray-50 border-b border-gray-200">
@@ -187,7 +187,7 @@ export default function CommissionsPage() {
                     const rate = (e as any).rule?.rateBps ?? 0;
                     return (
                       <tr key={e.id} className="hover:bg-gray-50/50 transition">
-                        <td className="px-4 py-3 font-medium text-gray-900">{e.booking?.service?.title ?? "—"}</td>
+                        <td className="px-4 py-3 font-semibold text-gray-900">{e.booking?.service?.title ?? "—"}</td>
                         <td className="px-4 py-3 text-xs text-gray-600" dir="ltr">{e.booking?.traveler?.email ?? "—"}</td>
                         <td className="px-4 py-3 text-xs text-gray-600">{e.beneficiaryType}</td>
                         <td className="px-4 py-3 font-semibold text-gray-900">{egp(e.amountMinor, e.currency)}</td>
@@ -221,7 +221,7 @@ export default function CommissionsPage() {
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           {rules.length === 0 ? (
-            <div className="p-12 text-center"><Percent size={40} className="mx-auto mb-3 text-gray-300" /><p className="text-gray-500">No rules yet</p></div>
+            <div className="p-12 text-center"><Percent size={40} className="mx-auto mb-3 text-gray-300" /><p className="text-gray-600">No rules yet</p></div>
           ) : (
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
@@ -288,13 +288,13 @@ export default function CommissionsPage() {
                   <input type="number" value={ruleForm.rateBps} onChange={(e) => setRuleForm({ ...ruleForm, rateBps: e.target.value })}
                     placeholder="1000 = 10%"
                     className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227]" />
-                  <p className="text-[10px] text-gray-500 mt-1">{(parseInt(ruleForm.rateBps || "0") / 100).toFixed(2)}%</p>
+                  <p className="text-[10px] text-gray-600 mt-1">{(parseInt(ruleForm.rateBps || "0") / 100).toFixed(2)}%</p>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Fixed Fee (minor)</label>
                   <input type="number" value={ruleForm.fixedMinor} onChange={(e) => setRuleForm({ ...ruleForm, fixedMinor: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227]" />
-                  <p className="text-[10px] text-gray-500 mt-1">{egp(parseInt(ruleForm.fixedMinor || "0"))}</p>
+                  <p className="text-[10px] text-gray-600 mt-1">{egp(parseInt(ruleForm.fixedMinor || "0"))}</p>
                 </div>
               </div>
             </div>

@@ -105,7 +105,7 @@ export default function StaffPage() {
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <Users size={24} className="text-[#C9A227]" /> Staff Management
           </h1>
-          <p className="text-sm text-gray-500 mt-1">{staff.length} staff • Each has a unique access code</p>
+          <p className="text-sm text-gray-600 mt-1">{staff.length} staff • Each has a unique access code</p>
         </div>
         <button onClick={openCreate} className="px-4 py-2.5 bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06] rounded-lg font-semibold hover:brightness-110 flex items-center gap-2">
           <Plus size={18} /> Add Staff
@@ -114,7 +114,7 @@ export default function StaffPage() {
 
       <div className="bg-white rounded-xl border border-gray-200 p-4">
         <div className="relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name, email, or code..."
             className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#C9A227]" />
         </div>
@@ -122,9 +122,9 @@ export default function StaffPage() {
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-400"><Loader2 className="animate-spin mx-auto mb-2" size={24} />Loading...</div>
+          <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto mb-2" size={24} />Loading...</div>
         ) : filtered.length === 0 ? (
-          <div className="p-12 text-center"><Users size={40} className="mx-auto mb-3 text-gray-300" /><p className="text-gray-500">No staff members</p></div>
+          <div className="p-12 text-center"><Users size={40} className="mx-auto mb-3 text-gray-300" /><p className="text-gray-600">No staff members</p></div>
         ) : (
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
@@ -149,11 +149,11 @@ export default function StaffPage() {
                           {s.profile?.firstName?.[0] ?? s.email?.[0]?.toUpperCase() ?? "?"}
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900">
+                          <p className="font-semibold text-gray-900">
                             {[s.profile?.firstName, s.profile?.lastName].filter(Boolean).join(" ") || "—"}
                             {isOwner && <span className="ml-2 px-1.5 py-0.5 text-[9px] font-bold bg-[#C9A227] text-[#0C0A06] rounded">OWNER</span>}
                           </p>
-                          <p className="text-xs text-gray-500" dir="ltr">{s.email ?? "—"}</p>
+                          <p className="text-xs text-gray-600" dir="ltr">{s.email ?? "—"}</p>
                         </div>
                       </div>
                     </td>
@@ -164,14 +164,14 @@ export default function StaffPage() {
                           {revealed[s.id] ? s.accessCode : s.accessCode?.slice(0, 3) + "••••"}
                         </code>
                         <button onClick={() => setRevealed((r) => ({ ...r, [s.id]: !r[s.id] }))}
-                          className="p-1 text-gray-400 hover:text-[#8C6D1F]" title={revealed[s.id] ? "Hide" : "Reveal"}>
+                          className="p-1 text-gray-500 hover:text-[#8C6D1F]" title={revealed[s.id] ? "Hide" : "Reveal"}>
                           {revealed[s.id] ? <EyeOff size={14} /> : <Eye size={14} />}
                         </button>
                         {refreshing === s.id ? (
-                          <Loader2 size={14} className="animate-spin text-gray-400" />
+                          <Loader2 size={14} className="animate-spin text-gray-500" />
                         ) : (
                           !isOwner && (
-                            <button onClick={() => handleRegen(s)} className="p-1 text-gray-400 hover:text-blue-600" title="Regenerate code">
+                            <button onClick={() => handleRegen(s)} className="p-1 text-gray-500 hover:text-blue-600" title="Regenerate code">
                               <RefreshCw size={14} />
                             </button>
                           )

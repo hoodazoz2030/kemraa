@@ -57,7 +57,7 @@ export default function SearchBar() {
   return (
     <div ref={container} className="relative w-96">
       <div className="relative">
-        <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+        <Search className="absolute left-3 top-2.5 text-gray-500" size={18} />
         <input
           type="text"
           value={q}
@@ -70,7 +70,7 @@ export default function SearchBar() {
         {q && (
           <button
             onClick={() => { setQ(""); setResults(null); }}
-            className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-600"
           >
             <X size={18} />
           </button>
@@ -80,7 +80,7 @@ export default function SearchBar() {
       {open && results && (
         <div className="absolute top-full mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-xl z-50 max-h-[500px] overflow-y-auto">
           {totalHits === 0 ? (
-            <div className="p-4 text-center text-gray-500 text-sm">
+            <div className="p-4 text-center text-gray-600 text-sm">
               No results for "{q}"
             </div>
           ) : (
@@ -106,19 +106,19 @@ export default function SearchBar() {
                       onClick={() => goTo(r.collection === "services" ? `/services?id=${hit.document.id}` : `/trips?id=${hit.document.id}`)}
                       className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b last:border-b-0 transition"
                     >
-                      <div className="font-medium text-gray-900 text-sm">
+                      <div className="font-semibold text-gray-900 text-sm">
                         {hit.document.name || hit.document.title || hit.document.id.slice(0, 8)}
                       </div>
                       {hit.document.type && (
-                        <div className="text-xs text-gray-500 mt-0.5">Type: {hit.document.type}</div>
+                        <div className="text-xs text-gray-600 mt-0.5">Type: {hit.document.type}</div>
                       )}
                       {hit.document.destinationCountry && (
-                        <div className="text-xs text-gray-500 mt-0.5">→ {hit.document.destinationCountry}</div>
+                        <div className="text-xs text-gray-600 mt-0.5">→ {hit.document.destinationCountry}</div>
                       )}
                     </button>
                   ))}
                   {r.found > 4 && (
-                    <div className="px-4 py-2 text-xs text-gray-500 text-center bg-gray-50">
+                    <div className="px-4 py-2 text-xs text-gray-600 text-center bg-gray-50">
                       + {r.found - 4} more
                     </div>
                   )}

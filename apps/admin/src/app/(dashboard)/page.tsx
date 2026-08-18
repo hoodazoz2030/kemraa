@@ -76,7 +76,7 @@ export default function HomePage() {
           <div key={label} className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-lg hover:border-[#C9A227]/40 transition">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-gray-500">{label}</p>
+                <p className="text-sm text-gray-600">{label}</p>
                 <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
               </div>
               <div className={`w-11 h-11 rounded-lg bg-gradient-to-br ${grad} flex items-center justify-center shadow-md`}>
@@ -127,11 +127,11 @@ export default function HomePage() {
             </Link>
           </div>
           {payments.length === 0 ? (
-            <p className="text-sm text-gray-400 text-center py-10">No payments yet</p>
+            <p className="text-sm text-gray-500 text-center py-10">No payments yet</p>
           ) : (
             <table className="min-w-full">
               <thead>
-                <tr className="text-left text-xs text-gray-500 uppercase border-b">
+                <tr className="text-left text-xs text-gray-600 uppercase border-b">
                   <th className="pb-2 pr-4">Provider</th>
                   <th className="pb-2 pr-4">Amount</th>
                   <th className="pb-2 pr-4">Status</th>
@@ -141,14 +141,14 @@ export default function HomePage() {
               <tbody className="divide-y">
                 {payments.slice(0, 5).map((p) => (
                   <tr key={p.id} className="hover:bg-gray-50">
-                    <td className="py-3 pr-4 text-sm font-medium text-gray-900">{p.provider}</td>
+                    <td className="py-3 pr-4 text-sm font-semibold text-gray-900">{p.provider}</td>
                     <td className="py-3 pr-4 text-sm font-semibold text-gray-900">{egp(p.amountMinor)}</td>
                     <td className="py-3 pr-4">
                       <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColor(p.status)}`}>
                         {p.status}
                       </span>
                     </td>
-                    <td className="py-3 text-xs text-gray-500">{new Date(p.createdAt).toLocaleDateString()}</td>
+                    <td className="py-3 text-xs text-gray-600">{new Date(p.createdAt).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>

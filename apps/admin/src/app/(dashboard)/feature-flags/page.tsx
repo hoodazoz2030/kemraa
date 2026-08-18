@@ -53,14 +53,14 @@ export default function FeatureFlagsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Feature Flags</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-600 mt-1">
             Control feature availability across the platform
           </p>
         </div>
         <div className="flex items-center gap-3">
           <div className="text-sm text-gray-600">
             <span className="font-semibold text-green-600">{enabledCount}</span>
-            <span className="text-gray-400"> / {totalCount}</span> enabled
+            <span className="text-gray-500"> / {totalCount}</span> enabled
           </div>
           <button
             onClick={load}
@@ -86,9 +86,9 @@ export default function FeatureFlagsPage() {
       {/* Flags table */}
       <div className="bg-white rounded-lg border overflow-hidden">
         {loading && flags.length === 0 ? (
-          <div className="p-12 text-center text-gray-500">Loading flags...</div>
+          <div className="p-12 text-center text-gray-600">Loading flags...</div>
         ) : filtered.length === 0 ? (
-          <div className="p-12 text-center text-gray-500">
+          <div className="p-12 text-center text-gray-600">
             {search ? "No flags match your search" : "No feature flags found"}
           </div>
         ) : (
@@ -105,7 +105,7 @@ export default function FeatureFlagsPage() {
               {filtered.map((flag) => (
                 <tr key={flag.key} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
-                    <div className="font-mono text-sm font-medium text-gray-900">{flag.key}</div>
+                    <div className="font-mono text-sm font-semibold text-gray-900">{flag.key}</div>
                   </td>
                   <td className="px-6 py-4">
                     <span
@@ -116,7 +116,7 @@ export default function FeatureFlagsPage() {
                       {flag.enabled ? "Enabled" : "Disabled"}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-600">
                     {new Date(flag.updatedAt).toLocaleString()}
                   </td>
                   <td className="px-6 py-4 text-right">

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -121,13 +121,13 @@ export default function PortalDashboardPage() {
             </div>
             <div>
               <h1 className="text-sm font-bold text-gray-900">{me.organization.displayName}</h1>
-              <p className="text-xs text-gray-500">Partner Portal</p>
+              <p className="text-xs text-gray-600">Partner Portal</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right">
-              <p className="text-xs font-medium text-gray-900">{user.email}</p>
-              <p className="text-xs text-gray-500">{user.organizationName}</p>
+              <p className="text-xs font-semibold text-gray-900">{user.email}</p>
+              <p className="text-xs text-gray-600">{user.organizationName}</p>
             </div>
             <button onClick={logout} className="p-2 rounded-lg hover:bg-gray-100 text-gray-600" title="Logout">
               <LogOut size={18} />
@@ -144,7 +144,7 @@ export default function PortalDashboardPage() {
               <div className={`w-8 h-8 rounded-lg ${s.bg} flex items-center justify-center mb-2`}>
                 <s.icon size={16} className={s.color} />
               </div>
-              <p className="text-xs text-gray-500 uppercase tracking-wider">{s.label}</p>
+              <p className="text-xs text-gray-600 uppercase tracking-wider">{s.label}</p>
               <p className="text-lg font-bold text-gray-900 mt-0.5">{s.value}</p>
             </div>
           ))}
@@ -160,7 +160,7 @@ export default function PortalDashboardPage() {
                 className={`px-4 py-3 text-sm font-medium capitalize transition ${
                   tab === t
                     ? "text-[#C9A227] border-b-2 border-[#C9A227]"
-                    : "text-gray-500 hover:text-gray-700"
+                    : "text-gray-600 hover:text-gray-700"
                 }`}
               >
                 {t}
@@ -194,7 +194,7 @@ export default function PortalDashboardPage() {
             )}
 
             {tab === "bookings" && (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-gray-600">
                 <Package size={40} className="mx-auto mb-3 text-gray-300" />
                 <p>Bookings will appear here once customers book your services.</p>
                 <p className="text-xs mt-1">{dash.totalBookings} total bookings</p>
@@ -204,7 +204,7 @@ export default function PortalDashboardPage() {
             {tab === "drivers" && (
               <div>
                 {me.drivers.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className="text-center py-8 text-gray-600">
                     <Users size={40} className="mx-auto mb-3 text-gray-300" />
                     <p>No drivers assigned yet.</p>
                   </div>
@@ -213,8 +213,8 @@ export default function PortalDashboardPage() {
                     {me.drivers.map((d: any) => (
                       <div key={d.userId} className="p-3 border border-gray-200 rounded-lg flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{d.user?.email}</p>
-                          <p className="text-xs text-gray-500">Status: {d.status} · Rating: {d.rating ?? "N/A"}</p>
+                          <p className="text-sm font-semibold text-gray-900">{d.user?.email}</p>
+                          <p className="text-xs text-gray-600">Status: {d.status} · Rating: {d.rating ?? "N/A"}</p>
                         </div>
                         <span className={`text-xs px-2 py-0.5 rounded ${d.status === "ONLINE" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"}`}>
                           {d.status}
@@ -229,7 +229,7 @@ export default function PortalDashboardPage() {
             {tab === "vehicles" && (
               <div>
                 {me.vehicles.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className="text-center py-8 text-gray-600">
                     <Car size={40} className="mx-auto mb-3 text-gray-300" />
                     <p>No vehicles in fleet.</p>
                   </div>
@@ -238,7 +238,7 @@ export default function PortalDashboardPage() {
                     {me.vehicles.map((v: any) => (
                       <div key={v.id} className="p-3 border border-gray-200 rounded-lg">
                         <p className="font-semibold text-sm">{v.make} {v.model}</p>
-                        <p className="text-xs text-gray-500">{v.year} · {v.plateRef} · Capacity: {v.capacity}</p>
+                        <p className="text-xs text-gray-600">{v.year} · {v.plateRef} · Capacity: {v.capacity}</p>
                       </div>
                     ))}
                   </div>
@@ -284,14 +284,14 @@ export default function PortalDashboardPage() {
                 <div>
                   <h3 className="font-semibold text-sm mb-2">Your Documents ({me.documents.length})</h3>
                   {me.documents.length === 0 ? (
-                    <p className="text-sm text-gray-500 py-4">No documents uploaded yet.</p>
+                    <p className="text-sm text-gray-600 py-4">No documents uploaded yet.</p>
                   ) : (
                     <div className="space-y-2">
                       {me.documents.map((d: any) => (
                         <div key={d.id} className="p-3 border border-gray-200 rounded-lg flex items-center justify-between">
                           <div>
                             <p className="text-sm font-medium">{d.fileName}</p>
-                            <p className="text-xs text-gray-500">{d.docType} · {new Date(d.createdAt).toLocaleDateString()}</p>
+                            <p className="text-xs text-gray-600">{d.docType} · {new Date(d.createdAt).toLocaleDateString()}</p>
                           </div>
                           <span className="text-xs px-2 py-0.5 rounded bg-yellow-100 text-yellow-700">{d.status}</span>
                         </div>

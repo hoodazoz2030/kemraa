@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useEffect, useState } from "react";
 import { driversApi, type Driver } from "@/lib/api";
 import { Car, Loader2, Check, X, Search, UserCheck, UserX, ShieldCheck } from "lucide-react";
@@ -40,25 +40,25 @@ export default function DriversPage() {
         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
           <Car size={24} className="text-[#C9A227]" /> Drivers Management
         </h1>
-        <p className="text-sm text-gray-500 mt-1">{total} drivers • Verification & status control</p>
+        <p className="text-sm text-gray-600 mt-1">{total} drivers • Verification & status control</p>
       </div>
 
       {stats && (
         <div className="grid grid-cols-4 gap-3">
           <div className="bg-white p-4 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 uppercase tracking-wider">Total</p>
+            <p className="text-xs text-gray-600 uppercase tracking-wider">Total</p>
             <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
           </div>
           <div className="bg-white p-4 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 uppercase tracking-wider">Verified</p>
+            <p className="text-xs text-gray-600 uppercase tracking-wider">Verified</p>
             <p className="text-2xl font-bold text-green-600">{stats.verified}</p>
           </div>
           <div className="bg-white p-4 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 uppercase tracking-wider">Online Now</p>
+            <p className="text-xs text-gray-600 uppercase tracking-wider">Online Now</p>
             <p className="text-2xl font-bold text-blue-600">{stats.online}</p>
           </div>
           <div className="bg-white p-4 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 uppercase tracking-wider">Pending</p>
+            <p className="text-xs text-gray-600 uppercase tracking-wider">Pending</p>
             <p className="text-2xl font-bold text-orange-600">{stats.pending}</p>
           </div>
         </div>
@@ -66,7 +66,7 @@ export default function DriversPage() {
 
       <div className="bg-white rounded-xl border border-gray-200 p-4 grid grid-cols-4 gap-3">
         <div className="col-span-2 relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
           <input value={filter.search}
             onChange={(e) => { setFilter({ ...filter, search: e.target.value }); setTimeout(load, 300); }}
             placeholder="Search by name or email..."
@@ -84,9 +84,9 @@ export default function DriversPage() {
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-400"><Loader2 className="animate-spin mx-auto" size={24} /></div>
+          <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div>
         ) : drivers.length === 0 ? (
-          <div className="p-12 text-center text-gray-500"><Car size={40} className="mx-auto mb-3 text-gray-300" />No drivers</div>
+          <div className="p-12 text-center text-gray-600"><Car size={40} className="mx-auto mb-3 text-gray-300" />No drivers</div>
         ) : (
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b text-left text-xs uppercase tracking-wider text-gray-600">
@@ -112,8 +112,8 @@ export default function DriversPage() {
                           {name[0]?.toUpperCase() ?? "?"}
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900">{name}</p>
-                          <p className="text-xs text-gray-500" dir="ltr">{d.user?.email ?? d.user?.phone}</p>
+                          <p className="font-semibold text-gray-900">{name}</p>
+                          <p className="text-xs text-gray-600" dir="ltr">{d.user?.email ?? d.user?.phone}</p>
                         </div>
                       </div>
                     </td>
@@ -123,7 +123,7 @@ export default function DriversPage() {
                         {isVerified ? <ShieldCheck size={12} /> : <UserX size={12} />}
                         {d.verificationStatus}
                       </span>
-                      {d.licenseRef && <p className="text-[10px] text-gray-500 mt-0.5" dir="ltr">#{d.licenseRef}</p>}
+                      {d.licenseRef && <p className="text-[10px] text-gray-600 mt-0.5" dir="ltr">#{d.licenseRef}</p>}
                     </td>
                     <td className="px-4 py-3">
                       <span className={clsx("inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold",

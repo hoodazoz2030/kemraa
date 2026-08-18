@@ -92,7 +92,7 @@ export default function RefundsPage() {
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <ArrowRightLeft size={24} className="text-[#C9A227]" /> Refunds
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-600 mt-1">
             {refunds.length} refunds • {egp(totalAmount)} total
           </p>
         </div>
@@ -116,7 +116,7 @@ export default function RefundsPage() {
                 <span className={clsx("px-2 py-0.5 rounded text-[10px] font-semibold", st.bg, st.color)}>{s}</span>
               </div>
               <p className="text-2xl font-bold text-gray-900">{count}</p>
-              <p className="text-xs text-gray-500 mt-1">{egp(amt)}</p>
+              <p className="text-xs text-gray-600 mt-1">{egp(amt)}</p>
             </div>
           );
         })}
@@ -124,7 +124,7 @@ export default function RefundsPage() {
 
       <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-[240px]">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
           <input value={search} onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by email, service, or reason..."
             className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#C9A227]" />
@@ -141,9 +141,9 @@ export default function RefundsPage() {
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-400"><Loader2 className="animate-spin mx-auto mb-2" size={24} />Loading...</div>
+          <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto mb-2" size={24} />Loading...</div>
         ) : filtered.length === 0 ? (
-          <div className="p-12 text-center"><ArrowRightLeft size={40} className="mx-auto mb-3 text-gray-300" /><p className="text-gray-500">No refunds</p></div>
+          <div className="p-12 text-center"><ArrowRightLeft size={40} className="mx-auto mb-3 text-gray-300" /><p className="text-gray-600">No refunds</p></div>
         ) : (
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
@@ -164,13 +164,13 @@ export default function RefundsPage() {
                 return (
                   <tr key={r.id} className="hover:bg-gray-50/50 transition">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-gray-900 truncate">{r.payment?.booking?.service?.title ?? "—"}</p>
-                      <p className="text-xs text-gray-500">{r.payment?.provider} • {r.payment?.methodType}</p>
+                      <p className="font-semibold text-gray-900 truncate">{r.payment?.booking?.service?.title ?? "—"}</p>
+                      <p className="text-xs text-gray-600">{r.payment?.provider} • {r.payment?.methodType}</p>
                     </td>
                     <td className="px-4 py-3 text-xs text-gray-600" dir="ltr">{r.payment?.booking?.traveler?.email ?? "—"}</td>
                     <td className="px-4 py-3">
                       <p className="font-semibold text-gray-900">{egp(r.amountMinor, r.payment?.currency)}</p>
-                      <p className="text-xs text-gray-500">of {egp(r.payment?.amountMinor ?? 0, r.payment?.currency)}</p>
+                      <p className="text-xs text-gray-600">of {egp(r.payment?.amountMinor ?? 0, r.payment?.currency)}</p>
                     </td>
                     <td className="px-4 py-3 text-xs text-gray-600 max-w-xs truncate">{r.reason ?? "—"}</td>
                     <td className="px-4 py-3">

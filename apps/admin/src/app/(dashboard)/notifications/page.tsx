@@ -89,7 +89,7 @@ export default function NotificationsPage() {
               </span>
             )}
           </h1>
-          <p className="text-sm text-gray-500 mt-1">Stay updated on your kingdom's activity</p>
+          <p className="text-sm text-gray-600 mt-1">Stay updated on your kingdom's activity</p>
         </div>
         <button
           onClick={handleMarkAll}
@@ -122,7 +122,7 @@ export default function NotificationsPage() {
       {/* List */}
       <div className="bg-white rounded-xl border border-gray-200 divide-y">
         {loading ? (
-          <div className="p-12 text-center text-gray-400">
+          <div className="p-12 text-center text-gray-500">
             <Loader2 className="animate-spin mx-auto mb-2" size={24} />
             Loading...
           </div>
@@ -131,8 +131,8 @@ export default function NotificationsPage() {
             <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-[#C9A227]/20 to-[#E6C55C]/20 flex items-center justify-center mb-3">
               <AlertCircle size={28} className="text-[#C9A227]" />
             </div>
-            <p className="text-gray-500">No notifications{filter === "__unread" ? " unread" : ""}</p>
-            <p className="text-sm text-gray-400 mt-1">You're all caught up!</p>
+            <p className="text-gray-600">No notifications{filter === "__unread" ? " unread" : ""}</p>
+            <p className="text-sm text-gray-500 mt-1">You're all caught up!</p>
           </div>
         ) : (
           items.map((n) => {
@@ -159,7 +159,7 @@ export default function NotificationsPage() {
                     <h3 className={clsx("text-sm", isUnread ? "font-semibold text-gray-900" : "font-medium text-gray-700")}>
                       {n.title}
                     </h3>
-                    <span className="text-xs text-gray-400 whitespace-nowrap shrink-0">
+                    <span className="text-xs text-gray-500 whitespace-nowrap shrink-0">
                       {timeAgo(n.sentAt)}
                     </span>
                   </div>

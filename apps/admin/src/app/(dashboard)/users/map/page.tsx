@@ -90,10 +90,10 @@ export default function UsersMapPage() {
             <MapPin size={24} className="text-[#C9A227]" />
             Live Location Map
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-600 mt-1">
             Real-time user tracking across Egypt
             {lastUpdate && (
-              <span className="ml-2 text-xs text-gray-400">
+              <span className="ml-2 text-xs text-gray-500">
                 Last update: {lastUpdate.toLocaleTimeString()}
               </span>
             )}
@@ -128,21 +128,21 @@ export default function UsersMapPage() {
           <div className="px-4 py-2 bg-white border border-gray-200 rounded-lg flex items-center gap-2">
             <Users size={16} className="text-[#C9A227]" />
             <div>
-              <p className="text-xs text-gray-500">Active</p>
+              <p className="text-xs text-gray-600">Active</p>
               <p className="text-lg font-bold text-gray-900 leading-none">{activeCount}</p>
             </div>
           </div>
           <div className="px-4 py-2 bg-white border border-gray-200 rounded-lg flex items-center gap-2">
             <Zap size={16} className="text-green-600" />
             <div>
-              <p className="text-xs text-gray-500">High accuracy</p>
+              <p className="text-xs text-gray-600">High accuracy</p>
               <p className="text-lg font-bold text-gray-900 leading-none">{highAccuracy}</p>
             </div>
           </div>
           <div className="px-4 py-2 bg-white border border-gray-200 rounded-lg flex items-center gap-2">
             <Battery size={16} className={avgBattery > 50 ? "text-green-600" : avgBattery > 20 ? "text-amber-600" : "text-red-600"} />
             <div>
-              <p className="text-xs text-gray-500">Avg battery</p>
+              <p className="text-xs text-gray-600">Avg battery</p>
               <p className="text-lg font-bold text-gray-900 leading-none">
                 {locations.length > 0 ? Math.round(avgBattery) + "%" : "—"}
               </p>
@@ -151,7 +151,7 @@ export default function UsersMapPage() {
         </div>
 
         <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg p-1">
-          <Clock size={14} className="text-gray-400 ml-2" />
+          <Clock size={14} className="text-gray-500 ml-2" />
           {timeWindows.map((tw) => (
             <button
               key={tw.key}
@@ -183,8 +183,8 @@ export default function UsersMapPage() {
             <div className="absolute inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm pointer-events-none">
               <div className="text-center">
                 <MapIcon size={48} className="mx-auto mb-3 text-gray-300" />
-                <p className="text-gray-500 font-medium">No active users in the last {activeMinutes} minutes</p>
-                <p className="text-xs text-gray-400 mt-1">Try increasing the time window</p>
+                <p className="text-gray-600 font-medium">No active users in the last {activeMinutes} minutes</p>
+                <p className="text-xs text-gray-500 mt-1">Try increasing the time window</p>
               </div>
             </div>
           )}
@@ -199,13 +199,13 @@ export default function UsersMapPage() {
                 </div>
                 <div className="min-w-0">
                   <h3 className="font-bold text-gray-900 truncate">{selected.displayName}</h3>
-                  <p className="text-xs text-gray-500 truncate" dir="ltr">
+                  <p className="text-xs text-gray-600 truncate" dir="ltr">
                     {selected.user.email ?? selected.user.phone ?? "—"}
                   </p>
                 </div>
               </div>
               <button onClick={() => { setSelected(null); setUserDetail(null); }} className="p-1 rounded hover:bg-gray-100">
-                <X size={16} className="text-gray-500" />
+                <X size={16} className="text-gray-600" />
               </button>
             </div>
 
@@ -251,17 +251,17 @@ export default function UsersMapPage() {
                   <div className="p-2 bg-gray-50 rounded-lg text-center">
                     <MapIcon size={14} className="mx-auto text-[#C9A227]" />
                     <p className="text-sm font-bold text-gray-900 mt-1">{userDetail._count.trips}</p>
-                    <p className="text-[9px] text-gray-500 uppercase">Trips</p>
+                    <p className="text-[9px] text-gray-600 uppercase">Trips</p>
                   </div>
                   <div className="p-2 bg-gray-50 rounded-lg text-center">
                     <Calendar size={14} className="mx-auto text-[#C9A227]" />
                     <p className="text-sm font-bold text-gray-900 mt-1">{userDetail._count.bookings}</p>
-                    <p className="text-[9px] text-gray-500 uppercase">Bookings</p>
+                    <p className="text-[9px] text-gray-600 uppercase">Bookings</p>
                   </div>
                   <div className="p-2 bg-gray-50 rounded-lg text-center">
                     <Radio size={14} className="mx-auto text-[#C9A227]" />
                     <p className="text-sm font-bold text-gray-900 mt-1">{userDetail._count.tickets}</p>
-                    <p className="text-[9px] text-gray-500 uppercase">Tickets</p>
+                    <p className="text-[9px] text-gray-600 uppercase">Tickets</p>
                   </div>
                 </div>
 
@@ -281,13 +281,13 @@ export default function UsersMapPage() {
 
                 {userDetail.trips.length > 0 && (
                   <div>
-                    <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Recent Trips</p>
+                    <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-2">Recent Trips</p>
                     <div className="space-y-1.5">
                       {userDetail.trips.slice(0, 3).map((t: any) => (
                         <div key={t.id} className="p-2 bg-gray-50 rounded-lg flex items-center justify-between gap-2">
                           <div className="min-w-0 flex-1">
-                            <p className="text-xs font-medium text-gray-900 truncate">{t.title}</p>
-                            <p className="text-[10px] text-gray-500">{t.destinationCountry}</p>
+                            <p className="text-xs font-semibold text-gray-900 truncate">{t.title}</p>
+                            <p className="text-[10px] text-gray-600">{t.destinationCountry}</p>
                           </div>
                           <span className={clsx(
                             "px-1.5 py-0.5 rounded text-[9px] font-semibold shrink-0",
