@@ -104,6 +104,7 @@ model Partner {
   vehicles        Vehicle[]
   settlements     Settlement[]
   signingRequests SigningRequest[]
+  documents     PartnerDocument[]
 
   @@map("partners")
 }
@@ -675,6 +676,7 @@ enum Role {
   CONTENT
   ADMIN
   SUPER_ADMIN
+  PARTNER_USER
 }
 // ============ Support Replies ============
 model SupportReply {
@@ -800,4 +802,25 @@ model SigningRequest {
   @@index([signingToken])
   @@index([expiresAt])
   @@map("signing_requests")
+}
+
+model PartnerDocument {
+  id          String   @id @db.Uuid @default(uuid())
+  partnerId   String   @map("partner_id") @db.Uuid
+  docType     String   @map("doc_type")
+  fileName    String   @map("file_name")
+  fileUrl     String   @map("file_url")
+  fileSize    Int      @map("file_size")
+  mimeType    String?  @map("mime_type")
+  uploadedBy  String?  @map("uploaded_by") @db.Uuid
+  status      String   @default("PENDING")
+  notes       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  partner     Partner  @relation(fields: [partnerId], references: [organizationId], onDelete: Cascade)
+
+  @@index([partnerId])
+  @@index([status])
+  @@map("partner_documents")
 }
