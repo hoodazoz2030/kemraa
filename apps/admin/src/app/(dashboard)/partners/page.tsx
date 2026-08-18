@@ -248,7 +248,7 @@ export default function PartnersPage() {
       </div>
 
       {modal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 ">
           <div className="bg-white rounded-2xl w-full max-w-lg p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold">{editing ? "Edit Partner" : "New Partner"}</h3>
@@ -303,45 +303,93 @@ export default function PartnersPage() {
         </div>
       )}
 
-      {detail && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-2xl p-6 max-h-[80vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold">{detail.displayName}</h3>
-              <button onClick={() => setDetail(null)} className="p-1.5 rounded hover:bg-gray-100"><X size={16} /></button>
+            {detail && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60">
+          <div className="bg-white rounded-2xl w-full max-w-2xl p-6 max-h-[85vh] overflow-y-auto shadow-2xl">
+            <div className="flex items-center justify-between mb-5 pb-4 border-b-2 border-[#C9A227]">
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">{detail.displayName}</h3>
+                <p className="text-sm text-gray-600 mt-0.5">Partner Details</p>
+              </div>
+              <button onClick={() => setDetail(null)} className="p-2 rounded-lg hover:bg-gray-200 text-gray-800" title="Close">
+                <X size={20} />
+              </button>
             </div>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div><span className="text-gray-600">Legal:</span> <span className="font-medium">{detail.legalName}</span></div>
-              <div><span className="text-gray-600">Type:</span> <span className="font-medium">{detail.type}</span></div>
-              <div><span className="text-gray-600">Status:</span> <span className="font-medium">{detail.status}</span></div>
-              <div><span className="text-gray-600">Country:</span> <span className="font-medium">{detail.country}</span></div>
-              <div className="col-span-2">
-                <span className="text-gray-600">Settlement:</span>
-                <pre className="mt-1 p-2 bg-gray-50 rounded text-xs font-mono overflow-x-auto">
-                  {JSON.stringify(detail.partner?.settlementTerms ?? {}, null, 2)}
-                </pre>
+
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Legal Name</p>
+                <p className="font-semibold text-gray-900">{detail.legalName}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Type</p>
+                <p className="font-semibold text-gray-900">{detail.type}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Status</p>
+                <p className="font-semibold text-gray-900">{detail.status}</p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Country</p>
+                <p className="font-semibold text-gray-900">{detail.country}</p>
+              </div>
+              <div className="col-span-2 bg-gray-50 rounded-lg p-3 border border-gray-200">
+                <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Settlement Terms</p>
+                <pre className="text-xs font-mono text-gray-900 overflow-x-auto">{JSON.stringify(detail.partner?.settlementTerms ?? {}, null, 2)}</pre>
               </div>
             </div>
+
             <div className="grid grid-cols-3 gap-3 mt-4">
-              <div className="p-3 bg-blue-50 rounded-lg">
-                <p className="text-xs text-blue-600 uppercase">Vehicles</p>
+              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-xs font-bold text-blue-700 uppercase">Vehicles</p>
                 <p className="text-2xl font-bold text-blue-900">{detail.partner?.vehicles?.length ?? 0}</p>
               </div>
-              <div className="p-3 bg-green-50 rounded-lg">
-                <p className="text-xs text-green-600 uppercase">Drivers</p>
+              <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                <p className="text-xs font-bold text-green-700 uppercase">Drivers</p>
                 <p className="text-2xl font-bold text-green-900">{detail.partner?.drivers?.length ?? 0}</p>
               </div>
-              <div className="p-3 bg-purple-50 rounded-lg">
-                <p className="text-xs text-purple-600 uppercase">Services</p>
+              <div className="p-3 bg-purple-50 rounded-lg border border-purple-200">
+                <p className="text-xs font-bold text-purple-700 uppercase">Services</p>
                 <p className="text-2xl font-bold text-purple-900">{detail.partner?.services?.length ?? 0}</p>
               </div>
+            </div>
+
+            <div className="flex flex-col gap-2 mt-6">
+              <button
+                onClick={() => downloadContract(detail)}
+                disabled={downloading}
+                className="w-full py-2.5 bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06] rounded-lg font-bold flex items-center justify-center gap-2 disabled:opacity-50 hover:shadow-lg transition"
+              >
+                {downloading ? <Loader2 size={16} className="animate-spin" /> : <FileDown size={16} />}
+                Download Contract PDF
+              </button>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => { setDetail(null); openEdit(detail); }}
+                  className="py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold flex items-center justify-center gap-2"
+                >
+                  Edit Partner
+                </button>
+                <button
+                  onClick={() => { setDetail(null); openPortalModal(detail); }}
+                  className="py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold flex items-center justify-center gap-2"
+                >
+                  Create Portal User
+                </button>
+              </div>
+              <button
+                onClick={() => setDetail(null)}
+                className="w-full py-2.5 bg-gray-800 hover:bg-gray-900 text-white rounded-lg font-bold flex items-center justify-center gap-2 mt-1"
+              >
+                Back to List
+              </button>
             </div>
           </div>
         </div>
       )}
 
       {portalModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 ">
           <div className="bg-white rounded-2xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold flex items-center gap-2">
