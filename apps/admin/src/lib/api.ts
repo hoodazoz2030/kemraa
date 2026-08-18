@@ -579,3 +579,25 @@ export const portalApi = {
   createPartnerUser: (data: { partnerId: string; email: string; password: string; firstName?: string; lastName?: string }) =>
     api.post("/partner-portal/admin/create-user", data).then((r: any) => r.data),
 };
+
+// ============ Ops (Content / THOTH / Queues) ============
+export const opsApi = {
+  // Content
+  listContent: (params?: any) => {
+    const q = new URLSearchParams();
+    Object.entries(params ?? {}).forEach(([k, v]: any) => v !== undefined && v !== "" && q.set(k, String(v)));
+    return api.get(`/admin/content?${q.toString()}`).then((r: any) => r.data);
+  },
+  createContent: (data: any) => api.post("/admin/content", data).then((r: any) => r.data),
+  updateContent: (id: string, data: any) => api.patch(`/admin/content/${id}`, data).then((r: any) => r.data),
+  deleteContent: (id: string) => api.delete(`/admin/content/${id}`).then((r: any) => r.data),
+  // THOTH
+  listTools: () => api.get("/admin/thoth/tools").then((r: any) => r.data),
+  updateTool: (id: string, data: any) => api.patch(`/admin/thoth/tools/${id}`, data).then((r: any) => r.data),
+  listActions: (status?: string) => api.get(`/admin/thoth/actions${status ? `?status=${status}` : ""}`).then((r: any) => r.data),
+  simulateAction: (toolName: string, payload?: any) => api.post("/admin/thoth/actions/simulate", { toolName, payload }).then((r: any) => r.data),
+  approveAction: (id: string, note?: string) => api.post(`/admin/thoth/actions/${id}/approve`, { note }).then((r: any) => r.data),
+  rejectAction: (id: string, note?: string) => api.post(`/admin/thoth/actions/${id}/reject`, { note }).then((r: any) => r.data),
+  // Queues
+  queues: () => api.get("/admin/queues").then((r: any) => r.data),
+};

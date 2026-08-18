@@ -824,3 +824,50 @@ model PartnerDocument {
   @@index([status])
   @@map("partner_documents")
 }
+model ContentItem {
+  id          String    @id @db.Uuid @default(uuid())
+  type        String    @map("item_type")
+  title       String
+  body        String
+  locale      String    @default("ar-EG")
+  status      String    @default("DRAFT")
+  publishedAt DateTime? @map("published_at")
+  createdBy   String?   @map("created_by") @db.Uuid
+  metadata    Json      @default("{}") @map("metadata_json")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([type, status])
+  @@map("content_items")
+}
+
+model ThothTool {
+  id               String   @id @db.Uuid @default(uuid())
+  name             String   @unique
+  description      String?
+  riskLevel        String   @default("LOW") @map("risk_level")
+  enabled          Boolean  @default(true)
+  requiresApproval Boolean  @default(false) @map("requires_approval")
+  schemaJson       Json     @default("{}") @map("schema_json")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("thoth_tools")
+}
+
+model ThothAction {
+  id           String    @id @db.Uuid @default(uuid())
+  toolName     String    @map("tool_name")
+  riskLevel    String    @map("risk_level")
+  status       String    @default("PENDING")
+  payload      Json      @default("{}") @map("payload_json")
+  requestedBy  String?   @map("requested_by") @db.Uuid
+  decidedBy    String?   @map("decided_by") @db.Uuid
+  decidedAt    DateTime? @map("decided_at")
+  decisionNote String?   @map("decision_note")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@map("thoth_actions")
+}
