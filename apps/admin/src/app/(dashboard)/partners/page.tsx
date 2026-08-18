@@ -137,53 +137,53 @@ export default function PartnersPage() {
 
       {stats && (
         <div className="grid grid-cols-4 gap-3">
-          <div className="bg-white p-4 rounded-xl border border-gray-200">
+          <div className="bg-white p-4 rounded-xl border border-gray-300">
             <p className="text-xs text-gray-600 uppercase tracking-wider">Total</p>
             <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
           </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200">
+          <div className="bg-white p-4 rounded-xl border border-gray-300">
             <p className="text-xs text-gray-600 uppercase tracking-wider">Active</p>
             <p className="text-2xl font-bold text-green-600">{stats.active}</p>
           </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200">
+          <div className="bg-white p-4 rounded-xl border border-gray-300">
             <p className="text-xs text-gray-600 uppercase tracking-wider">Draft</p>
             <p className="text-2xl font-bold text-orange-600">{stats.draft}</p>
           </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200">
+          <div className="bg-white p-4 rounded-xl border border-gray-300">
             <p className="text-xs text-gray-600 uppercase tracking-wider">Pending</p>
             <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
           </div>
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-gray-200 p-4 grid grid-cols-4 gap-3">
+      <div className="bg-white rounded-xl border border-gray-300 p-4 grid grid-cols-4 gap-3">
         <div className="col-span-2 relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700" />
           <input value={filter.search}
             onChange={(e) => { setFilter({ ...filter, search: e.target.value }); setTimeout(load, 300); }}
             placeholder="Search by name..."
-            className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm" />
+            className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm" />
         </div>
         <select value={filter.type} onChange={(e) => { setFilter({ ...filter, type: e.target.value }); load(); }}
-          className="px-3 py-2 border border-gray-200 rounded-lg bg-white text-sm">
+          className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm">
           <option value="">All Types</option>
           {TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
         </select>
         <select value={filter.status} onChange={(e) => { setFilter({ ...filter, status: e.target.value }); load(); }}
-          className="px-3 py-2 border border-gray-200 rounded-lg bg-white text-sm">
+          className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm">
           <option value="">All Status</option>
           <option>DRAFT</option><option>ACTIVE</option><option>EXPIRED</option><option>TERMINATED</option>
         </select>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-300 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div>
+          <div className="p-12 text-center text-gray-700"><Loader2 className="animate-spin mx-auto" size={24} /></div>
         ) : partners.length === 0 ? (
           <div className="p-12 text-center text-gray-600"><Building2 size={40} className="mx-auto mb-3 text-gray-300" />No partners yet</div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b text-left text-xs uppercase tracking-wider text-gray-600">
+            <thead className="bg-gray-100 border-b text-left text-xs uppercase tracking-wider text-gray-800">
               <tr>
                 <th className="px-4 py-3">Partner</th>
                 <th className="px-4 py-3">Type</th>
@@ -197,7 +197,7 @@ export default function PartnersPage() {
               {partners.map((p) => {
                 const isActive = p.status === "ACTIVE";
                 return (
-                  <tr key={p.id} className="hover:bg-gray-50/50">
+                  <tr key={p.id} className="hover:bg-gray-100/50">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#C9A227] to-[#E6C55C] text-[#0C0A06] font-bold text-sm flex items-center justify-center">
@@ -317,23 +317,23 @@ export default function PartnersPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+              <div className="bg-gray-100 rounded-lg p-3 border border-gray-300">
                 <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Legal Name</p>
                 <p className="font-semibold text-gray-900">{detail.legalName}</p>
               </div>
-              <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+              <div className="bg-gray-100 rounded-lg p-3 border border-gray-300">
                 <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Type</p>
                 <p className="font-semibold text-gray-900">{detail.type}</p>
               </div>
-              <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+              <div className="bg-gray-100 rounded-lg p-3 border border-gray-300">
                 <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Status</p>
                 <p className="font-semibold text-gray-900">{detail.status}</p>
               </div>
-              <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+              <div className="bg-gray-100 rounded-lg p-3 border border-gray-300">
                 <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Country</p>
                 <p className="font-semibold text-gray-900">{detail.country}</p>
               </div>
-              <div className="col-span-2 bg-gray-50 rounded-lg p-3 border border-gray-200">
+              <div className="col-span-2 bg-gray-100 rounded-lg p-3 border border-gray-300">
                 <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Settlement Terms</p>
                 <pre className="text-xs font-mono text-gray-900 overflow-x-auto">{JSON.stringify(detail.partner?.settlementTerms ?? {}, null, 2)}</pre>
               </div>
@@ -405,7 +405,7 @@ export default function PartnersPage() {
                   <p className="text-sm font-semibold text-green-800 mb-2">Portal User Created!</p>
                   <p className="text-xs text-green-700">Share these credentials with the partner:</p>
                 </div>
-                <div className="space-y-2 p-3 bg-gray-50 rounded-lg">
+                <div className="space-y-2 p-3 bg-gray-100 rounded-lg">
                   <div className="flex justify-between items-center">
                     <span className="text-xs text-gray-600">Email:</span>
                     <code className="text-sm font-mono">{portalResult.user.email}</code>
@@ -445,7 +445,7 @@ export default function PartnersPage() {
                   <label className="block text-xs font-semibold text-gray-700 uppercase mb-1.5">Password *</label>
                   <input type="text" required value={portalForm.password} onChange={(e) => setPortalForm({ ...portalForm, password: e.target.value })}
                     className="w-full px-3 py-2 border rounded-lg font-mono" />
-                  <p className="text-xs text-gray-500 mt-1">Min 8 chars. Partner can use email+password or access code.</p>
+                  <p className="text-xs text-gray-700 mt-1">Min 8 chars. Partner can use email+password or access code.</p>
                 </div>
                 {portalError && (
                   <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{portalError}</div>

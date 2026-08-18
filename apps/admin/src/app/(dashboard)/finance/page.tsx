@@ -45,7 +45,7 @@ export default function FinancePage() {
         </button>
       </div>
 
-      <div className="flex gap-1 border-b border-gray-200">
+      <div className="flex gap-1 border-b border-gray-300">
         {[
           { id: "overview", label: "Overview", icon: PieChart },
           { id: "commissions", label: "Commissions", icon: Receipt },
@@ -64,34 +64,34 @@ export default function FinancePage() {
 
       {tab === "overview" && (
         <>
-          <div className="flex gap-2 items-center bg-white p-3 rounded-xl border border-gray-200">
-            <Calendar size={14} className="text-gray-500" />
+          <div className="flex gap-2 items-center bg-white p-3 rounded-xl border border-gray-300">
+            <Calendar size={14} className="text-gray-700" />
             <input type="date" value={range.from} onChange={(e) => setRange({ ...range, from: e.target.value })}
-              className="px-2 py-1.5 border border-gray-200 rounded-lg text-sm" />
-            <span className="text-gray-500">→</span>
+              className="px-2 py-1.5 border border-gray-300 rounded-lg text-sm" />
+            <span className="text-gray-700">→</span>
             <input type="date" value={range.to} onChange={(e) => setRange({ ...range, to: e.target.value })}
-              className="px-2 py-1.5 border border-gray-200 rounded-lg text-sm" />
+              className="px-2 py-1.5 border border-gray-300 rounded-lg text-sm" />
           </div>
 
-          {loading ? <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div> : overview && (
+          {loading ? <div className="p-12 text-center text-gray-700"><Loader2 className="animate-spin mx-auto" size={24} /></div> : overview && (
             <>
               <div className="grid grid-cols-4 gap-4">
-                <div className="bg-white p-5 rounded-xl border border-gray-200">
+                <div className="bg-white p-5 rounded-xl border border-gray-300">
                   <div className="flex items-center gap-2 mb-2">
                     <TrendingUp size={16} className="text-blue-600" />
                     <p className="text-xs text-gray-600 uppercase tracking-wider">Gross</p>
                   </div>
                   <p className="text-2xl font-bold text-gray-900">{fmt(overview.gross)}</p>
-                  <p className="text-xs text-gray-500 mt-1">{overview.total} transactions</p>
+                  <p className="text-xs text-gray-700 mt-1">{overview.total} transactions</p>
                 </div>
-                <div className="bg-white p-5 rounded-xl border border-gray-200">
+                <div className="bg-white p-5 rounded-xl border border-gray-300">
                   <div className="flex items-center gap-2 mb-2">
                     <Receipt size={16} className="text-[#C9A227]" />
                     <p className="text-xs text-gray-600 uppercase tracking-wider">Captured</p>
                   </div>
                   <p className="text-2xl font-bold text-[#C9A227]">{fmt(overview.captured)}</p>
                 </div>
-                <div className="bg-white p-5 rounded-xl border border-gray-200">
+                <div className="bg-white p-5 rounded-xl border border-gray-300">
                   <div className="flex items-center gap-2 mb-2">
                     <TrendingDown size={16} className="text-red-500" />
                     <p className="text-xs text-gray-600 uppercase tracking-wider">VAT (14%)</p>
@@ -109,7 +109,7 @@ export default function FinancePage() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white p-5 rounded-xl border border-gray-200">
+                <div className="bg-white p-5 rounded-xl border border-gray-300">
                   <h3 className="font-semibold text-gray-900 mb-3">By Status</h3>
                   <div className="space-y-2">
                     {Object.entries(overview.byStatus).map(([status, v]: any) => (
@@ -123,7 +123,7 @@ export default function FinancePage() {
                     ))}
                   </div>
                 </div>
-                <div className="bg-white p-5 rounded-xl border border-gray-200">
+                <div className="bg-white p-5 rounded-xl border border-gray-300">
                   <h3 className="font-semibold text-gray-900 mb-3">By Provider</h3>
                   <div className="space-y-2">
                     {Object.entries(overview.byProvider).map(([prov, v]: any) => (
@@ -135,7 +135,7 @@ export default function FinancePage() {
                         </div>
                       </div>
                     ))}
-                    {Object.keys(overview.byProvider).length === 0 && <p className="text-sm text-gray-500">No data</p>}
+                    {Object.keys(overview.byProvider).length === 0 && <p className="text-sm text-gray-700">No data</p>}
                   </div>
                 </div>
               </div>
@@ -146,18 +146,18 @@ export default function FinancePage() {
 
       {tab === "commissions" && (
         <>
-          <div className="flex gap-2 items-center bg-white p-3 rounded-xl border border-gray-200">
-            <Calendar size={14} className="text-gray-500" />
+          <div className="flex gap-2 items-center bg-white p-3 rounded-xl border border-gray-300">
+            <Calendar size={14} className="text-gray-700" />
             <input type="date" value={range.from} onChange={(e) => setRange({ ...range, from: e.target.value })}
-              className="px-2 py-1.5 border border-gray-200 rounded-lg text-sm" />
-            <span className="text-gray-500">→</span>
+              className="px-2 py-1.5 border border-gray-300 rounded-lg text-sm" />
+            <span className="text-gray-700">→</span>
             <input type="date" value={range.to} onChange={(e) => setRange({ ...range, to: e.target.value })}
-              className="px-2 py-1.5 border border-gray-200 rounded-lg text-sm" />
+              className="px-2 py-1.5 border border-gray-300 rounded-lg text-sm" />
           </div>
 
-          {loading ? <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div> : commissions && (
+          {loading ? <div className="p-12 text-center text-gray-700"><Loader2 className="animate-spin mx-auto" size={24} /></div> : commissions && (
             <>
-              <div className="bg-white p-5 rounded-xl border border-gray-200">
+              <div className="bg-white p-5 rounded-xl border border-gray-300">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="font-semibold text-gray-900">Grand Total Commissions</h3>
                   <p className="text-2xl font-bold text-[#C9A227]">{fmt(commissions.grandTotal)}</p>
@@ -165,9 +165,9 @@ export default function FinancePage() {
                 <p className="text-sm text-gray-600">{commissions.totalEntries} entries</p>
               </div>
 
-              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div className="bg-white rounded-xl border border-gray-300 overflow-hidden">
                 <table className="w-full text-sm">
-                  <thead className="bg-gray-50 border-b text-left text-xs uppercase tracking-wider text-gray-600">
+                  <thead className="bg-gray-100 border-b text-left text-xs uppercase tracking-wider text-gray-800">
                     <tr>
                       <th className="px-4 py-3">Beneficiary</th>
                       <th className="px-4 py-3">Type</th>
@@ -177,7 +177,7 @@ export default function FinancePage() {
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {Object.entries(commissions.byBeneficiary).map(([key, v]: any) => (
-                      <tr key={key} className="hover:bg-gray-50/50">
+                      <tr key={key} className="hover:bg-gray-100/50">
                         <td className="px-4 py-3 font-mono text-xs text-gray-600" dir="ltr">{v.beneficiaryId.slice(0, 8)}...</td>
                         <td className="px-4 py-3"><span className="px-2 py-0.5 text-xs rounded bg-gray-100 text-gray-700">{v.beneficiaryType}</span></td>
                         <td className="px-4 py-3 font-mono">{v.count}</td>
@@ -185,7 +185,7 @@ export default function FinancePage() {
                       </tr>
                     ))}
                     {Object.keys(commissions.byBeneficiary).length === 0 && (
-                      <tr><td colSpan={4} className="p-8 text-center text-gray-500">No commission entries in this period</td></tr>
+                      <tr><td colSpan={4} className="p-8 text-center text-gray-700">No commission entries in this period</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -197,26 +197,26 @@ export default function FinancePage() {
 
       {tab === "tax" && (
         <>
-          <div className="flex gap-2 items-center bg-white p-3 rounded-xl border border-gray-200">
-            <Calendar size={14} className="text-gray-500" />
+          <div className="flex gap-2 items-center bg-white p-3 rounded-xl border border-gray-300">
+            <Calendar size={14} className="text-gray-700" />
             <input type="month" value={month} onChange={(e) => setMonth(e.target.value)}
-              className="px-2 py-1.5 border border-gray-200 rounded-lg text-sm" />
+              className="px-2 py-1.5 border border-gray-300 rounded-lg text-sm" />
           </div>
 
-          {loading ? <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div> : taxData && (
+          {loading ? <div className="p-12 text-center text-gray-700"><Loader2 className="animate-spin mx-auto" size={24} /></div> : taxData && (
             <>
               <div className="grid grid-cols-4 gap-4">
-                <div className="bg-white p-5 rounded-xl border border-gray-200">
+                <div className="bg-white p-5 rounded-xl border border-gray-300">
                   <p className="text-xs text-gray-600 uppercase tracking-wider">Gross</p>
                   <p className="text-2xl font-bold text-gray-900 mt-2">{fmt(taxData.gross)}</p>
-                  <p className="text-xs text-gray-500 mt-1">{taxData.transactions} txns</p>
+                  <p className="text-xs text-gray-700 mt-1">{taxData.transactions} txns</p>
                 </div>
-                <div className="bg-white p-5 rounded-xl border border-gray-200">
+                <div className="bg-white p-5 rounded-xl border border-gray-300">
                   <p className="text-xs text-gray-600 uppercase tracking-wider">Refunded</p>
                   <p className="text-2xl font-bold text-red-600 mt-2">-{fmt(taxData.refunded)}</p>
-                  <p className="text-xs text-gray-500 mt-1">{taxData.refunds} refunds</p>
+                  <p className="text-xs text-gray-700 mt-1">{taxData.refunds} refunds</p>
                 </div>
-                <div className="bg-white p-5 rounded-xl border border-gray-200">
+                <div className="bg-white p-5 rounded-xl border border-gray-300">
                   <p className="text-xs text-gray-600 uppercase tracking-wider">Taxable</p>
                   <p className="text-2xl font-bold text-gray-900 mt-2">{fmt(taxData.taxable)}</p>
                 </div>

@@ -48,14 +48,14 @@ export default function PromosPage() {
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-300 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div>
+          <div className="p-12 text-center text-gray-700"><Loader2 className="animate-spin mx-auto" size={24} /></div>
         ) : promos.length === 0 ? (
           <div className="p-12 text-center text-gray-600"><TicketPercent size={40} className="mx-auto mb-3 text-gray-300" />No promo codes yet</div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b text-left text-xs uppercase tracking-wider text-gray-600">
+            <thead className="bg-gray-100 border-b text-left text-xs uppercase tracking-wider text-gray-800">
               <tr>
                 <th className="px-4 py-3">Code</th><th className="px-4 py-3">Discount</th>
                 <th className="px-4 py-3">Usage</th><th className="px-4 py-3">Status</th>
@@ -64,7 +64,7 @@ export default function PromosPage() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {promos.map((p) => (
-                <tr key={p.id} className={clsx("hover:bg-gray-50/50", !p.active && "opacity-50")}>
+                <tr key={p.id} className={clsx("hover:bg-gray-100/50", !p.active && "opacity-50")}>
                   <td className="px-4 py-3"><code className="px-2 py-1 bg-[#C9A227]/10 text-[#8C6D1F] rounded font-bold">{p.code}</code></td>
                   <td className="px-4 py-3 font-medium">{p.kind === "PERCENT" ? `${(p.valueBps / 100).toFixed(0)}%` : `EGP ${(p.amountMinor / 100).toFixed(0)}`}</td>
                   <td className="px-4 py-3 text-gray-600">{p.usedCount}{p.maxUses > 0 ? ` / ${p.maxUses}` : " / ∞"}</td>

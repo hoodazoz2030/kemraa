@@ -60,12 +60,12 @@ export default function FeatureFlagsPage() {
         <div className="flex items-center gap-3">
           <div className="text-sm text-gray-600">
             <span className="font-semibold text-green-600">{enabledCount}</span>
-            <span className="text-gray-500"> / {totalCount}</span> enabled
+            <span className="text-gray-700"> / {totalCount}</span> enabled
           </div>
           <button
             onClick={load}
             disabled={loading}
-            className="px-4 py-2 text-sm border rounded hover:bg-gray-50 disabled:opacity-50"
+            className="px-4 py-2 text-sm border rounded hover:bg-gray-100 disabled:opacity-50"
           >
             {loading ? "Loading..." : "Refresh"}
           </button>
@@ -93,7 +93,7 @@ export default function FeatureFlagsPage() {
           </div>
         ) : (
           <table className="min-w-full divide-y">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-100">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Flag Key</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
@@ -103,7 +103,7 @@ export default function FeatureFlagsPage() {
             </thead>
             <tbody className="divide-y">
               {filtered.map((flag) => (
-                <tr key={flag.key} className="hover:bg-gray-50">
+                <tr key={flag.key} className="hover:bg-gray-100">
                   <td className="px-6 py-4">
                     <div className="font-mono text-sm font-semibold text-gray-900">{flag.key}</div>
                   </td>

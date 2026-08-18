@@ -131,14 +131,14 @@ export default function TripsPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-wrap gap-3">
+      <div className="bg-white rounded-xl border border-gray-300 p-4 flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-[240px]">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by title or destination..."
-            className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#C9A227]"
+            className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#C9A227]"
           />
         </div>
         <div className="flex flex-wrap gap-1">
@@ -150,7 +150,7 @@ export default function TripsPage() {
                 "px-3 py-1.5 rounded-full text-xs font-medium transition border",
                 statusFilter === s
                   ? "bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06] border-[#C9A227]"
-                  : "bg-white text-gray-600 border-gray-200 hover:border-[#C9A227]/50"
+                  : "bg-white text-gray-600 border-gray-300 hover:border-[#C9A227]/50"
               )}
             >
               {s || "All"} {s && counts[s] ? `(${counts[s]})` : ""}
@@ -160,9 +160,9 @@ export default function TripsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-300 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-500">
+          <div className="p-12 text-center text-gray-700">
             <Loader2 className="animate-spin mx-auto mb-2" size={24} />
             Loading...
           </div>
@@ -173,8 +173,8 @@ export default function TripsPage() {
           </div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr className="text-left text-xs uppercase tracking-wider text-gray-600">
+            <thead className="bg-gray-100 border-b border-gray-300">
+              <tr className="text-left text-xs uppercase tracking-wider text-gray-800">
                 <th className="px-4 py-3 font-semibold">Trip</th>
                 <th className="px-4 py-3 font-semibold">Destination</th>
                 <th className="px-4 py-3 font-semibold">Dates</th>
@@ -188,7 +188,7 @@ export default function TripsPage() {
                 const st = statusMeta[t.status] ?? statusMeta.DRAFT;
                 const StIcon = st.icon;
                 return (
-                  <tr key={t.id} className="hover:bg-gray-50/50 transition">
+                  <tr key={t.id} className="hover:bg-gray-100/50 transition">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#C9A227]/20 to-[#E6C55C]/20 flex items-center justify-center shrink-0">
@@ -210,7 +210,7 @@ export default function TripsPage() {
                     </td>
                     <td className="px-4 py-3 text-gray-600 text-xs">
                       <div>{fmtDate(t.startAt)}</div>
-                      <div className="text-gray-500">→ {fmtDate(t.endAt)}</div>
+                      <div className="text-gray-700">→ {fmtDate(t.endAt)}</div>
                     </td>
                     <td className="px-4 py-3 font-semibold text-gray-900">
                       {egp(t.budgetMinor, t.currency)}
@@ -274,7 +274,7 @@ export default function TripsPage() {
       {selected && !showReject && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-2xl text-gray-900 w-full max-w-2xl max-h-[90vh] flex flex-col border border-[#C9A227]/30 shadow-[0_0_60px_rgba(201,162,39,0.25)]">
-            <div className="flex items-center justify-between p-5 border-b border-gray-200 bg-gradient-to-r from-[#F0D78C]/20 to-transparent">
+            <div className="flex items-center justify-between p-5 border-b border-gray-300 bg-gradient-to-r from-[#F0D78C]/20 to-transparent">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <Map size={20} className="text-[#C9A227]" />
                 {selected.title}
@@ -287,21 +287,21 @@ export default function TripsPage() {
             <div className="flex-1 overflow-y-auto p-5 space-y-5">
               {/* Meta */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-gray-50 rounded-lg">
+                <div className="p-3 bg-gray-100 rounded-lg">
                   <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Status</p>
                   <span className={clsx("inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold mt-1", statusMeta[selected.status]?.bg, statusMeta[selected.status]?.color)}>
                     {selected.status}
                   </span>
                 </div>
-                <div className="p-3 bg-gray-50 rounded-lg">
+                <div className="p-3 bg-gray-100 rounded-lg">
                   <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Destination</p>
                   <p className="font-semibold text-gray-900 mt-1">{selected.destinationCountry}</p>
                 </div>
-                <div className="p-3 bg-gray-50 rounded-lg">
+                <div className="p-3 bg-gray-100 rounded-lg">
                   <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider flex items-center gap-1"><Calendar size={10} /> Start</p>
                   <p className="font-semibold text-gray-900 mt-1">{fmtDate(selected.startAt)}</p>
                 </div>
-                <div className="p-3 bg-gray-50 rounded-lg">
+                <div className="p-3 bg-gray-100 rounded-lg">
                   <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider flex items-center gap-1"><Calendar size={10} /> End</p>
                   <p className="font-semibold text-gray-900 mt-1">{fmtDate(selected.endAt)}</p>
                 </div>
@@ -321,14 +321,14 @@ export default function TripsPage() {
                   </span>
                 </h3>
                 {(!selected.itineraries || selected.itineraries.length === 0) ? (
-                  <p className="text-sm text-gray-500 italic">No itinerary planned yet</p>
+                  <p className="text-sm text-gray-700 italic">No itinerary planned yet</p>
                 ) : (
                   <div className="space-y-3">
                     {selected.itineraries.map((it) => (
-                      <div key={it.id} className="border border-gray-200 rounded-lg overflow-hidden">
-                        <div className="px-3 py-2 bg-gray-50 text-xs font-semibold text-gray-600 flex items-center justify-between">
+                      <div key={it.id} className="border border-gray-300 rounded-lg overflow-hidden">
+                        <div className="px-3 py-2 bg-gray-100 text-xs font-semibold text-gray-600 flex items-center justify-between">
                           <span>Version {it.version}</span>
-                          <span className="text-gray-500">{new Date(it.createdAt).toLocaleString()}</span>
+                          <span className="text-gray-700">{new Date(it.createdAt).toLocaleString()}</span>
                         </div>
                         <div className="divide-y divide-gray-100">
                           {it.items.map((item, idx) => (
@@ -355,7 +355,7 @@ export default function TripsPage() {
             </div>
 
             {selected.status === "READY" && (
-              <div className="flex gap-2 p-4 border-t border-gray-200 bg-gray-50">
+              <div className="flex gap-2 p-4 border-t border-gray-300 bg-gray-100">
                 <button
                   onClick={() => setShowReject(true)}
                   className="flex-1 px-4 py-2 border border-red-300 text-red-700 rounded-lg font-semibold hover:bg-red-50 flex items-center justify-center gap-2"
@@ -378,7 +378,7 @@ export default function TripsPage() {
       {showReject && selected && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="bg-white rounded-2xl text-gray-900 w-full max-w-md border border-red-200 shadow-xl">
-            <div className="p-5 border-b border-gray-200 flex items-center justify-between">
+            <div className="p-5 border-b border-gray-300 flex items-center justify-between">
               <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <XCircle size={20} className="text-red-600" />
                 Reject Trip
@@ -396,11 +396,11 @@ export default function TripsPage() {
                 onChange={(e) => setRejectReason(e.target.value)}
                 placeholder="Reason for rejection (min 5 chars)..."
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-200 resize-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-200 resize-none"
                 autoFocus
               />
             </div>
-            <div className="flex gap-2 p-4 border-t border-gray-200 bg-gray-50">
+            <div className="flex gap-2 p-4 border-t border-gray-300 bg-gray-100">
               <button
                 onClick={() => setShowReject(false)}
                 disabled={actionLoading}

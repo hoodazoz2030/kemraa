@@ -114,7 +114,7 @@ export default function CommissionsPage() {
       </div>
 
       <div className="grid grid-cols-3 gap-3">
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
+        <div className="bg-white border border-gray-300 rounded-xl p-4">
           <div className="flex items-center justify-between mb-2">
             <Clock size={18} className="text-gray-600" />
             <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-gray-700">PENDING</span>
@@ -140,7 +140,7 @@ export default function CommissionsPage() {
         </div>
       </div>
 
-      <div className="flex gap-1 border-b border-gray-200">
+      <div className="flex gap-1 border-b border-gray-300">
         <button onClick={() => setTab("entries")}
           className={clsx("px-4 py-2.5 text-sm font-semibold border-b-2 transition flex items-center gap-1.5",
             tab === "entries" ? "border-[#C9A227] text-[#8C6D1F]" : "border-transparent text-gray-600")}>
@@ -154,23 +154,23 @@ export default function CommissionsPage() {
       </div>
 
       {loading ? (
-        <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto mb-2" size={24} />Loading...</div>
+        <div className="p-12 text-center text-gray-700"><Loader2 className="animate-spin mx-auto mb-2" size={24} />Loading...</div>
       ) : tab === "entries" ? (
         <>
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="bg-white rounded-xl border border-gray-300 p-4">
             <div className="relative">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700" />
               <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by service or traveler..."
-                className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#C9A227]" />
+                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#C9A227]" />
             </div>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-xl border border-gray-300 overflow-hidden">
             {filtered.length === 0 ? (
               <div className="p-12 text-center"><Percent size={40} className="mx-auto mb-3 text-gray-300" /><p className="text-gray-600">No entries</p></div>
             ) : (
               <table className="w-full text-sm">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr className="text-left text-xs uppercase tracking-wider text-gray-600">
+                <thead className="bg-gray-100 border-b border-gray-300">
+                  <tr className="text-left text-xs uppercase tracking-wider text-gray-800">
                     <th className="px-4 py-3 font-semibold">Service</th>
                     <th className="px-4 py-3 font-semibold">Traveler</th>
                     <th className="px-4 py-3 font-semibold">Beneficiary</th>
@@ -186,7 +186,7 @@ export default function CommissionsPage() {
                     const st = statusMeta[e.status] ?? statusMeta.PENDING;
                     const rate = (e as any).rule?.rateBps ?? 0;
                     return (
-                      <tr key={e.id} className="hover:bg-gray-50/50 transition">
+                      <tr key={e.id} className="hover:bg-gray-100/50 transition">
                         <td className="px-4 py-3 font-semibold text-gray-900">{e.booking?.service?.title ?? "—"}</td>
                         <td className="px-4 py-3 text-xs text-gray-600" dir="ltr">{e.booking?.traveler?.email ?? "—"}</td>
                         <td className="px-4 py-3 text-xs text-gray-600">{e.beneficiaryType}</td>
@@ -219,13 +219,13 @@ export default function CommissionsPage() {
           </div>
         </>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-gray-300 overflow-hidden">
           {rules.length === 0 ? (
             <div className="p-12 text-center"><Percent size={40} className="mx-auto mb-3 text-gray-300" /><p className="text-gray-600">No rules yet</p></div>
           ) : (
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr className="text-left text-xs uppercase tracking-wider text-gray-600">
+              <thead className="bg-gray-100 border-b border-gray-300">
+                <tr className="text-left text-xs uppercase tracking-wider text-gray-800">
                   <th className="px-4 py-3 font-semibold">Scope</th>
                   <th className="px-4 py-3 font-semibold">Basis</th>
                   <th className="px-4 py-3 font-semibold">Rate</th>
@@ -236,7 +236,7 @@ export default function CommissionsPage() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {rules.map((r) => (
-                  <tr key={r.id} className="hover:bg-gray-50/50 transition">
+                  <tr key={r.id} className="hover:bg-gray-100/50 transition">
                     <td className="px-4 py-3">
                       <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs font-semibold">{r.scopeType}</span>
                     </td>
@@ -268,7 +268,7 @@ export default function CommissionsPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Scope</label>
-                  <select value={ruleForm.scopeType} onChange={(e) => setRuleForm({ ...ruleForm, scopeType: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg bg-white">
+                  <select value={ruleForm.scopeType} onChange={(e) => setRuleForm({ ...ruleForm, scopeType: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white">
                     <option value="GLOBAL">GLOBAL</option>
                     <option value="SERVICE">SERVICE</option>
                     <option value="PARTNER">PARTNER</option>
@@ -276,7 +276,7 @@ export default function CommissionsPage() {
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Basis</label>
-                  <select value={ruleForm.basis} onChange={(e) => setRuleForm({ ...ruleForm, basis: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg bg-white">
+                  <select value={ruleForm.basis} onChange={(e) => setRuleForm({ ...ruleForm, basis: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white">
                     <option value="NET">NET</option>
                     <option value="GROSS">GROSS</option>
                   </select>
@@ -287,18 +287,18 @@ export default function CommissionsPage() {
                   <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Rate (bps)</label>
                   <input type="number" value={ruleForm.rateBps} onChange={(e) => setRuleForm({ ...ruleForm, rateBps: e.target.value })}
                     placeholder="1000 = 10%"
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227]" />
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A227]" />
                   <p className="text-[10px] text-gray-600 mt-1">{(parseInt(ruleForm.rateBps || "0") / 100).toFixed(2)}%</p>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Fixed Fee (minor)</label>
                   <input type="number" value={ruleForm.fixedMinor} onChange={(e) => setRuleForm({ ...ruleForm, fixedMinor: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227]" />
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A227]" />
                   <p className="text-[10px] text-gray-600 mt-1">{egp(parseInt(ruleForm.fixedMinor || "0"))}</p>
                 </div>
               </div>
             </div>
-            <div className="flex gap-2 p-4 border-t bg-gray-50">
+            <div className="flex gap-2 p-4 border-t bg-gray-100">
               <button onClick={() => setRuleModal(false)} className="flex-1 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium">Cancel</button>
               <button onClick={handleSaveRule} disabled={saving}
                 className="flex-1 px-4 py-2 bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06] rounded-lg font-semibold disabled:opacity-50 flex items-center justify-center gap-2">

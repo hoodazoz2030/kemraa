@@ -85,7 +85,7 @@ export default function PaymentsPage() {
         <button
           onClick={load}
           disabled={loading}
-          className="px-4 py-2 text-sm border rounded-lg hover:bg-gray-50 disabled:opacity-50 flex items-center gap-2"
+          className="px-4 py-2 text-sm border rounded-lg hover:bg-gray-100 disabled:opacity-50 flex items-center gap-2"
         >
           <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
           Refresh
@@ -117,7 +117,7 @@ export default function PaymentsPage() {
         <div className="flex-1 min-w-[200px]">
           <label className="text-xs font-medium text-gray-700 mb-1 block">Search</label>
           <div className="relative">
-            <Search className="absolute left-3 top-2.5 text-gray-500" size={16} />
+            <Search className="absolute left-3 top-2.5 text-gray-700" size={16} />
             <input
               type="text"
               value={search}
@@ -155,7 +155,7 @@ export default function PaymentsPage() {
         </div>
         <button
           onClick={() => { setSearch(""); setProviderFilter("all"); setStatusFilter("all"); }}
-          className="px-4 py-2 text-sm border rounded hover:bg-gray-50"
+          className="px-4 py-2 text-sm border rounded hover:bg-gray-100"
         >
           Clear
         </button>
@@ -169,7 +169,7 @@ export default function PaymentsPage() {
           <div className="p-12 text-center text-gray-600">No payments found</div>
         ) : (
           <table className="min-w-full divide-y">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-100">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Provider</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Reference</th>
@@ -182,7 +182,7 @@ export default function PaymentsPage() {
             </thead>
             <tbody className="divide-y">
               {filtered.map((p) => (
-                <tr key={p.id} className="hover:bg-gray-50">
+                <tr key={p.id} className="hover:bg-gray-100">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       {p.provider === "STRIPE" ? (

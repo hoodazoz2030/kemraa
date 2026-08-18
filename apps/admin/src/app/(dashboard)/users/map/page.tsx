@@ -93,7 +93,7 @@ export default function UsersMapPage() {
           <p className="text-sm text-gray-600 mt-1">
             Real-time user tracking across Egypt
             {lastUpdate && (
-              <span className="ml-2 text-xs text-gray-500">
+              <span className="ml-2 text-xs text-gray-700">
                 Last update: {lastUpdate.toLocaleTimeString()}
               </span>
             )}
@@ -106,7 +106,7 @@ export default function UsersMapPage() {
               "px-3 py-2 text-xs rounded-lg font-semibold flex items-center gap-1.5 border transition",
               autoRefresh
                 ? "bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06] border-[#C9A227]"
-                : "bg-white text-gray-600 border-gray-200 hover:border-[#C9A227]/50"
+                : "bg-white text-gray-600 border-gray-300 hover:border-[#C9A227]/50"
             )}
           >
             <Activity size={13} className={autoRefresh ? "animate-pulse" : ""} />
@@ -115,7 +115,7 @@ export default function UsersMapPage() {
           <button
             onClick={() => load(true)}
             disabled={refreshing}
-            className="px-3 py-2 text-xs bg-white border border-gray-200 rounded-lg font-semibold text-gray-700 hover:border-[#C9A227]/50 flex items-center gap-1.5"
+            className="px-3 py-2 text-xs bg-white border border-gray-300 rounded-lg font-semibold text-gray-700 hover:border-[#C9A227]/50 flex items-center gap-1.5"
           >
             <RefreshCw size={13} className={refreshing ? "animate-spin" : ""} />
             Refresh
@@ -125,21 +125,21 @@ export default function UsersMapPage() {
 
       <div className="flex items-center justify-between flex-shrink-0 gap-4 flex-wrap">
         <div className="flex items-center gap-3">
-          <div className="px-4 py-2 bg-white border border-gray-200 rounded-lg flex items-center gap-2">
+          <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg flex items-center gap-2">
             <Users size={16} className="text-[#C9A227]" />
             <div>
               <p className="text-xs text-gray-600">Active</p>
               <p className="text-lg font-bold text-gray-900 leading-none">{activeCount}</p>
             </div>
           </div>
-          <div className="px-4 py-2 bg-white border border-gray-200 rounded-lg flex items-center gap-2">
+          <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg flex items-center gap-2">
             <Zap size={16} className="text-green-600" />
             <div>
               <p className="text-xs text-gray-600">High accuracy</p>
               <p className="text-lg font-bold text-gray-900 leading-none">{highAccuracy}</p>
             </div>
           </div>
-          <div className="px-4 py-2 bg-white border border-gray-200 rounded-lg flex items-center gap-2">
+          <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg flex items-center gap-2">
             <Battery size={16} className={avgBattery > 50 ? "text-green-600" : avgBattery > 20 ? "text-amber-600" : "text-red-600"} />
             <div>
               <p className="text-xs text-gray-600">Avg battery</p>
@@ -150,8 +150,8 @@ export default function UsersMapPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg p-1">
-          <Clock size={14} className="text-gray-500 ml-2" />
+        <div className="flex items-center gap-1 bg-white border border-gray-300 rounded-lg p-1">
+          <Clock size={14} className="text-gray-700 ml-2" />
           {timeWindows.map((tw) => (
             <button
               key={tw.key}
@@ -160,7 +160,7 @@ export default function UsersMapPage() {
                 "px-3 py-1 rounded text-xs font-semibold transition",
                 activeMinutes === tw.key
                   ? "bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06]"
-                  : "text-gray-600 hover:bg-gray-50"
+                  : "text-gray-600 hover:bg-gray-100"
               )}
             >
               {tw.label}
@@ -170,9 +170,9 @@ export default function UsersMapPage() {
       </div>
 
       <div className="flex-1 flex gap-4 min-h-0">
-        <div className="flex-1 bg-white border border-gray-200 rounded-xl overflow-hidden relative">
+        <div className="flex-1 bg-white border border-gray-300 rounded-xl overflow-hidden relative">
           {loading ? (
-            <div className="w-full h-full flex items-center justify-center bg-gray-50">
+            <div className="w-full h-full flex items-center justify-center bg-gray-100">
               <Loader2 className="animate-spin text-[#C9A227]" size={32} />
             </div>
           ) : (
@@ -184,14 +184,14 @@ export default function UsersMapPage() {
               <div className="text-center">
                 <MapIcon size={48} className="mx-auto mb-3 text-gray-300" />
                 <p className="text-gray-600 font-medium">No active users in the last {activeMinutes} minutes</p>
-                <p className="text-xs text-gray-500 mt-1">Try increasing the time window</p>
+                <p className="text-xs text-gray-700 mt-1">Try increasing the time window</p>
               </div>
             </div>
           )}
         </div>
 
         {selected && (
-          <div className="w-96 bg-white border border-gray-200 rounded-xl overflow-hidden flex flex-col">
+          <div className="w-96 bg-white border border-gray-300 rounded-xl overflow-hidden flex flex-col">
             <div className="p-4 bg-gradient-to-r from-[#F0D78C]/30 to-transparent border-b flex items-start justify-between gap-2">
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#C9A227] to-[#E6C55C] text-[#0C0A06] font-bold text-base flex items-center justify-center shrink-0 ring-2 ring-[#C9A227]/50">
@@ -248,17 +248,17 @@ export default function UsersMapPage() {
                 </div>
 
                 <div className="grid grid-cols-3 gap-2">
-                  <div className="p-2 bg-gray-50 rounded-lg text-center">
+                  <div className="p-2 bg-gray-100 rounded-lg text-center">
                     <MapIcon size={14} className="mx-auto text-[#C9A227]" />
                     <p className="text-sm font-bold text-gray-900 mt-1">{userDetail._count.trips}</p>
                     <p className="text-[9px] text-gray-600 uppercase">Trips</p>
                   </div>
-                  <div className="p-2 bg-gray-50 rounded-lg text-center">
+                  <div className="p-2 bg-gray-100 rounded-lg text-center">
                     <Calendar size={14} className="mx-auto text-[#C9A227]" />
                     <p className="text-sm font-bold text-gray-900 mt-1">{userDetail._count.bookings}</p>
                     <p className="text-[9px] text-gray-600 uppercase">Bookings</p>
                   </div>
-                  <div className="p-2 bg-gray-50 rounded-lg text-center">
+                  <div className="p-2 bg-gray-100 rounded-lg text-center">
                     <Radio size={14} className="mx-auto text-[#C9A227]" />
                     <p className="text-sm font-bold text-gray-900 mt-1">{userDetail._count.tickets}</p>
                     <p className="text-[9px] text-gray-600 uppercase">Tickets</p>
@@ -284,7 +284,7 @@ export default function UsersMapPage() {
                     <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-2">Recent Trips</p>
                     <div className="space-y-1.5">
                       {userDetail.trips.slice(0, 3).map((t: any) => (
-                        <div key={t.id} className="p-2 bg-gray-50 rounded-lg flex items-center justify-between gap-2">
+                        <div key={t.id} className="p-2 bg-gray-100 rounded-lg flex items-center justify-between gap-2">
                           <div className="min-w-0 flex-1">
                             <p className="text-xs font-semibold text-gray-900 truncate">{t.title}</p>
                             <p className="text-[10px] text-gray-600">{t.destinationCountry}</p>

@@ -74,7 +74,7 @@ export default function PartnerLoginPage() {
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A227] focus:ring-2 focus:ring-[#C9A227]/20"
                 placeholder="••••••••"
               />
-              <p className="text-xs text-gray-500 mt-1">Or use your access code</p>
+              <p className="text-xs text-gray-700 mt-1">Or use your access code</p>
             </div>
 
             {error && (
@@ -94,8 +94,8 @@ export default function PartnerLoginPage() {
           </form>
 
           {/* Footer */}
-          <div className="mt-6 pt-6 border-t border-gray-200 text-center">
-            <p className="text-xs text-gray-500">
+          <div className="mt-6 pt-6 border-t border-gray-300 text-center">
+            <p className="text-xs text-gray-700">
               Need access? Contact your Kemraa account manager.
             </p>
           </div>

@@ -94,7 +94,7 @@ export default function PortalDashboardPage() {
   };
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <Loader2 className="animate-spin text-[#C9A227]" size={40} />
     </div>
   );
@@ -106,14 +106,14 @@ export default function PortalDashboardPage() {
     { label: "Drivers", value: dash.totalDrivers, icon: Users, color: "text-green-600", bg: "bg-green-50" },
     { label: "Vehicles", value: dash.totalVehicles, icon: Car, color: "text-purple-600", bg: "bg-purple-50" },
     { label: "Settlements", value: dash.totalSettlements, icon: Receipt, color: "text-amber-600", bg: "bg-amber-50" },
-    { label: "Documents", value: dash.totalDocuments, icon: FileText, color: "text-gray-600", bg: "bg-gray-50" },
+    { label: "Documents", value: dash.totalDocuments, icon: FileText, color: "text-gray-600", bg: "bg-gray-100" },
     { label: "Total Revenue", value: fmt(dash.totalRevenueMinor), icon: DollarSign, color: "text-[#C9A227]", bg: "bg-amber-50" },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       {/* Top bar */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <header className="bg-white border-b border-gray-300 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#C9A227] to-[#E6C55C] flex items-center justify-center">
@@ -140,7 +140,7 @@ export default function PortalDashboardPage() {
         {/* Stats grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
           {statCards.map((s) => (
-            <div key={s.label} className="bg-white p-4 rounded-xl border border-gray-200">
+            <div key={s.label} className="bg-white p-4 rounded-xl border border-gray-300">
               <div className={`w-8 h-8 rounded-lg ${s.bg} flex items-center justify-center mb-2`}>
                 <s.icon size={16} className={s.color} />
               </div>
@@ -151,8 +151,8 @@ export default function PortalDashboardPage() {
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="border-b border-gray-200 flex">
+        <div className="bg-white rounded-xl border border-gray-300 overflow-hidden">
+          <div className="border-b border-gray-300 flex">
             {(["overview", "bookings", "drivers", "vehicles", "documents"] as const).map((t) => (
               <button
                 key={t}
@@ -211,7 +211,7 @@ export default function PortalDashboardPage() {
                 ) : (
                   <div className="space-y-2">
                     {me.drivers.map((d: any) => (
-                      <div key={d.userId} className="p-3 border border-gray-200 rounded-lg flex items-center justify-between">
+                      <div key={d.userId} className="p-3 border border-gray-300 rounded-lg flex items-center justify-between">
                         <div>
                           <p className="text-sm font-semibold text-gray-900">{d.user?.email}</p>
                           <p className="text-xs text-gray-600">Status: {d.status} · Rating: {d.rating ?? "N/A"}</p>
@@ -236,7 +236,7 @@ export default function PortalDashboardPage() {
                 ) : (
                   <div className="grid grid-cols-2 gap-3">
                     {me.vehicles.map((v: any) => (
-                      <div key={v.id} className="p-3 border border-gray-200 rounded-lg">
+                      <div key={v.id} className="p-3 border border-gray-300 rounded-lg">
                         <p className="font-semibold text-sm">{v.make} {v.model}</p>
                         <p className="text-xs text-gray-600">{v.year} · {v.plateRef} · Capacity: {v.capacity}</p>
                       </div>
@@ -248,7 +248,7 @@ export default function PortalDashboardPage() {
 
             {tab === "documents" && (
               <div className="space-y-4">
-                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <div className="bg-gray-100 p-4 rounded-lg border border-gray-300">
                   <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
                     <Upload size={16} /> Upload Document
                   </h3>
@@ -288,7 +288,7 @@ export default function PortalDashboardPage() {
                   ) : (
                     <div className="space-y-2">
                       {me.documents.map((d: any) => (
-                        <div key={d.id} className="p-3 border border-gray-200 rounded-lg flex items-center justify-between">
+                        <div key={d.id} className="p-3 border border-gray-300 rounded-lg flex items-center justify-between">
                           <div>
                             <p className="text-sm font-medium">{d.fileName}</p>
                             <p className="text-xs text-gray-600">{d.docType} · {new Date(d.createdAt).toLocaleDateString()}</p>

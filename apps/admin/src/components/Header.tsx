@@ -6,7 +6,7 @@ import SearchBar from "./SearchBar";
 export default function Header() {
   const { user, logout } = useAuth();
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+    <header className="bg-white border-b border-gray-300 px-6 py-4 flex items-center justify-between">
       <div>
         <h2 className="text-lg font-semibold text-gray-900">Welcome back</h2>
         <p className="text-sm text-gray-600">{user?.email}</p>

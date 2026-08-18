@@ -171,21 +171,21 @@ export default function ServicesPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="bg-white rounded-xl border border-gray-300 p-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[240px]">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search services..."
-              className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#C9A227] focus:ring-1 focus:ring-[#C9A227]/30"
+              className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#C9A227] focus:ring-1 focus:ring-[#C9A227]/30"
             />
           </div>
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white"
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
           >
             <option value="">All types</option>
             {TYPES.map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}
@@ -193,7 +193,7 @@ export default function ServicesPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white"
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
           >
             <option value="">All statuses</option>
             <option value="DRAFT">Draft</option>
@@ -205,9 +205,9 @@ export default function ServicesPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-300 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-500">
+          <div className="p-12 text-center text-gray-700">
             <Loader2 className="animate-spin mx-auto mb-2" size={24} />
             Loading...
           </div>
@@ -221,8 +221,8 @@ export default function ServicesPage() {
           </div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr className="text-left text-xs uppercase tracking-wider text-gray-600">
+            <thead className="bg-gray-100 border-b border-gray-300">
+              <tr className="text-left text-xs uppercase tracking-wider text-gray-800">
                 <th className="px-4 py-3 font-semibold">Service</th>
                 <th className="px-4 py-3 font-semibold">Type</th>
                 <th className="px-4 py-3 font-semibold">Price</th>
@@ -236,7 +236,7 @@ export default function ServicesPage() {
                 const TypeIcon = typeInfo.icon;
                 const st = statusMeta[s.status] ?? statusMeta.DRAFT;
                 return (
-                  <tr key={s.id} className="hover:bg-gray-50/50 transition">
+                  <tr key={s.id} className="hover:bg-gray-100/50 transition">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className={clsx("w-9 h-9 rounded-lg flex items-center justify-center shrink-0", typeInfo.bg)}>
@@ -308,7 +308,7 @@ export default function ServicesPage() {
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-2xl text-gray-900 w-full max-w-lg border border-[#C9A227]/30 shadow-[0_0_60px_rgba(201,162,39,0.25)]">
-            <div className="flex items-center justify-between p-5 border-b border-gray-200">
+            <div className="flex items-center justify-between p-5 border-b border-gray-300">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#C9A227] to-[#E6C55C] flex items-center justify-center">
                   {modalMode === "create" ? <Plus size={16} className="text-[#0C0A06]" /> : <Edit3 size={16} className="text-[#0C0A06]" />}
@@ -327,7 +327,7 @@ export default function ServicesPage() {
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
                   placeholder="e.g. Cairo Pyramids Day Tour"
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227] focus:ring-1 focus:ring-[#C9A227]/30"
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A227] focus:ring-1 focus:ring-[#C9A227]/30"
                   autoFocus
                 />
               </div>
@@ -339,7 +339,7 @@ export default function ServicesPage() {
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                   placeholder="Short description..."
                   rows={2}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227] focus:ring-1 focus:ring-[#C9A227]/30 resize-none"
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A227] focus:ring-1 focus:ring-[#C9A227]/30 resize-none"
                 />
               </div>
 
@@ -349,7 +349,7 @@ export default function ServicesPage() {
                   <select
                     value={form.type}
                     onChange={(e) => setForm({ ...form, type: e.target.value })}
-                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg bg-white"
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg bg-white"
                   >
                     {TYPES.map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}
                   </select>
@@ -359,7 +359,7 @@ export default function ServicesPage() {
                   <select
                     value={form.currency}
                     onChange={(e) => setForm({ ...form, currency: e.target.value })}
-                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg bg-white"
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg bg-white"
                   >
                     <option value="EGP">EGP</option>
                     <option value="USD">USD</option>
@@ -376,12 +376,12 @@ export default function ServicesPage() {
                   value={form.price}
                   onChange={(e) => setForm({ ...form, price: e.target.value })}
                   placeholder="0.00"
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227] focus:ring-1 focus:ring-[#C9A227]/30"
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A227] focus:ring-1 focus:ring-[#C9A227]/30"
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 p-5 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+            <div className="flex items-center justify-end gap-2 p-5 border-t border-gray-300 bg-gray-100 rounded-b-2xl">
               <button
                 onClick={() => setModalOpen(false)}
                 className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition"
@@ -412,7 +412,7 @@ export default function ServicesPage() {
               <h3 className="text-lg font-bold text-gray-900">Delete Service?</h3>
               <p className="text-sm text-gray-600 mt-2">This action cannot be undone.</p>
             </div>
-            <div className="flex gap-2 p-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+            <div className="flex gap-2 p-4 border-t border-gray-300 bg-gray-100 rounded-b-2xl">
               <button
                 onClick={() => setDeleteId(null)}
                 disabled={deleting}

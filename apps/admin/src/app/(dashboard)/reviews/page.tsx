@@ -37,15 +37,15 @@ export default function ReviewsPage() {
 
       {stats && (
         <div className="grid grid-cols-4 gap-3">
-          <div className="bg-white p-4 rounded-xl border border-gray-200">
+          <div className="bg-white p-4 rounded-xl border border-gray-300">
             <p className="text-xs text-gray-600 uppercase tracking-wider">Total</p>
             <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
           </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200">
+          <div className="bg-white p-4 rounded-xl border border-gray-300">
             <p className="text-xs text-gray-600 uppercase tracking-wider">Average</p>
             <p className="text-2xl font-bold text-[#C9A227]">{Number(stats.average).toFixed(1)} ★</p>
           </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200 col-span-2">
+          <div className="bg-white p-4 rounded-xl border border-gray-300 col-span-2">
             <p className="text-xs text-gray-600 uppercase tracking-wider mb-2">Distribution</p>
             <div className="flex gap-2 items-end h-10">
               {[5, 4, 3, 2, 1].map((r) => {
@@ -67,11 +67,11 @@ export default function ReviewsPage() {
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-gray-200 p-4 flex gap-3 items-end">
+      <div className="bg-white rounded-xl border border-gray-300 p-4 flex gap-3 items-end">
         <div>
           <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Target</label>
           <select value={filter.targetType} onChange={(e) => setFilter({ ...filter, targetType: e.target.value })}
-            className="px-3 py-2 border border-gray-200 rounded-lg bg-white text-sm">
+            className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm">
             <option value="">All</option><option>SERVICE</option><option>TRIP</option><option>DRIVER</option>
           </select>
         </div>
@@ -79,27 +79,27 @@ export default function ReviewsPage() {
           <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Min Rating</label>
           <input type="number" min="1" max="5" value={filter.minRating}
             onChange={(e) => setFilter({ ...filter, minRating: e.target.value })}
-            className="px-3 py-2 border border-gray-200 rounded-lg text-sm w-20" placeholder="1" />
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm w-20" placeholder="1" />
         </div>
         <div>
           <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Max Rating</label>
           <input type="number" min="1" max="5" value={filter.maxRating}
             onChange={(e) => setFilter({ ...filter, maxRating: e.target.value })}
-            className="px-3 py-2 border border-gray-200 rounded-lg text-sm w-20" placeholder="5" />
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm w-20" placeholder="5" />
         </div>
         <button onClick={load} className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center gap-1.5">
           <Filter size={14} /> Apply
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-300 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div>
+          <div className="p-12 text-center text-gray-700"><Loader2 className="animate-spin mx-auto" size={24} /></div>
         ) : reviews.length === 0 ? (
           <div className="p-12 text-center text-gray-600"><Star size={40} className="mx-auto mb-3 text-gray-300" />No reviews yet</div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b text-left text-xs uppercase tracking-wider text-gray-600">
+            <thead className="bg-gray-100 border-b text-left text-xs uppercase tracking-wider text-gray-800">
               <tr>
                 <th className="px-4 py-3">Reviewer</th>
                 <th className="px-4 py-3">Rating</th>
@@ -113,7 +113,7 @@ export default function ReviewsPage() {
               {reviews.map((r) => {
                 const name = [r.reviewer?.profile?.firstName, r.reviewer?.profile?.lastName].filter(Boolean).join(" ") || r.reviewer?.email || "—";
                 return (
-                  <tr key={r.id} className="hover:bg-gray-50/50">
+                  <tr key={r.id} className="hover:bg-gray-100/50">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#C9A227] to-[#E6C55C] text-[#0C0A06] font-bold text-xs flex items-center justify-center">
@@ -136,7 +136,7 @@ export default function ReviewsPage() {
                       <p className="text-xs text-gray-600 mt-0.5">{r.booking?.service?.title ?? "—"}</p>
                     </td>
                     <td className="px-4 py-3 max-w-xs">
-                      <p className="text-gray-700 truncate">{r.comment ?? <span className="italic text-gray-500">(no comment)</span>}</p>
+                      <p className="text-gray-700 truncate">{r.comment ?? <span className="italic text-gray-700">(no comment)</span>}</p>
                     </td>
                     <td className="px-4 py-3 text-xs text-gray-600">{new Date(r.createdAt).toLocaleDateString()}</td>
                     <td className="px-4 py-3 text-right">

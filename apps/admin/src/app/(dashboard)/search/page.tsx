@@ -59,7 +59,7 @@ export default function SearchPage() {
         className="bg-white rounded-lg border p-4 flex gap-3"
       >
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-3 text-gray-500" size={20} />
+          <Search className="absolute left-3 top-3 text-gray-700" size={20} />
           <input
             type="text"
             value={q}
@@ -87,7 +87,7 @@ export default function SearchPage() {
 
       {results && results.results.map((r, idx) => (
         <div key={idx} className="bg-white rounded-lg border overflow-hidden">
-          <div className="px-5 py-3 bg-gray-50 border-b flex items-center gap-2">
+          <div className="px-5 py-3 bg-gray-100 border-b flex items-center gap-2">
             {r.collection === "services" ? <Package size={16} className="text-gray-600" /> : <MapPin size={16} className="text-gray-600" />}
             <h2 className="font-semibold text-gray-900 capitalize">{r.collection}</h2>
             <span className="ml-auto text-sm text-gray-600">{r.found} hits</span>
@@ -97,7 +97,7 @@ export default function SearchPage() {
               <div className="p-8 text-center text-gray-600 text-sm">No results</div>
             ) : (
               r.hits.map((hit, i) => (
-                <div key={i} className="p-4 hover:bg-gray-50 transition">
+                <div key={i} className="p-4 hover:bg-gray-100 transition">
                   <div className="font-semibold text-gray-900">
                     {hit.document.name || hit.document.title || "Untitled"}
                   </div>
@@ -117,7 +117,7 @@ export default function SearchPage() {
                         {hit.document.destinationCountry}
                       </span>
                     )}
-                    <span className="text-gray-500 font-mono">
+                    <span className="text-gray-700 font-mono">
                       {hit.document.id.slice(0, 8)}
                     </span>
                   </div>
@@ -129,7 +129,7 @@ export default function SearchPage() {
       ))}
 
       {!searched && (
-        <div className="bg-gray-50 border-2 border-dashed rounded-lg p-12 text-center text-gray-500">
+        <div className="bg-gray-100 border-2 border-dashed rounded-lg p-12 text-center text-gray-700">
           <Search size={48} className="mx-auto mb-3 opacity-40" />
           <p>Type above to search</p>
         </div>

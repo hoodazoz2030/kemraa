@@ -73,7 +73,7 @@ export default function HomePage() {
       {/* ===== Stat cards ===== */}
       <div className="grid grid-cols-4 gap-4">
         {stats.map(({ label, value, icon: Icon, grad }) => (
-          <div key={label} className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-lg hover:border-[#C9A227]/40 transition">
+          <div key={label} className="bg-white rounded-xl border border-gray-300 p-5 hover:shadow-lg hover:border-[#C9A227]/40 transition">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600">{label}</p>
@@ -90,7 +90,7 @@ export default function HomePage() {
       {/* ===== Revenue sparkline + Recent payments ===== */}
       <div className="grid grid-cols-3 gap-4">
         {/* Revenue sparkline */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-300 p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-gray-700">Revenue — last 14 days</h3>
             <Link href="/analytics" className="text-xs text-[#8C6D1F] hover:text-[#C9A227] flex items-center gap-1">
@@ -116,7 +116,7 @@ export default function HomePage() {
         </div>
 
         {/* Recent payments */}
-        <div className="col-span-2 bg-white rounded-xl border border-gray-200 p-5">
+        <div className="col-span-2 bg-white rounded-xl border border-gray-300 p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
               <CreditCard size={16} className="text-[#C9A227]" />
@@ -127,7 +127,7 @@ export default function HomePage() {
             </Link>
           </div>
           {payments.length === 0 ? (
-            <p className="text-sm text-gray-500 text-center py-10">No payments yet</p>
+            <p className="text-sm text-gray-700 text-center py-10">No payments yet</p>
           ) : (
             <table className="min-w-full">
               <thead>
@@ -140,7 +140,7 @@ export default function HomePage() {
               </thead>
               <tbody className="divide-y">
                 {payments.slice(0, 5).map((p) => (
-                  <tr key={p.id} className="hover:bg-gray-50">
+                  <tr key={p.id} className="hover:bg-gray-100">
                     <td className="py-3 pr-4 text-sm font-semibold text-gray-900">{p.provider}</td>
                     <td className="py-3 pr-4 text-sm font-semibold text-gray-900">{egp(p.amountMinor)}</td>
                     <td className="py-3 pr-4">

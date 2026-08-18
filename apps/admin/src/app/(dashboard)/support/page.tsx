@@ -126,7 +126,7 @@ export default function SupportPage() {
                   "px-3 py-1 rounded-full text-xs font-medium transition border",
                   statusFilter === s
                     ? "bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06] border-[#C9A227]"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-[#C9A227]/50"
+                    : "bg-white text-gray-600 border-gray-300 hover:border-[#C9A227]/50"
                 )}
               >
                 {s === "ALL" ? "All" : s.replace("_", " ")}
@@ -145,7 +145,7 @@ export default function SupportPage() {
                   "px-3 py-1 rounded-full text-xs font-medium transition border",
                   priorityFilter === p
                     ? "bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06] border-[#C9A227]"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-[#C9A227]/50"
+                    : "bg-white text-gray-600 border-gray-300 hover:border-[#C9A227]/50"
                 )}
               >
                 {p === "ALL" ? "All" : p}
@@ -158,16 +158,16 @@ export default function SupportPage() {
       {/* Split view */}
       <div className="grid grid-cols-12 gap-4">
         {/* Ticket list */}
-        <div className="col-span-5 bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-4 py-3 border-b bg-gray-50 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+        <div className="col-span-5 bg-white rounded-xl border border-gray-300 overflow-hidden">
+          <div className="px-4 py-3 border-b bg-gray-100 text-xs font-semibold text-gray-600 uppercase tracking-wider">
             {tickets.length} tickets
           </div>
           {loading ? (
-            <div className="p-8 text-center text-gray-500">
+            <div className="p-8 text-center text-gray-700">
               <Loader2 className="animate-spin mx-auto" size={20} />
             </div>
           ) : tickets.length === 0 ? (
-            <div className="p-8 text-center text-gray-500 text-sm">No tickets match filters</div>
+            <div className="p-8 text-center text-gray-700 text-sm">No tickets match filters</div>
           ) : (
             <div className="divide-y max-h-[600px] overflow-y-auto">
               {tickets.map((t) => {
@@ -215,9 +215,9 @@ export default function SupportPage() {
         </div>
 
         {/* Ticket detail */}
-        <div className="col-span-7 bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="col-span-7 bg-white rounded-xl border border-gray-300 overflow-hidden">
           {!selected ? (
-            <div className="p-12 text-center text-gray-500">
+            <div className="p-12 text-center text-gray-700">
               <HelpCircle size={40} className="mx-auto mb-3 text-[#C9A227]/40" />
               <p className="text-sm">Select a ticket to view details</p>
             </div>
@@ -265,7 +265,7 @@ export default function SupportPage() {
                   </div>
                   <div className="flex-1">
                     <label className="block text-[10px] text-gray-600 uppercase tracking-wider mb-1">Customer</label>
-                    <div className="px-3 py-1.5 text-xs border rounded-lg bg-gray-50 text-gray-700 flex items-center gap-1">
+                    <div className="px-3 py-1.5 text-xs border rounded-lg bg-gray-100 text-gray-700 flex items-center gap-1">
                       <User size={12} />
                       {selected.user.email}
                     </div>
@@ -276,13 +276,13 @@ export default function SupportPage() {
               {/* Conversation thread */}
               <div className="flex-1 overflow-y-auto p-5 space-y-3 bg-gray-50/50">
                 {/* Original ticket body */}
-                <div className="bg-white rounded-lg border border-gray-200 p-4">
+                <div className="bg-white rounded-lg border border-gray-300 p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <User size={14} className="text-gray-600" />
                     <span className="text-xs font-semibold text-gray-700">
                       {selected.user.email}
                     </span>
-                    <span className="text-[10px] text-gray-500 ml-auto">
+                    <span className="text-[10px] text-gray-700 ml-auto">
                       {new Date(selected.createdAt).toLocaleString()}
                     </span>
                   </div>
@@ -297,7 +297,7 @@ export default function SupportPage() {
                       "rounded-lg border p-4",
                       r.isStaff
                         ? "bg-gradient-to-br from-[#F0D78C]/30 to-[#C9A227]/10 border-[#C9A227]/40 ml-6"
-                        : "bg-white border-gray-200 mr-6"
+                        : "bg-white border-gray-300 mr-6"
                     )}
                   >
                     <div className="flex items-center gap-2 mb-2">
@@ -305,7 +305,7 @@ export default function SupportPage() {
                       <span className={clsx("text-xs font-semibold", r.isStaff ? "text-[#8C6D1F]" : "text-gray-700")}>
                         {r.isStaff ? "Staff" : r.author.email}
                       </span>
-                      <span className="text-[10px] text-gray-500 ml-auto">
+                      <span className="text-[10px] text-gray-700 ml-auto">
                         {new Date(r.createdAt).toLocaleString()}
                       </span>
                     </div>
@@ -322,7 +322,7 @@ export default function SupportPage() {
                     onChange={(e) => setReplyText(e.target.value)}
                     placeholder="Type your reply as staff..."
                     rows={2}
-                    className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227] focus:ring-1 focus:ring-[#C9A227]/30 resize-none"
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A227] focus:ring-1 focus:ring-[#C9A227]/30 resize-none"
                   />
                   <button
                     onClick={handleSendReply}

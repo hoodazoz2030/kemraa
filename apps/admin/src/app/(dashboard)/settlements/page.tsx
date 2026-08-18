@@ -64,19 +64,19 @@ export default function SettlementsPage() {
 
       {stats && (
         <div className="grid grid-cols-5 gap-3">
-          <div className="bg-white p-4 rounded-xl border border-gray-200">
+          <div className="bg-white p-4 rounded-xl border border-gray-300">
             <p className="text-xs text-gray-600 uppercase tracking-wider">Total</p>
             <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
           </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200">
+          <div className="bg-white p-4 rounded-xl border border-gray-300">
             <p className="text-xs text-gray-600 uppercase tracking-wider">OPEN</p>
             <p className="text-2xl font-bold text-yellow-600">{stats.OPEN}</p>
           </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200">
+          <div className="bg-white p-4 rounded-xl border border-gray-300">
             <p className="text-xs text-gray-600 uppercase tracking-wider">Approved</p>
             <p className="text-2xl font-bold text-blue-600">{stats.approved}</p>
           </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200">
+          <div className="bg-white p-4 rounded-xl border border-gray-300">
             <p className="text-xs text-gray-600 uppercase tracking-wider">Paid</p>
             <p className="text-2xl font-bold text-green-600">{stats.paid}</p>
           </div>
@@ -87,22 +87,22 @@ export default function SettlementsPage() {
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="bg-white rounded-xl border border-gray-300 p-4">
         <select value={filter.status} onChange={(e) => setFilter({ ...filter, status: e.target.value })}
-          className="px-3 py-2 border border-gray-200 rounded-lg bg-white text-sm">
+          className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm">
           <option value="">All Status</option>
           <option>OPEN</option><option>APPROVED</option><option>PAID</option><option>REJECTED</option>
         </select>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-300 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div>
+          <div className="p-12 text-center text-gray-700"><Loader2 className="animate-spin mx-auto" size={24} /></div>
         ) : items.length === 0 ? (
           <div className="p-12 text-center text-gray-600"><Receipt size={40} className="mx-auto mb-3 text-gray-300" />No settlements yet<br/><span className="text-xs">Create from Partners page</span></div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b text-left text-xs uppercase tracking-wider text-gray-600">
+            <thead className="bg-gray-100 border-b text-left text-xs uppercase tracking-wider text-gray-800">
               <tr>
                 <th className="px-4 py-3">Partner</th>
                 <th className="px-4 py-3">Period</th>
@@ -114,7 +114,7 @@ export default function SettlementsPage() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {items.map((s) => (
-                <tr key={s.id} className="hover:bg-gray-50/50">
+                <tr key={s.id} className="hover:bg-gray-100/50">
                   <td className="px-4 py-3">
                     <p className="font-semibold text-gray-900">{s.partner?.organization?.displayName}</p>
                     <p className="text-xs text-gray-600">{s.partner?.organization?.legalName}</p>

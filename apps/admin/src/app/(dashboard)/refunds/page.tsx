@@ -110,7 +110,7 @@ export default function RefundsPage() {
           const amt = totals[s] ?? 0;
           const st = statusMeta[s];
           return (
-            <div key={s} className="bg-white border border-gray-200 rounded-xl p-4">
+            <div key={s} className="bg-white border border-gray-300 rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">
                 <st.icon size={18} className={st.color} />
                 <span className={clsx("px-2 py-0.5 rounded text-[10px] font-semibold", st.bg, st.color)}>{s}</span>
@@ -122,32 +122,32 @@ export default function RefundsPage() {
         })}
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-wrap gap-3">
+      <div className="bg-white rounded-xl border border-gray-300 p-4 flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-[240px]">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700" />
           <input value={search} onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by email, service, or reason..."
-            className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#C9A227]" />
+            className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#C9A227]" />
         </div>
         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white">
+          className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white">
           <option value="">All statuses</option>
           {Object.keys(statusMeta).map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
-        <button onClick={load} className="px-3 py-2 border border-gray-200 rounded-lg text-sm hover:border-[#C9A227] flex items-center gap-1.5">
+        <button onClick={load} className="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:border-[#C9A227] flex items-center gap-1.5">
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> Refresh
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-300 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto mb-2" size={24} />Loading...</div>
+          <div className="p-12 text-center text-gray-700"><Loader2 className="animate-spin mx-auto mb-2" size={24} />Loading...</div>
         ) : filtered.length === 0 ? (
           <div className="p-12 text-center"><ArrowRightLeft size={40} className="mx-auto mb-3 text-gray-300" /><p className="text-gray-600">No refunds</p></div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr className="text-left text-xs uppercase tracking-wider text-gray-600">
+            <thead className="bg-gray-100 border-b border-gray-300">
+              <tr className="text-left text-xs uppercase tracking-wider text-gray-800">
                 <th className="px-4 py-3 font-semibold">Service</th>
                 <th className="px-4 py-3 font-semibold">Traveler</th>
                 <th className="px-4 py-3 font-semibold">Amount</th>
@@ -162,7 +162,7 @@ export default function RefundsPage() {
                 const st = statusMeta[r.status] ?? statusMeta.PENDING;
                 const StIcon = st.icon;
                 return (
-                  <tr key={r.id} className="hover:bg-gray-50/50 transition">
+                  <tr key={r.id} className="hover:bg-gray-100/50 transition">
                     <td className="px-4 py-3">
                       <p className="font-semibold text-gray-900 truncate">{r.payment?.booking?.service?.title ?? "—"}</p>
                       <p className="text-xs text-gray-600">{r.payment?.provider} • {r.payment?.methodType}</p>
@@ -220,22 +220,22 @@ export default function RefundsPage() {
                 <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Payment ID</label>
                 <input value={selectedPaymentId} onChange={(e) => setSelectedPaymentId(e.target.value)}
                   placeholder="UUID of the payment" dir="ltr"
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227] text-sm" />
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A227] text-sm" />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Amount (EGP)</label>
                 <input type="number" step="0.01" value={refundAmount} onChange={(e) => setRefundAmount(e.target.value)}
                   placeholder="0.00"
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227]" />
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A227]" />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Reason</label>
                 <textarea value={refundReason} onChange={(e) => setRefundReason(e.target.value)}
                   placeholder="Why refunding?" rows={3}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227] resize-none" />
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A227] resize-none" />
               </div>
             </div>
-            <div className="flex gap-2 p-4 border-t bg-gray-50">
+            <div className="flex gap-2 p-4 border-t bg-gray-100">
               <button onClick={() => setCreateModal(false)} className="flex-1 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium">Cancel</button>
               <button onClick={handleCreate} disabled={saving || !selectedPaymentId || !refundAmount}
                 className="flex-1 px-4 py-2 bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06] rounded-lg font-semibold disabled:opacity-50 flex items-center justify-center gap-2">

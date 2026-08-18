@@ -111,7 +111,7 @@ export default function NotificationsPage() {
               "px-4 py-1.5 rounded-full text-sm font-medium transition border",
               filter === f.key
                 ? "bg-gradient-to-r from-[#C9A227] to-[#E6C55C] text-[#0C0A06] border-[#C9A227] shadow-sm"
-                : "bg-white text-gray-700 border-gray-200 hover:border-[#C9A227]/50"
+                : "bg-white text-gray-700 border-gray-300 hover:border-[#C9A227]/50"
             )}
           >
             {f.label}
@@ -120,9 +120,9 @@ export default function NotificationsPage() {
       </div>
 
       {/* List */}
-      <div className="bg-white rounded-xl border border-gray-200 divide-y">
+      <div className="bg-white rounded-xl border border-gray-300 divide-y">
         {loading ? (
-          <div className="p-12 text-center text-gray-500">
+          <div className="p-12 text-center text-gray-700">
             <Loader2 className="animate-spin mx-auto mb-2" size={24} />
             Loading...
           </div>
@@ -132,7 +132,7 @@ export default function NotificationsPage() {
               <AlertCircle size={28} className="text-[#C9A227]" />
             </div>
             <p className="text-gray-600">No notifications{filter === "__unread" ? " unread" : ""}</p>
-            <p className="text-sm text-gray-500 mt-1">You're all caught up!</p>
+            <p className="text-sm text-gray-700 mt-1">You're all caught up!</p>
           </div>
         ) : (
           items.map((n) => {
@@ -159,7 +159,7 @@ export default function NotificationsPage() {
                     <h3 className={clsx("text-sm", isUnread ? "font-semibold text-gray-900" : "font-medium text-gray-700")}>
                       {n.title}
                     </h3>
-                    <span className="text-xs text-gray-500 whitespace-nowrap shrink-0">
+                    <span className="text-xs text-gray-700 whitespace-nowrap shrink-0">
                       {timeAgo(n.sentAt)}
                     </span>
                   </div>

@@ -57,7 +57,7 @@ export default function SearchBar() {
   return (
     <div ref={container} className="relative w-96">
       <div className="relative">
-        <Search className="absolute left-3 top-2.5 text-gray-500" size={18} />
+        <Search className="absolute left-3 top-2.5 text-gray-700" size={18} />
         <input
           type="text"
           value={q}
@@ -70,7 +70,7 @@ export default function SearchBar() {
         {q && (
           <button
             onClick={() => { setQ(""); setResults(null); }}
-            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-600"
+            className="absolute right-3 top-2.5 text-gray-700 hover:text-gray-600"
           >
             <X size={18} />
           </button>
@@ -78,14 +78,14 @@ export default function SearchBar() {
       </div>
 
       {open && results && (
-        <div className="absolute top-full mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-xl z-50 max-h-[500px] overflow-y-auto">
+        <div className="absolute top-full mt-2 w-full bg-white border border-gray-300 rounded-lg shadow-xl z-50 max-h-[500px] overflow-y-auto">
           {totalHits === 0 ? (
             <div className="p-4 text-center text-gray-600 text-sm">
               No results for "{q}"
             </div>
           ) : (
             <>
-              <div className="px-4 py-2 border-b bg-gray-50 text-xs text-gray-600 flex justify-between">
+              <div className="px-4 py-2 border-b bg-gray-100 text-xs text-gray-600 flex justify-between">
                 <span>{totalHits} results</span>
                 <button
                   onClick={() => goTo("/search?q=" + encodeURIComponent(q))}
@@ -96,7 +96,7 @@ export default function SearchBar() {
               </div>
               {results.results.map((r, idx) => (
                 <div key={idx} className="border-b last:border-b-0">
-                  <div className="px-4 py-2 bg-gray-50 text-xs font-semibold text-gray-600 uppercase flex items-center gap-2">
+                  <div className="px-4 py-2 bg-gray-100 text-xs font-semibold text-gray-600 uppercase flex items-center gap-2">
                     {r.collection === "services" ? <Package size={12} /> : <MapPin size={12} />}
                     {r.collection} ({r.found})
                   </div>
@@ -104,7 +104,7 @@ export default function SearchBar() {
                     <button
                       key={i}
                       onClick={() => goTo(r.collection === "services" ? `/services?id=${hit.document.id}` : `/trips?id=${hit.document.id}`)}
-                      className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b last:border-b-0 transition"
+                      className="w-full text-left px-4 py-3 hover:bg-gray-100 border-b last:border-b-0 transition"
                     >
                       <div className="font-semibold text-gray-900 text-sm">
                         {hit.document.name || hit.document.title || hit.document.id.slice(0, 8)}
@@ -118,7 +118,7 @@ export default function SearchBar() {
                     </button>
                   ))}
                   {r.found > 4 && (
-                    <div className="px-4 py-2 text-xs text-gray-600 text-center bg-gray-50">
+                    <div className="px-4 py-2 text-xs text-gray-600 text-center bg-gray-100">
                       + {r.found - 4} more
                     </div>
                   )}

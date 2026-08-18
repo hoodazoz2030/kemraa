@@ -163,21 +163,21 @@ export default function UsersPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="bg-white rounded-xl border border-gray-300 p-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[240px]">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by name, email, or phone..."
-              className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#C9A227]"
+              className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#C9A227]"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white"
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
           >
             <option value="">All statuses</option>
             {STATUSES.slice(1).map((s) => <option key={s} value={s}>{s} ({statusCounts[s] ?? 0})</option>)}
@@ -185,7 +185,7 @@ export default function UsersPage() {
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white"
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
           >
             <option value="">All roles</option>
             {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
@@ -194,9 +194,9 @@ export default function UsersPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-300 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-500">
+          <div className="p-12 text-center text-gray-700">
             <Loader2 className="animate-spin mx-auto mb-2" size={24} />
             Loading...
           </div>
@@ -207,8 +207,8 @@ export default function UsersPage() {
           </div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr className="text-left text-xs uppercase tracking-wider text-gray-600">
+            <thead className="bg-gray-100 border-b border-gray-300">
+              <tr className="text-left text-xs uppercase tracking-wider text-gray-800">
                 <th className="px-4 py-3 font-semibold">User</th>
                 <th className="px-4 py-3 font-semibold">Contact</th>
                 <th className="px-4 py-3 font-semibold">Roles</th>
@@ -225,7 +225,7 @@ export default function UsersPage() {
                   ? name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()
                   : (u.email?.[0]?.toUpperCase() ?? "?");
                 return (
-                  <tr key={u.id} className="hover:bg-gray-50/50 transition">
+                  <tr key={u.id} className="hover:bg-gray-100/50 transition">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         {u.avatarUrl ? (
@@ -262,7 +262,7 @@ export default function UsersPage() {
                           );
                         })}
                         {u.roles.length > 3 && (
-                          <span className="text-[10px] text-gray-500">+{u.roles.length - 3}</span>
+                          <span className="text-[10px] text-gray-700">+{u.roles.length - 3}</span>
                         )}
                       </div>
                     </td>
@@ -384,23 +384,23 @@ export default function UsersPage() {
               {activeTab === "overview" && (
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="p-3 bg-gray-50 rounded-lg">
+                    <div className="p-3 bg-gray-100 rounded-lg">
                       <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Email</p>
                       <p className="text-sm text-gray-900 mt-1 break-all" dir="ltr">{selected.email ?? "—"}</p>
                     </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
+                    <div className="p-3 bg-gray-100 rounded-lg">
                       <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Phone</p>
                       <p className="text-sm text-gray-900 mt-1" dir="ltr">{selected.phone ?? "—"}</p>
                     </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
+                    <div className="p-3 bg-gray-100 rounded-lg">
                       <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Organization</p>
                       <p className="text-sm text-gray-900 mt-1">{selected.organization ?? "—"}</p>
                     </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
+                    <div className="p-3 bg-gray-100 rounded-lg">
                       <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Locale / Timezone</p>
                       <p className="text-sm text-gray-900 mt-1">{(selected as any).locale ?? "ar-EG"} / {(selected as any).timezone ?? "Africa/Cairo"}</p>
                     </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
+                    <div className="p-3 bg-gray-100 rounded-lg">
                       <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">MFA</p>
                       <p className="text-sm mt-1 flex items-center gap-1">
                         {selected.mfaEnabled ? (
@@ -410,7 +410,7 @@ export default function UsersPage() {
                         )}
                       </p>
                     </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
+                    <div className="p-3 bg-gray-100 rounded-lg">
                       <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Joined</p>
                       <p className="text-sm text-gray-900 mt-1">{new Date(selected.createdAt).toLocaleDateString()}</p>
                     </div>
@@ -458,10 +458,10 @@ export default function UsersPage() {
               {activeTab === "trips" && (
                 <div className="space-y-2">
                   {selected.trips.length === 0 ? (
-                    <p className="text-center text-gray-500 py-8 text-sm">No trips yet</p>
+                    <p className="text-center text-gray-700 py-8 text-sm">No trips yet</p>
                   ) : (
                     selected.trips.map((t) => (
-                      <div key={t.id} className="p-3 border border-gray-200 rounded-lg hover:border-[#C9A227]/40 transition">
+                      <div key={t.id} className="p-3 border border-gray-300 rounded-lg hover:border-[#C9A227]/40 transition">
                         <div className="flex items-center justify-between gap-2">
                           <div className="min-w-0 flex-1">
                             <p className="text-sm font-semibold text-gray-900 truncate">{t.title}</p>
@@ -487,10 +487,10 @@ export default function UsersPage() {
               {activeTab === "bookings" && (
                 <div className="space-y-2">
                   {selected.bookings.length === 0 ? (
-                    <p className="text-center text-gray-500 py-8 text-sm">No bookings yet</p>
+                    <p className="text-center text-gray-700 py-8 text-sm">No bookings yet</p>
                   ) : (
                     selected.bookings.map((b) => (
-                      <div key={b.id} className="p-3 border border-gray-200 rounded-lg">
+                      <div key={b.id} className="p-3 border border-gray-300 rounded-lg">
                         <div className="flex items-center justify-between gap-2">
                           <div className="min-w-0 flex-1">
                             <p className="text-sm font-semibold text-gray-900 truncate">{b.service?.title ?? "Booking"}</p>
@@ -512,17 +512,17 @@ export default function UsersPage() {
               {activeTab === "tickets" && (
                 <div className="space-y-2">
                   {selected.tickets.length === 0 ? (
-                    <p className="text-center text-gray-500 py-8 text-sm">No tickets</p>
+                    <p className="text-center text-gray-700 py-8 text-sm">No tickets</p>
                   ) : (
                     selected.tickets.map((t) => (
-                      <div key={t.id} className="p-3 border border-gray-200 rounded-lg">
+                      <div key={t.id} className="p-3 border border-gray-300 rounded-lg">
                         <p className="text-sm font-semibold text-gray-900">{t.subject}</p>
                         <div className="flex items-center gap-2 mt-1.5">
                           <span className={clsx("px-1.5 py-0.5 rounded text-[10px] font-semibold", statusMeta[t.status]?.bg ?? "bg-gray-100", statusMeta[t.status]?.color ?? "text-gray-700")}>
                             {t.status}
                           </span>
                           <span className="text-[10px] text-gray-600 uppercase">{t.category}</span>
-                          <span className="text-[10px] text-gray-500 ml-auto">{new Date(t.createdAt).toLocaleDateString()}</span>
+                          <span className="text-[10px] text-gray-700 ml-auto">{new Date(t.createdAt).toLocaleDateString()}</span>
                         </div>
                       </div>
                     ))
@@ -533,15 +533,15 @@ export default function UsersPage() {
               {activeTab === "notifications" && (
                 <div className="space-y-2">
                   {selected.notifications.length === 0 ? (
-                    <p className="text-center text-gray-500 py-8 text-sm">No notifications</p>
+                    <p className="text-center text-gray-700 py-8 text-sm">No notifications</p>
                   ) : (
                     selected.notifications.map((n) => (
-                      <div key={n.id} className="p-3 border border-gray-200 rounded-lg">
+                      <div key={n.id} className="p-3 border border-gray-300 rounded-lg">
                         <p className="text-sm font-semibold text-gray-900">{n.title}</p>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-[10px] text-gray-600 uppercase">{n.type}</span>
                           {!n.readAt && <span className="w-1.5 h-1.5 rounded-full bg-[#C9A227]" />}
-                          <span className="text-[10px] text-gray-500 ml-auto">{new Date(n.sentAt ?? n.createdAt).toLocaleString()}</span>
+                          <span className="text-[10px] text-gray-700 ml-auto">{new Date(n.sentAt ?? n.createdAt).toLocaleString()}</span>
                         </div>
                       </div>
                     ))
@@ -572,7 +572,7 @@ export default function UsersPage() {
                 <select
                   value={newStatus}
                   onChange={(e) => setNewStatus(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white"
                 >
                   <option value="ACTIVE">ACTIVE</option>
                   <option value="SUSPENDED">SUSPENDED</option>
@@ -586,7 +586,7 @@ export default function UsersPage() {
                   onChange={(e) => setStatusReason(e.target.value)}
                   placeholder="Why are you changing this status?"
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227] resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A227] resize-none"
                 />
               </div>
               <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800 flex items-start gap-2">
@@ -594,7 +594,7 @@ export default function UsersPage() {
                 <span>This will notify the user about the status change.</span>
               </div>
             </div>
-            <div className="flex gap-2 p-4 border-t bg-gray-50 rounded-b-2xl">
+            <div className="flex gap-2 p-4 border-t bg-gray-100 rounded-b-2xl">
               <button
                 onClick={() => setStatusModal(false)}
                 disabled={saving}
@@ -647,7 +647,7 @@ export default function UsersPage() {
                         "p-2.5 rounded-lg border-2 text-xs font-semibold transition text-left",
                         active
                           ? "border-[#C9A227] bg-[#F0D78C]/30 text-[#8C6D1F]"
-                          : "border-gray-200 bg-white hover:border-gray-300 text-gray-600"
+                          : "border-gray-300 bg-white hover:border-gray-300 text-gray-600"
                       )}
                     >
                       <div className="flex items-center gap-2">
@@ -666,7 +666,7 @@ export default function UsersPage() {
                 </p>
               )}
             </div>
-            <div className="flex gap-2 p-4 border-t bg-gray-50 rounded-b-2xl">
+            <div className="flex gap-2 p-4 border-t bg-gray-100 rounded-b-2xl">
               <button
                 onClick={() => setRolesModal(false)}
                 disabled={saving}

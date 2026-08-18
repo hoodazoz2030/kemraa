@@ -112,23 +112,23 @@ export default function StaffPage() {
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="bg-white rounded-xl border border-gray-300 p-4">
         <div className="relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700" />
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name, email, or code..."
-            className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#C9A227]" />
+            className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#C9A227]" />
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-300 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto mb-2" size={24} />Loading...</div>
+          <div className="p-12 text-center text-gray-700"><Loader2 className="animate-spin mx-auto mb-2" size={24} />Loading...</div>
         ) : filtered.length === 0 ? (
           <div className="p-12 text-center"><Users size={40} className="mx-auto mb-3 text-gray-300" /><p className="text-gray-600">No staff members</p></div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr className="text-left text-xs uppercase tracking-wider text-gray-600">
+            <thead className="bg-gray-100 border-b border-gray-300">
+              <tr className="text-left text-xs uppercase tracking-wider text-gray-800">
                 <th className="px-4 py-3 font-semibold">Staff</th>
                 <th className="px-4 py-3 font-semibold">Access Code</th>
                 <th className="px-4 py-3 font-semibold">Features</th>
@@ -141,7 +141,7 @@ export default function StaffPage() {
                 const isSuspended = s.status !== "ACTIVE";
                 const isOwner = s.accessCode === "KRT-SUN-2026-KEMRAA";
                 return (
-                  <tr key={s.id} className={clsx("hover:bg-gray-50/50 transition", isSuspended && "opacity-60")}>
+                  <tr key={s.id} className={clsx("hover:bg-gray-100/50 transition", isSuspended && "opacity-60")}>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className={clsx("w-9 h-9 rounded-full font-bold text-sm flex items-center justify-center",
@@ -164,14 +164,14 @@ export default function StaffPage() {
                           {revealed[s.id] ? s.accessCode : s.accessCode?.slice(0, 3) + "••••"}
                         </code>
                         <button onClick={() => setRevealed((r) => ({ ...r, [s.id]: !r[s.id] }))}
-                          className="p-1 text-gray-500 hover:text-[#8C6D1F]" title={revealed[s.id] ? "Hide" : "Reveal"}>
+                          className="p-1 text-gray-700 hover:text-[#8C6D1F]" title={revealed[s.id] ? "Hide" : "Reveal"}>
                           {revealed[s.id] ? <EyeOff size={14} /> : <Eye size={14} />}
                         </button>
                         {refreshing === s.id ? (
-                          <Loader2 size={14} className="animate-spin text-gray-500" />
+                          <Loader2 size={14} className="animate-spin text-gray-700" />
                         ) : (
                           !isOwner && (
-                            <button onClick={() => handleRegen(s)} className="p-1 text-gray-500 hover:text-blue-600" title="Regenerate code">
+                            <button onClick={() => handleRegen(s)} className="p-1 text-gray-700 hover:text-blue-600" title="Regenerate code">
                               <RefreshCw size={14} />
                             </button>
                           )
@@ -230,7 +230,7 @@ export default function StaffPage() {
                     <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Full Name *</label>
                     <input value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} required
                       placeholder="Ahmed Hassan"
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227]" />
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A227]" />
                   </div>
                 </>
               )}
@@ -243,7 +243,7 @@ export default function StaffPage() {
                       className={clsx("px-3 py-2 text-xs rounded-lg border text-left flex items-center gap-2 transition",
                         form.features.includes(f.key)
                           ? "bg-[#C9A227]/10 border-[#C9A227] text-[#8C6D1F] font-semibold"
-                          : "bg-white border-gray-200 text-gray-600 hover:border-gray-300")}>
+                          : "bg-white border-gray-300 text-gray-600 hover:border-gray-300")}>
                       <Check size={14} className={form.features.includes(f.key) ? "text-[#8C6D1F]" : "text-transparent"} />
                       {f.label}
                     </button>

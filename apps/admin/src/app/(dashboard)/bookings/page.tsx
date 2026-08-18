@@ -138,21 +138,21 @@ export default function BookingsPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="bg-white rounded-xl border border-gray-300 p-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[240px]">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by service or traveler..."
-              className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#C9A227]"
+              className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#C9A227]"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white"
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
           >
             {STATUSES.map((s) => (
               <option key={s} value={s}>{s === "" ? "All statuses" : `${statusMeta[s]?.label ?? s}${counts[s] ? ` (${counts[s]})` : ""}`}</option>
@@ -162,9 +162,9 @@ export default function BookingsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-300 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-500">
+          <div className="p-12 text-center text-gray-700">
             <Loader2 className="animate-spin mx-auto mb-2" size={24} />
             Loading...
           </div>
@@ -175,8 +175,8 @@ export default function BookingsPage() {
           </div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr className="text-left text-xs uppercase tracking-wider text-gray-600">
+            <thead className="bg-gray-100 border-b border-gray-300">
+              <tr className="text-left text-xs uppercase tracking-wider text-gray-800">
                 <th className="px-4 py-3 font-semibold">Service</th>
                 <th className="px-4 py-3 font-semibold">Traveler</th>
                 <th className="px-4 py-3 font-semibold">Items</th>
@@ -189,7 +189,7 @@ export default function BookingsPage() {
               {filtered.map((b) => {
                 const st = statusMeta[b.status] ?? statusMeta.DRAFT;
                 return (
-                  <tr key={b.id} className="hover:bg-gray-50/50 transition">
+                  <tr key={b.id} className="hover:bg-gray-100/50 transition">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#C9A227]/20 to-[#E6C55C]/20 flex items-center justify-center shrink-0">
@@ -305,7 +305,7 @@ export default function BookingsPage() {
               <div className="flex-1 overflow-y-auto p-5 space-y-4">
                 {/* Status + total */}
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 bg-gray-50 rounded-lg">
+                  <div className="p-3 bg-gray-100 rounded-lg">
                     <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Status</p>
                     <span className={clsx("inline-flex px-2 py-0.5 rounded text-xs font-semibold mt-1", statusMeta[selected.status]?.bg, statusMeta[selected.status]?.color)}>
                       {statusMeta[selected.status]?.label ?? selected.status}
@@ -319,7 +319,7 @@ export default function BookingsPage() {
 
                 {/* Traveler */}
                 {selected.traveler && (
-                  <div className="p-3 bg-gray-50 rounded-lg flex items-center gap-3">
+                  <div className="p-3 bg-gray-100 rounded-lg flex items-center gap-3">
                     <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#C9A227] to-[#E6C55C] text-[#0C0A06] font-bold text-sm flex items-center justify-center">
                       {(selected.traveler.profile?.firstName?.[0] ?? selected.traveler.email?.[0] ?? "?").toUpperCase()}
                     </div>
@@ -337,7 +337,7 @@ export default function BookingsPage() {
                   <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-2">Items</p>
                   <div className="space-y-2">
                     {(selected.items ?? []).map((item) => (
-                      <div key={item.id} className="p-3 border border-gray-200 rounded-lg flex items-center justify-between gap-2">
+                      <div key={item.id} className="p-3 border border-gray-300 rounded-lg flex items-center justify-between gap-2">
                         <div className="min-w-0">
                           <p className="text-sm font-semibold text-gray-900">{item.description}</p>
                           <p className="text-xs text-gray-600">Qty: {item.quantity}</p>
@@ -347,7 +347,7 @@ export default function BookingsPage() {
                         </p>
                       </div>
                     ))}
-                    {(selected.items ?? []).length === 0 && <p className="text-sm text-gray-500 italic">No items</p>}
+                    {(selected.items ?? []).length === 0 && <p className="text-sm text-gray-700 italic">No items</p>}
                   </div>
                 </div>
 
@@ -358,7 +358,7 @@ export default function BookingsPage() {
                   </p>
                   <div className="space-y-2">
                     {(selected.payments ?? []).map((p: any) => (
-                      <div key={p.id} className="p-3 border border-gray-200 rounded-lg flex items-center justify-between gap-2">
+                      <div key={p.id} className="p-3 border border-gray-300 rounded-lg flex items-center justify-between gap-2">
                         <div>
                           <p className="text-sm font-semibold text-gray-900">{p.provider} • {p.methodType}</p>
                           <p className="text-xs text-gray-600">{new Date(p.createdAt).toLocaleString()}</p>
@@ -371,7 +371,7 @@ export default function BookingsPage() {
                         </div>
                       </div>
                     ))}
-                    {(selected.payments ?? []).length === 0 && <p className="text-sm text-gray-500 italic">No payments yet</p>}
+                    {(selected.payments ?? []).length === 0 && <p className="text-sm text-gray-700 italic">No payments yet</p>}
                   </div>
                 </div>
               </div>
@@ -379,7 +379,7 @@ export default function BookingsPage() {
 
             {/* Action bar */}
             {!loadingDetail && (
-              <div className="p-4 border-t bg-gray-50 flex gap-2">
+              <div className="p-4 border-t bg-gray-100 flex gap-2">
                 {selected.status === "PENDING_APPROVAL" && (
                   <>
                     <button
@@ -441,11 +441,11 @@ export default function BookingsPage() {
                 onChange={(e) => setRejectReason(e.target.value)}
                 placeholder="Reason for rejection (min 5 chars)..."
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-red-400 resize-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-red-400 resize-none"
                 autoFocus
               />
             </div>
-            <div className="flex gap-2 p-4 border-t bg-gray-50">
+            <div className="flex gap-2 p-4 border-t bg-gray-100">
               <button onClick={() => setRejectModal(false)} className="flex-1 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium">
                 Cancel
               </button>

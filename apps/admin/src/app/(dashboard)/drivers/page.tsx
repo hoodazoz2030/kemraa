@@ -45,51 +45,51 @@ export default function DriversPage() {
 
       {stats && (
         <div className="grid grid-cols-4 gap-3">
-          <div className="bg-white p-4 rounded-xl border border-gray-200">
+          <div className="bg-white p-4 rounded-xl border border-gray-300">
             <p className="text-xs text-gray-600 uppercase tracking-wider">Total</p>
             <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
           </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200">
+          <div className="bg-white p-4 rounded-xl border border-gray-300">
             <p className="text-xs text-gray-600 uppercase tracking-wider">Verified</p>
             <p className="text-2xl font-bold text-green-600">{stats.verified}</p>
           </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200">
+          <div className="bg-white p-4 rounded-xl border border-gray-300">
             <p className="text-xs text-gray-600 uppercase tracking-wider">Online Now</p>
             <p className="text-2xl font-bold text-blue-600">{stats.online}</p>
           </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200">
+          <div className="bg-white p-4 rounded-xl border border-gray-300">
             <p className="text-xs text-gray-600 uppercase tracking-wider">Pending</p>
             <p className="text-2xl font-bold text-orange-600">{stats.pending}</p>
           </div>
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-gray-200 p-4 grid grid-cols-4 gap-3">
+      <div className="bg-white rounded-xl border border-gray-300 p-4 grid grid-cols-4 gap-3">
         <div className="col-span-2 relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700" />
           <input value={filter.search}
             onChange={(e) => { setFilter({ ...filter, search: e.target.value }); setTimeout(load, 300); }}
             placeholder="Search by name or email..."
-            className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm" />
+            className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm" />
         </div>
         <select value={filter.verification} onChange={(e) => { setFilter({ ...filter, verification: e.target.value }); load(); }}
-          className="px-3 py-2 border border-gray-200 rounded-lg bg-white text-sm">
+          className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm">
           <option value="">All Verification</option><option>VERIFIED</option><option>UNVERIFIED</option>
         </select>
         <select value={filter.status} onChange={(e) => { setFilter({ ...filter, status: e.target.value }); load(); }}
-          className="px-3 py-2 border border-gray-200 rounded-lg bg-white text-sm">
+          className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm">
           <option value="">All Status</option><option>ONLINE</option><option>OFFLINE</option>
         </select>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-300 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div>
+          <div className="p-12 text-center text-gray-700"><Loader2 className="animate-spin mx-auto" size={24} /></div>
         ) : drivers.length === 0 ? (
           <div className="p-12 text-center text-gray-600"><Car size={40} className="mx-auto mb-3 text-gray-300" />No drivers</div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b text-left text-xs uppercase tracking-wider text-gray-600">
+            <thead className="bg-gray-100 border-b text-left text-xs uppercase tracking-wider text-gray-800">
               <tr>
                 <th className="px-4 py-3">Driver</th>
                 <th className="px-4 py-3">Verification</th>
@@ -105,7 +105,7 @@ export default function DriversPage() {
                 const isVerified = d.verificationStatus === "VERIFIED";
                 const isOnline = d.status === "ONLINE";
                 return (
-                  <tr key={d.userId} className="hover:bg-gray-50/50">
+                  <tr key={d.userId} className="hover:bg-gray-100/50">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#C9A227] to-[#E6C55C] text-[#0C0A06] font-bold text-sm flex items-center justify-center">
@@ -166,9 +166,9 @@ export default function DriversPage() {
             <h3 className="text-lg font-bold text-gray-900">Reject Driver</h3>
             <textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)}
               placeholder="Reason for rejection..." rows={3}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg" />
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
             <div className="flex gap-2">
-              <button onClick={() => setRejectId(null)} className="flex-1 px-4 py-2 border border-gray-200 rounded-lg">Cancel</button>
+              <button onClick={() => setRejectId(null)} className="flex-1 px-4 py-2 border border-gray-300 rounded-lg">Cancel</button>
               <button onClick={reject} disabled={!rejectReason.trim()}
                 className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg disabled:opacity-50">Reject</button>
             </div>

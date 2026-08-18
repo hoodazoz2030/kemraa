@@ -25,7 +25,7 @@ export default function SettingsPage() {
 
   const set = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
 
-  if (loading) return <div className="p-12 text-center text-gray-500"><Loader2 className="animate-spin mx-auto" size={24} /></div>;
+  if (loading) return <div className="p-12 text-center text-gray-700"><Loader2 className="animate-spin mx-auto" size={24} /></div>;
 
   return (
     <div className="max-w-2xl space-y-6">
@@ -36,17 +36,17 @@ export default function SettingsPage() {
         <p className="text-sm text-gray-600 mt-1">إعدادات المنصة العامة — SUPER_ADMIN فقط</p>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+      <div className="bg-white rounded-xl border border-gray-300 p-6 space-y-5">
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Brand Name</label>
             <input value={form.brandName ?? ""} onChange={(e) => set("brandName", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227]" />
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A227]" />
           </div>
           <div>
             <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Default Currency</label>
             <select value={form.defaultCurrency ?? "EGP"} onChange={(e) => set("defaultCurrency", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg bg-white">
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white">
               <option>EGP</option><option>USD</option><option>SAR</option><option>AED</option>
             </select>
           </div>
@@ -54,22 +54,22 @@ export default function SettingsPage() {
             <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Tax %</label>
             <input type="number" step="0.1" value={((form.taxBps ?? 0) / 100).toFixed(1)}
               onChange={(e) => set("taxBps", Math.round(parseFloat(e.target.value || "0") * 100))}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227]" />
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A227]" />
           </div>
           <div>
             <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Support SLA (hours)</label>
             <input type="number" value={form.supportSlaHours ?? 24} onChange={(e) => set("supportSlaHours", parseInt(e.target.value || "24"))}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227]" />
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A227]" />
           </div>
           <div>
             <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">OTP TTL (minutes)</label>
             <input type="number" value={form.otpTtlMinutes ?? 10} onChange={(e) => set("otpTtlMinutes", parseInt(e.target.value || "10"))}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#C9A227]" />
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#C9A227]" />
           </div>
           <div>
             <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Default Locale</label>
             <select value={form.locale ?? "ar-EG"} onChange={(e) => set("locale", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg bg-white">
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white">
               <option value="ar-EG">ar-EG</option><option value="en-US">en-US</option>
             </select>
           </div>

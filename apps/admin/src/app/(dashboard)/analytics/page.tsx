@@ -108,7 +108,7 @@ export default function AnalyticsPage() {
       {/* Stat cards */}
       <div className="grid grid-cols-4 gap-4">
         {statCards.map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-lg transition">
+          <div key={label} className="bg-white rounded-xl border border-gray-300 p-5 hover:shadow-lg transition">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600">{label}</p>
@@ -125,7 +125,7 @@ export default function AnalyticsPage() {
       {/* Row 1: Revenue + Providers */}
       <div className="grid grid-cols-3 gap-4">
         {/* Revenue trend */}
-        <div className="col-span-2 bg-white rounded-xl border border-gray-200 p-5">
+        <div className="col-span-2 bg-white rounded-xl border border-gray-300 p-5">
           <h3 className="text-sm font-semibold text-gray-700 mb-4">Revenue Trend</h3>
           <ResponsiveContainer width="100%" height={280}>
             <AreaChart data={data.revenueByDay}>
@@ -148,7 +148,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Payments by provider (donut) */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-300 p-5">
           <h3 className="text-sm font-semibold text-gray-700 mb-4">Payments by Provider</h3>
           <ResponsiveContainer width="100%" height={280}>
             <PieChart>
@@ -177,7 +177,7 @@ export default function AnalyticsPage() {
       {/* Row 2: Bookings by status + Top services */}
       <div className="grid grid-cols-2 gap-4">
         {/* Bookings by status */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-300 p-5">
           <h3 className="text-sm font-semibold text-gray-700 mb-4">Bookings by Status</h3>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={data.bookingsByStatus}>
@@ -195,13 +195,13 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Top services */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-300 p-5">
           <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
             <Award size={16} className="text-[#C9A227]" />
             Top Services
           </h3>
           {data.topServices.length === 0 ? (
-            <p className="text-sm text-gray-500 text-center py-12">No services yet</p>
+            <p className="text-sm text-gray-700 text-center py-12">No services yet</p>
           ) : (
             <div className="space-y-2">
               {data.topServices.map((svc, idx) => {
