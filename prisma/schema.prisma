@@ -11,46 +11,41 @@ url      = env("DATABASE_URL")
 }
 
 model User {
-  id            String       @id @db.Uuid @default(uuid())
-  email         String?      @unique
-  phone         String?      @unique
-  passwordHash  String?      @map("password_hash")
-  status        UserStatus   @default(PENDING_VERIFICATION)
-  locale        String       @default("ar-EG")
-  timezone      String       @default("Africa/Cairo")
-  mfaEnabled    Boolean      @default(false) @map("mfa_enabled")
-  createdAt     DateTime     @default(now()) @map("created_at")
-  updatedAt     DateTime     @updatedAt @map("updated_at")
-  deletedAt     DateTime?    @map("deleted_at")
-  profile       UserProfile?
-  trips         Trip[]
-  bookings      Booking[]
-  notifications Notification[]
-  tickets       SupportTicket[]
-  reviews       Review[]
-  driver        Driver?
-  orgMembers    OrganizationMember[]
-  attributions  Attribution[]
+  id                  String    @id @db.Uuid @default(uuid())
+  email               String?   @unique
+  phone               String?   @unique
+  passwordHash        String?   @map("password_hash")
+  status              UserStatus @default(ACTIVE)
+  locale              String    @default("ar-EG")
+  timezone            String    @default("Africa/Cairo")
+  emailVerified       Boolean   @default(false) @map("email_verified")
+  phoneVerified       Boolean   @default(false) @map("phone_verified")
+  mfaEnabled          Boolean   @default(false) @map("mfa_enabled")
+  mfaSecret           String?   @map("mfa_secret")
+  role                Role      @default(CUSTOMER)
+  accountType         AccountType @default(CUSTOMER) @map("account_type")
+  lastLoginAt         DateTime? @map("last_login_at")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
 
-  supportReplies SupportReply[] @relation("SupportReplies")
-  liveLocation   UserLocation?
-  @@index([status])
-  username     String?     @unique @map("username")
-  trustedDevices TrustedDevice[]
-
-  features       Json         @default("[]")
-  accessCode            String?    @unique @map("access_code")
-  accessCodeLockedUntil DateTime?  @map("access_code_locked_until")
-  accessCodeAttempts    Int        @default(0) @map("access_code_attempts")
-
-
-
-  accountType  AccountType @default(TRAVELER) @map("account_type")
-
+  // Relations
+  profile             UserProfile?
+  organizationMembers OrganizationMember[]
+  drivers             Driver[]
+  trips               Trip[]
+  bookings            Booking[]
+  attributions        Attribution[]
+  notifications       Notification[]
+  supportTickets      SupportTicket[]
+  reviews             Review[]
+  supportReplies      SupportReply[]  @relation("SupportReplies")
+  userLocation        UserLocation?
+  trustedDevices      TrustedDevice[]
+  auditLogs           AuditLog[]
+  payments            Payment[]       @relation("TravelerPayments")
 
   @@map("users")
 }
-
 model UserProfile {
   userId      String   @id @map("user_id") @db.Uuid
   firstName   String?  @map("first_name")

@@ -1,3 +1,4 @@
+import * as bcrypt from "bcryptjs";
 import { Injectable, UnauthorizedException, BadRequestException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
 import { OtpService } from "./otp.service.js";
