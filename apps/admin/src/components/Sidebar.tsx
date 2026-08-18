@@ -1,8 +1,14 @@
-"use client";
+﻿"use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Home, Map, MapPin, ShoppingBag, Calendar, Bell, HelpCircle, Users, BarChart3, ScrollText, Flag, CreditCard, Percent, ArrowRightLeft, Shield, TicketPercent, Settings as SettingsIcon, Star, Car, DollarSign, Building2, Receipt, FileSignature, Newspaper, Sparkles, Layers } from "lucide-react";
+import {
+  Home, Map, MapPin, ShoppingBag, Calendar, Bell, HelpCircle, Users,
+  BarChart3, ScrollText, Flag, CreditCard, Percent, ArrowRightLeft,
+  Shield, TicketPercent, Settings as SettingsIcon, Star, Car, DollarSign,
+  Building2, Receipt, FileSignature, Newspaper, Sparkles, Layers,
+  Building, AlertTriangle, Wallet, Headphones
+} from "lucide-react";
 import clsx from "clsx";
 import Image from "next/image";
 import { notificationsApi, supportApi } from "@/lib/api";
@@ -14,47 +20,77 @@ const __ALL_ITEMS = [
   { href: "/bookings", label: "Bookings", icon: Calendar },
   { href: "/notifications", label: "Notifications", icon: Bell, badge: true },
   { href: "/support", label: "Support", icon: HelpCircle, badgeType: "tickets" },
+  { href: "/incidents", label: "Incidents", icon: AlertTriangle },
   { href: "/users", label: "Users", icon: Users },
   { href: "/users/map", label: "Live Map", icon: MapPin },
-  { href: "/staff", label: "Staff", icon: Shield },
-  { href: "/promos", label: "Promo Codes", icon: TicketPercent },
-  { href: "/reviews", label: "Reviews", icon: Star },
   { href: "/drivers", label: "Drivers", icon: Car },
-  { href: "/finance", label: "Finance", icon: DollarSign },
-  { href: "/settings", label: "Settings", icon: SettingsIcon },
+  { href: "/reviews", label: "Reviews", icon: Star },
+  { href: "/promos", label: "Promo Codes", icon: TicketPercent },
+  { href: "/staff", label: "Staff", icon: Shield },
   { href: "/partners", label: "Partners", icon: Building2 },
-  { href: "/settlements", label: "Settlements", icon: Receipt },
+  { href: "/agencies", label: "Agencies", icon: Building },
   { href: "/signing", label: "Signing", icon: FileSignature },
+  { href: "/settlements", label: "Settlements", icon: Receipt },
+  { href: "/finance", label: "Finance", icon: DollarSign },
+  { href: "/commissions", label: "Commissions", icon: Percent },
+  { href: "/payments", label: "Payments", icon: CreditCard },
+  { href: "/refunds", label: "Refunds", icon: ArrowRightLeft },
   { href: "/content", label: "Content", icon: Newspaper },
   { href: "/thoth", label: "THOTH", icon: Sparkles },
   { href: "/queues", label: "Queues", icon: Layers },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/audit-logs", label: "Audit Logs", icon: ScrollText },
   { href: "/feature-flags", label: "Feature Flags", icon: Flag },
-  { href: "/payments", label: "Payments", icon: CreditCard, Percent, ArrowRightLeft },
-  { href: "/refunds", label: "Refunds", icon: ArrowRightLeft },
-  { href: "/commissions", label: "Commissions", icon: Percent },
+  { href: "/settings", label: "Settings", icon: SettingsIcon },
 ];
+
 const FEATURE_MAP: Record<string, string> = {
-  "/": "dashboard", "/analytics": "analytics", "/services": "services",
-  "/trips": "trips", "/bookings": "bookings", "/payments": "payments",
-  "/refunds": "refunds", "/commissions": "commissions", "/users": "users",
-  "/users/map": "map", "/notifications": "notifications", "/support": "support",
-  "/feature-flags": "flags", "/audit-logs": "audit", "/staff": "staff", "/promos": "promos", "/reviews": "reviews", "/drivers": "drivers", "/finance": "finance", "/settings": "settings", "/partners": "partners", "/settlements": "settlements", "/signing": "signing", "/content": "content", "/thoth": "thoth", "/queues": "queues",
+  "/": "dashboard",
+  "/analytics": "analytics",
+  "/services": "services",
+  "/trips": "trips",
+  "/bookings": "bookings",
+  "/payments": "payments",
+  "/refunds": "refunds",
+  "/commissions": "commissions",
+  "/users": "users",
+  "/users/map": "map",
+  "/notifications": "notifications",
+  "/support": "support",
+  "/incidents": "incidents",
+  "/feature-flags": "flags",
+  "/audit-logs": "audit",
+  "/staff": "staff",
+  "/promos": "promos",
+  "/reviews": "reviews",
+  "/drivers": "drivers",
+  "/finance": "finance",
+  "/settings": "settings",
+  "/partners": "partners",
+  "/agencies": "agencies",
+  "/settlements": "settlements",
+  "/signing": "signing",
+  "/content": "content",
+  "/thoth": "thoth",
+  "/queues": "queues",
 };
+
 const __features = typeof window !== "undefined"
   ? (() => { try { return JSON.parse(localStorage.getItem("kemraa_features") || "null"); } catch { return null; } })()
   : null;
-const __user = typeof window !== "undefined" ? (() => {
-    try { return JSON.parse(localStorage.getItem("kemraa_user") || "null"); } catch { return null; }
-  })() : null;
-  const __isSuperAdmin = __user?.roles?.includes("SUPER_ADMIN") || __user?.accountType === "OWNER";
-  const navItems = __ALL_ITEMS.filter((i: any) => {
-    if (__isSuperAdmin) return true;             // Owner يشوف كل حاجة
-    if (!Array.isArray(__features)) return true; // مفيش features = كل حاجة
-    if (__features.length === 0) return true;    // features فاضية = كل حاجة
-    return __features.includes(FEATURE_MAP[i.href] ?? "dashboard");
-  });
+
+const __user = typeof window !== "undefined"
+  ? (() => { try { return JSON.parse(localStorage.getItem("kemraa_user") || "null"); } catch { return null; } })()
+  : null;
+
+const __isSuperAdmin = __user?.roles?.includes("SUPER_ADMIN") || __user?.accountType === "OWNER";
+
+const navItems = __ALL_ITEMS.filter((i: any) => {
+  if (__isSuperAdmin) return true;
+  if (!Array.isArray(__features)) return true;
+  if (__features.length === 0) return true;
+  return __features.includes(FEATURE_MAP[i.href] ?? "dashboard");
+});
 
 export default function Sidebar() {
   const pathname = usePathname();

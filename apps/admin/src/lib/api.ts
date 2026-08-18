@@ -601,3 +601,33 @@ export const opsApi = {
   // Queues
   queues: () => api.get("/admin/queues").then((r: any) => r.data),
 };
+
+// ============ Finance Admin (Commission Rules + Agencies) ============
+export const financeAdminApi = {
+  // Commission Rules
+  listRules: (params?: any) => {
+    const q = new URLSearchParams();
+    Object.entries(params ?? {}).forEach(([k, v]: any) => v !== undefined && v !== "" && q.set(k, String(v)));
+    return api.get(`/admin/finance/commission-rules?${q.toString()}`).then((r: any) => r.data);
+  },
+  createRule: (data: any) => api.post("/admin/finance/commission-rules", data).then((r: any) => r.data),
+  updateRule: (id: string, data: any) => api.patch(`/admin/finance/commission-rules/${id}`, data).then((r: any) => r.data),
+  deleteRule: (id: string) => api.delete(`/admin/finance/commission-rules/${id}`).then((r: any) => r.data),
+  // Agencies
+  listAgencies: () => api.get("/admin/finance/agencies").then((r: any) => r.data),
+  updateAgency: (organizationId: string, data: any) => api.patch(`/admin/finance/agencies/${organizationId}`, data).then((r: any) => r.data),
+  agencyStats: (organizationId: string) => api.get(`/admin/finance/agencies/${organizationId}/stats`).then((r: any) => r.data),
+};
+
+// ============ Incidents ============
+export const incidentsApi = {
+  list: (params?: any) => {
+    const q = new URLSearchParams();
+    Object.entries(params ?? {}).forEach(([k, v]: any) => v !== undefined && v !== "" && q.set(k, String(v)));
+    return api.get(`/admin/incidents?${q.toString()}`).then((r: any) => r.data);
+  },
+  stats: () => api.get("/admin/incidents/stats").then((r: any) => r.data),
+  create: (data: any) => api.post("/admin/incidents", data).then((r: any) => r.data),
+  updateStatus: (id: string, status: string, resolution?: string) =>
+    api.patch(`/admin/incidents/${id}/status`, { status, resolution }).then((r: any) => r.data),
+};

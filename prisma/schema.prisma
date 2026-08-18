@@ -871,3 +871,33 @@ model ThothAction {
   @@index([status])
   @@map("thoth_actions")
 }
+enum IncidentStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum IncidentType {
+  SAFETY
+  FRAUD
+  PAYMENT_DISPUTE
+  SERVICE_FAILURE
+  CANCELLATION
+  COMPLAINT
+  TECHNICAL
+  OTHER
+}
+
+enum TicketCategory {
+  BOOKING
+  PAYMENT
+  CANCELLATION
+  REFUND
+  TECHNICAL
+  ACCOUNT
+  PARTNER
+  AGENCY
+  SAFETY
+  OTHER
+}
