@@ -241,6 +241,7 @@ model Booking {
   payments       Payment[]
   commissions    CommissionEntry[]
   review         Review?
+  stateHistory   BookingStateHistory[]
 
   @@index([travelerId, status])
   @@index([providerId, status])
@@ -900,4 +901,23 @@ enum TicketCategory {
   AGENCY
   SAFETY
   OTHER
+}
+model BookingStateHistory {
+  id         String   @id @db.Uuid @default(uuid())
+  bookingId  String   @map("booking_id") @db.Uuid
+  fromStatus String   @map("from_status")
+  toStatus   String   @map("to_status")
+  actorId    String?  @map("actor_id") @db.Uuid
+  actorType  String   @default("SYSTEM") @map("actor_type")
+  reason     String?
+  metadata   Json     @default("{}") @map("metadata_json")
+  ip         String?
+  userAgent  String?  @map("user_agent")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  booking    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId, createdAt])
+  @@index([toStatus])
+  @@map("booking_state_history")
 }

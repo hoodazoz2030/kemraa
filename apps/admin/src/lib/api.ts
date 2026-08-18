@@ -631,3 +631,20 @@ export const incidentsApi = {
   updateStatus: (id: string, status: string, resolution?: string) =>
     api.patch(`/admin/incidents/${id}/status`, { status, resolution }).then((r: any) => r.data),
 };
+
+// ============ Bookings State Machine ============
+export const bookingsStateApi = {
+  machine: () => api.get("/admin/bookings-state/machine").then((r: any) => r.data),
+  stats: () => api.get("/admin/bookings-state/stats").then((r: any) => r.data),
+  detail: (id: string) => api.get(`/admin/bookings-state/${id}`).then((r: any) => r.data),
+  history: (id: string) => api.get(`/admin/bookings-state/${id}/history`).then((r: any) => r.data),
+  transition: (id: string, toStatus: string, reason?: string, metadata?: any) =>
+    api.post(`/admin/bookings-state/${id}/transition`, { toStatus, reason, metadata }).then((r: any) => r.data),
+};
+export const bookingsApi = {
+  list: (params?: any) => {
+    const q = new URLSearchParams();
+    Object.entries(params ?? {}).forEach(([k, v]: any) => v !== undefined && v !== "" && q.set(k, String(v)));
+    return api.get(`/bookings?${q.toString()}`).then((r: any) => r.data);
+  },
+};
