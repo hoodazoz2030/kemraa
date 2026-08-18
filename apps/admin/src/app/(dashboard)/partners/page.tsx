@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { partnersApi, contractsApi, type Partner } from "@/lib/api";
-import { Building2, Loader2, Plus, X, Save, Search, Check, Ban, Eye, FileDown } from "lucide-react";
+import { partnersApi, contractsApi, portalApi, type Partner } from "@/lib/api";
+import { Building2, Loader2, Plus, X, Save, Search, Check, Ban, Eye, FileDown, UserPlus, Key } from "lucide-react";
 import clsx from "clsx";
 
 const TYPES = [
@@ -26,6 +26,36 @@ export default function PartnersPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [detail, setDetail] = useState<any>(null);
+  const [portalModal, setPortalModal] = useState<Partner | null>(null);
+  const [portalForm, setPortalForm] = useState({ email: "", password: "", firstName: "", lastName: "" });
+  const [portalBusy, setPortalBusy] = useState(false);
+  const [portalResult, setPortalResult] = useState<any>(null);
+  const [portalError, setPortalError] = useState("");
+
+  const openPortalModal = (p: Partner) => {
+    setPortalModal(p);
+    setPortalForm({ email: "", password: "Portal123!", firstName: "", lastName: "" });
+    setPortalResult(null);
+    setPortalError("");
+  };
+
+  const createPortalUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!portalModal) return;
+    setPortalBusy(true);
+    setPortalError("");
+    try {
+      const result = await portalApi.createPartnerUser({
+        partnerId: portalModal.id,
+        ...portalForm,
+      });
+      setPortalResult(result);
+    } catch (err: any) {
+      setPortalError(err?.response?.data?.message || err?.message || "Failed to create");
+    } finally {
+      setPortalBusy(false);
+    }
+  };
   const [downloading, setDownloading] = useState(false);
   const downloadContract = async (p: any) => {
     setDownloading(true);
@@ -306,6 +336,79 @@ export default function PartnersPage() {
                 <p className="text-2xl font-bold text-purple-900">{detail.partner?.services?.length ?? 0}</p>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {portalModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold flex items-center gap-2">
+                <Key size={20} className="text-purple-600" />
+                Create Portal User for {portalModal.displayName}
+              </h3>
+              <button onClick={() => setPortalModal(null)} className="p-1.5 rounded hover:bg-gray-100"><X size={16} /></button>
+            </div>
+
+            {portalResult ? (
+              <div className="space-y-4">
+                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-sm font-semibold text-green-800 mb-2">Portal User Created!</p>
+                  <p className="text-xs text-green-700">Share these credentials with the partner:</p>
+                </div>
+                <div className="space-y-2 p-3 bg-gray-50 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-500">Email:</span>
+                    <code className="text-sm font-mono">{portalResult.user.email}</code>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-500">Access Code:</span>
+                    <code className="text-sm font-mono text-purple-700">{portalResult.accessCode}</code>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500">
+                  Partner can login at: <code className="font-mono text-xs bg-gray-100 px-1.5 py-0.5 rounded">/portal/login</code>
+                </p>
+                <button onClick={() => setPortalModal(null)} className="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">
+                  Done
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={createPortalUser} className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 uppercase mb-1.5">First Name</label>
+                    <input value={portalForm.firstName} onChange={(e) => setPortalForm({ ...portalForm, firstName: e.target.value })}
+                      className="w-full px-3 py-2 border rounded-lg" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 uppercase mb-1.5">Last Name</label>
+                    <input value={portalForm.lastName} onChange={(e) => setPortalForm({ ...portalForm, lastName: e.target.value })}
+                      className="w-full px-3 py-2 border rounded-lg" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 uppercase mb-1.5">Email *</label>
+                  <input type="email" required value={portalForm.email} onChange={(e) => setPortalForm({ ...portalForm, email: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg" placeholder="partner@company.com" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 uppercase mb-1.5">Password *</label>
+                  <input type="text" required value={portalForm.password} onChange={(e) => setPortalForm({ ...portalForm, password: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg font-mono" />
+                  <p className="text-xs text-gray-400 mt-1">Min 8 chars. Partner can use email+password or access code.</p>
+                </div>
+                {portalError && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{portalError}</div>
+                )}
+                <button type="submit" disabled={portalBusy}
+                  className="w-full py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg font-semibold disabled:opacity-50 flex items-center justify-center gap-2">
+                  {portalBusy ? <Loader2 size={16} className="animate-spin" /> : <UserPlus size={16} />}
+                  Create Portal User
+                </button>
+              </form>
+            )}
           </div>
         </div>
       )}

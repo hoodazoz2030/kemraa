@@ -572,3 +572,10 @@ export const signingApi = {
   send: (id: string) => api.post(`/signing/${id}/send`).then((r: any) => r.data),
   cancel: (id: string) => api.post(`/signing/${id}/cancel`).then((r: any) => r.data),
 };
+
+
+// ============ Partner Portal (admin operations) ============
+export const portalApi = {
+  createPartnerUser: (data: { partnerId: string; email: string; password: string; firstName?: string; lastName?: string }) =>
+    api.post("/partner-portal/admin/create-user", data).then((r: any) => r.data),
+};
