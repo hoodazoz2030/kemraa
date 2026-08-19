@@ -6,6 +6,9 @@ import { CustomerTripsController } from "./customer-trips.controller.js";
 import { CustomerServicesController } from "./customer-services.controller.js";
 import { CustomerBookingsController } from "./customer-bookings.controller.js";
 import { CustomerPaymentsController } from "./customer-payments.controller.js";
+import { CustomerRidesController } from "./customer-rides.controller.js";
+import { CustomerNotificationsController } from "./customer-notifications.controller.js";
+import { CustomerSupportController } from "./customer-support.controller.js";
 
 @Module({
   imports: [AuthModule],
@@ -16,6 +19,9 @@ import { CustomerPaymentsController } from "./customer-payments.controller.js";
     CustomerServicesController,
     CustomerBookingsController,
     CustomerPaymentsController,
+    CustomerRidesController,
+    CustomerNotificationsController,
+    CustomerSupportController,
   ],
 })
 export class CustomerModule {}
