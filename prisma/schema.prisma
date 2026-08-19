@@ -1046,3 +1046,37 @@ model ServiceAvailability {
   @@index([serviceId, date])
   @@map("service_availabilities")
 }
+
+model ReferralLink {
+  id           String    @id @default(uuid()) @db.Uuid
+  providerId   String    @map("provider_id") @db.Uuid
+  code         String    @unique
+  campaign     String?
+  clickCount   Int       @default(0) @map("click_count")
+  convertCount Int       @default(0) @map("convert_count")
+  isActive     Boolean   @default(true) @map("is_active")
+  expiresAt    DateTime? @map("expires_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  events ReferralEvent[]
+
+  @@index([providerId])
+  @@map("referral_links")
+}
+
+model ReferralEvent {
+  id        String   @id @default(uuid()) @db.Uuid
+  linkId    String   @map("link_id") @db.Uuid
+  eventType String   @map("event_type") // CLICK | SIGNUP | BOOKING
+  userId    String?  @map("user_id") @db.Uuid
+  bookingId String?  @map("booking_id") @db.Uuid
+  metadata  Json     @default("{}") @map("metadata_json")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  link ReferralLink @relation(fields: [linkId], references: [id], onDelete: Cascade)
+
+  @@index([linkId, eventType])
+  @@index([userId])
+  @@map("referral_events")
+}
