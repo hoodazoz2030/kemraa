@@ -1,4 +1,4 @@
-﻿import { Controller, Get, Post, Body, UseGuards, Req, Param, Query, SetMetadata, Logger } from "@nestjs/common";
+import { Controller, Get, Post, Body, UseGuards, Req, Param, Query, SetMetadata, Logger } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { RolesGuard } from "../common/guards/roles.guard.js";
 import { Audit } from "../common/interceptors/audit.interceptor.js";
@@ -100,8 +100,8 @@ export class DriverRidesController {
     if (!driver) return { error: { code: "DRIVER_NOT_FOUND" } };
     if (driver.status === "BUSY") return { error: { code: "ALREADY_BUSY" } };
     if (driver.status !== "ONLINE") return { error: { code: "NOT_ONLINE" } };
-    if (driver.verificationStatus !== "VERIFIED") {
-      return { error: { code: "NOT_VERIFIED" } };
+    if (!["VERIFIED", "PENDING"].includes(driver.verificationStatus)) {
+      return { error: { code: "NOT_VERIFIED", message: `Verification status: ${driver.verificationStatus}` } };
     }
 
     const ride = await this.prisma.ride.findUnique({ where: { id } });
