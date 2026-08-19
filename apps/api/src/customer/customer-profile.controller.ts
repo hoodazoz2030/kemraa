@@ -14,11 +14,10 @@ export class CustomerProfileController {
   @Get("me")
   @SetMetadata("roles", ["CUSTOMER"])
   async getMe(@Req() req: any) {
-    const user = await this.prisma.user.findUnique({
+    return await this.prisma.user.findUnique({
       where: { id: req.user.sub },
       include: { profile: true, trips: { take: 5, orderBy: { createdAt: "desc" } } },
     });
-    return user;
   }
 
   @Patch("me")
@@ -26,7 +25,6 @@ export class CustomerProfileController {
   @Audit("user.update_profile", "user")
   async updateMe(@Req() req: any, @Body() body: { firstName?: string; lastName?: string; nationality?: string; dob?: string; preferences?: any }) {
     const userId = req.user.sub;
-
     await this.prisma.userProfile.upsert({
       where: { userId },
       create: {
@@ -45,10 +43,6 @@ export class CustomerProfileController {
         preferences: (body.preferences ?? undefined) as any,
       },
     });
-
-    return await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: { profile: true },
-    });
+    return await this.prisma.user.findUnique({ where: { id: userId }, include: { profile: true } });
   }
 }

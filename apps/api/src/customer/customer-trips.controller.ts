@@ -4,10 +4,14 @@ import { RolesGuard } from "../common/guards/roles.guard.js";
 import { Audit } from "../common/interceptors/audit.interceptor.js";
 import { PrismaService } from "../prisma/prisma.service.js";
 
+/**
+ * §12 — Customer-facing Trip endpoints.
+ * Route prefix: /customer-trips (NOT /trips — that path is used by admin TripsController).
+ */
 @ApiTags("customer-trips")
 @ApiBearerAuth()
 @UseGuards(RolesGuard)
-@Controller("trips")
+@Controller("customer-trips")
 export class CustomerTripsController {
   constructor(private readonly prisma: PrismaService) {}
 
@@ -57,9 +61,13 @@ export class CustomerTripsController {
     });
   }
 
+  /**
+   * Customer "approve" means: confirm draft → mark ready for planning.
+   * Distinct from admin approve (READY → ACTIVE).
+   */
   @Post(":id/approve")
   @SetMetadata("roles", ["CUSTOMER"])
-  @Audit("trip.approve", "trip")
+  @Audit("trip.customer_approve", "trip")
   async approve(@Req() req: any, @Param("id") id: string) {
     const trip = await this.prisma.trip.findFirst({ where: { id, travelerId: req.user.sub } });
     if (!trip) return { error: { code: "NOT_FOUND", message: "Trip not found" } };
