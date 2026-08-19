@@ -4,14 +4,14 @@ import { RolesGuard } from "../common/guards/roles.guard.js";
 import { Audit } from "../common/interceptors/audit.interceptor.js";
 import { AdapterOrchestrator } from "./adapter-orchestrator.service.js";
 import { AdapterRegistry } from "./adapter-registry.service.js";
-import { PrismaService } from "../prisma/prisma.service.js";
+import { randomUUID } from "node:crypto";
 
 /**
  * §24 — TripPlan orchestrator.
  * Allows customer to plan a full trip (flight + hotel + activity) and book across adapters.
  *
- * BookingStatus valid values: DRAFT, PENDING_APPROVAL, PAYMENT_PENDING, CONFIRMING, CONFIRMED,
- *                              REJECTED, FAILED, CANCEL_REQUESTED, CANCELLED, COMPLETED, DISPUTED
+ * Note: This is an ORCHESTRATION layer — the actual bookings are persisted by each adapter.
+ * Trip-plan maintains a lightweight in-memory registry for getTripPlan lookups.
  */
 @ApiTags("trip-plan")
 @ApiBearerAuth()
@@ -20,15 +20,14 @@ import { PrismaService } from "../prisma/prisma.service.js";
 export class TripPlanController {
   private readonly logger = new Logger(TripPlanController.name);
 
+  // In-memory store (in production: Redis or dedicated TripPlan table)
+  private readonly tripPlans = new Map<string, any>();
+
   constructor(
     private readonly orchestrator: AdapterOrchestrator,
     private readonly registry: AdapterRegistry,
-    private readonly prisma: PrismaService,
   ) {}
 
-  /**
-   * Plan a full trip: search across all service types.
-   */
   @Post("search")
   @SetMetadata("roles", ["CUSTOMER", "ADMIN"])
   async planTrip(@Req() req: any, @Body() body: {
@@ -82,6 +81,7 @@ export class TripPlanController {
 
   /**
    * Book a full trip (flight + hotel + activity).
+   * Uses virtual bookingId — actual bookings persisted by adapters.
    */
   @Post("book")
   @SetMetadata("roles", ["CUSTOMER", "ADMIN"])
@@ -96,22 +96,10 @@ export class TripPlanController {
     const totalMinor = (body.flight?.totalMinor || 0) + (body.hotel?.totalMinor || 0) + (body.activity?.totalMinor || 0);
     const currency = body.flight?.currency || body.hotel?.currency || body.activity?.currency || "EGP";
 
-    // Use DRAFT as initial status (valid BookingStatus)
-    const masterBooking = await this.prisma.booking.create({
-      data: {
-        travelerId: req.user.sub,
-        providerId: "TRIP_PLAN",
-        serviceId: "FULL_TRIP",
-        status: "DRAFT" as any,
-        totalMinor,
-        currency,
-        items: { flight: !!body.flight, hotel: !!body.hotel, activity: !!body.activity } as any,
-        idempotencyKey: `trip_${Date.now()}_${Math.random().toString(36).slice(2)}`,
-        tripId: body.tripId ?? null,
-      },
-    });
+    // Virtual trip-plan ID (orchestration layer only)
+    const tripPlanId = `TRIP-${randomUUID()}`;
 
-    // Book flight if provided
+    // Book flight via adapter
     if (body.flight) {
       try {
         const adapter = this.registry.get(body.flight.providerCode);
@@ -120,7 +108,7 @@ export class TripPlanController {
             externalId: body.flight.externalId,
             items: body.flight.items,
             travelerId: req.user.sub,
-            bookingId: masterBooking.id,
+            bookingId: `${tripPlanId}-FL`,
             totalMinor: body.flight.totalMinor,
             currency: body.flight.currency,
           });
@@ -139,7 +127,7 @@ export class TripPlanController {
             externalId: body.hotel.externalId,
             items: body.hotel.items,
             travelerId: req.user.sub,
-            bookingId: masterBooking.id,
+            bookingId: `${tripPlanId}-HT`,
             totalMinor: body.hotel.totalMinor,
             currency: body.hotel.currency,
           });
@@ -158,7 +146,7 @@ export class TripPlanController {
             externalId: body.activity.externalId,
             items: body.activity.items,
             travelerId: req.user.sub,
-            bookingId: masterBooking.id,
+            bookingId: `${tripPlanId}-AC`,
             totalMinor: body.activity.totalMinor,
             currency: body.activity.currency,
           });
@@ -169,19 +157,24 @@ export class TripPlanController {
       }
     }
 
-    // Use CONFIRMING if not all confirmed, else CONFIRMED (both valid enum values)
     const allConfirmed = Object.values(bookings).every((b: any) => b.status === "CONFIRMED");
     const finalStatus = allConfirmed ? "CONFIRMED" : "CONFIRMING";
 
-    await this.prisma.booking.update({
-      where: { id: masterBooking.id },
-      data: { status: finalStatus as any },
+    // Store in-memory for getTripPlan lookup
+    this.tripPlans.set(tripPlanId, {
+      id: tripPlanId,
+      travelerId: req.user.sub,
+      status: finalStatus,
+      totalMinor,
+      currency,
+      bookings,
+      createdAt: new Date().toISOString(),
     });
 
-    this.logger.log(`Trip booked: ${masterBooking.id} — flight=${bookings.flight?.status}, hotel=${bookings.hotel?.status}, activity=${bookings.activity?.status}`);
+    this.logger.log(`Trip plan booked: ${tripPlanId} — flight=${bookings.flight?.status}, hotel=${bookings.hotel?.status}, activity=${bookings.activity?.status}`);
 
     return {
-      bookingId: masterBooking.id,
+      bookingId: tripPlanId,
       status: finalStatus,
       totalMinor,
       currency,
@@ -192,11 +185,9 @@ export class TripPlanController {
   @Get(":bookingId")
   @SetMetadata("roles", ["CUSTOMER", "ADMIN"])
   async getTripPlan(@Req() req: any, @Param("bookingId") bookingId: string) {
-    const booking = await this.prisma.booking.findFirst({
-      where: { id: bookingId, travelerId: req.user.sub },
-      include: { payments: true },
-    });
-    if (!booking) return { error: { code: "NOT_FOUND" } };
-    return booking;
+    const plan = this.tripPlans.get(bookingId);
+    if (!plan) return { error: { code: "NOT_FOUND" } };
+    if (plan.travelerId !== req.user.sub) return { error: { code: "FORBIDDEN" } };
+    return plan;
   }
 }
