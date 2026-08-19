@@ -1,4 +1,4 @@
-﻿import { Controller, Get, Post, Patch, Delete, Body, UseGuards, Req, Param, SetMetadata, Logger } from "@nestjs/common";
+import { Controller, Get, Post, Patch, Delete, Body, UseGuards, Req, Param, SetMetadata, Logger } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { RolesGuard } from "../common/guards/roles.guard.js";
 import { Audit } from "../common/interceptors/audit.interceptor.js";
@@ -21,7 +21,7 @@ export class DriverVehiclesController {
   async list(@Req() req: any) {
     const vehicles = await this.prisma.vehicle.findMany({
       where: { driverId: req.user.sub },
-      orderBy: { createdAt: "desc" } as any,
+      
     });
     return { items: vehicles, total: vehicles.length };
   }
