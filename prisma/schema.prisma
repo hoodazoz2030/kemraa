@@ -385,20 +385,21 @@ model Attribution {
 }
 
 model Ride {
-  id        String      @id @default(uuid()) @db.Uuid
-  tripId    String?     @map("trip_id") @db.Uuid
-  riderId   String      @map("rider_id") @db.Uuid
-  driverId  String?     @map("driver_id") @db.Uuid
-  pickup    Json        @default("{}") @map("pickup_json")
-  dropoff   Json        @default("{}") @map("dropoff_json")
-  fareMinor Int         @default(0) @map("fare_minor")
-  currency  String      @default("EGP")
-  status    RideStatus  @default(REQUESTED)
-  createdAt DateTime    @default(now()) @map("created_at")
-  updatedAt DateTime    @updatedAt @map("updated_at")
-  trip      Trip?       @relation(fields: [tripId], references: [id])
-  driver    Driver?     @relation(fields: [driverId], references: [userId])
+  id        String         @id @default(uuid()) @db.Uuid
+  tripId    String?        @map("trip_id") @db.Uuid
+  riderId   String         @map("rider_id") @db.Uuid
+  driverId  String?        @map("driver_id") @db.Uuid
+  pickup    Json           @default("{}") @map("pickup_json")
+  dropoff   Json           @default("{}") @map("dropoff_json")
+  fareMinor Int            @default(0) @map("fare_minor")
+  currency  String         @default("EGP")
+  status    RideStatus     @default(REQUESTED)
+  createdAt DateTime       @default(now()) @map("created_at")
+  updatedAt DateTime       @updatedAt @map("updated_at")
+  trip      Trip?          @relation(fields: [tripId], references: [id])
+  driver    Driver?        @relation(fields: [driverId], references: [userId])
   events    RideEvent[]
+  incidents RideIncident[]
 
   @@index([riderId, status])
   @@index([driverId, status])
@@ -1079,4 +1080,24 @@ model ReferralEvent {
   @@index([linkId, eventType])
   @@index([userId])
   @@map("referral_events")
+}
+
+model RideIncident {
+  id           String   @id @default(uuid()) @db.Uuid
+  rideId       String   @map("ride_id") @db.Uuid
+  reporterId   String   @map("reporter_id") @db.Uuid
+  reporterType String   @map("reporter_type")
+  category     String
+  description  String
+  status       String   @default("OPEN")
+  severity     String   @default("MEDIUM")
+  resolution   String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  ride Ride @relation(fields: [rideId], references: [id])
+
+  @@index([rideId])
+  @@index([reporterId])
+  @@map("ride_incidents")
 }

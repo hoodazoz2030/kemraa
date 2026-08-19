@@ -6,6 +6,8 @@ import { DriverVehiclesController } from "./driver-vehicles.controller.js";
 import { DriverRidesController } from "./driver-rides.controller.js";
 import { DriverRidesStateController } from "./driver-rides-state.controller.js";
 import { DriverLocationController } from "./driver-location.controller.js";
+import { DriverDashboardController } from "./driver-dashboard.controller.js";
+import { DriverIncidentsController } from "./driver-incidents.controller.js";
 
 @Module({
   imports: [AuthModule],
@@ -16,6 +18,8 @@ import { DriverLocationController } from "./driver-location.controller.js";
     DriverRidesController,
     DriverRidesStateController,
     DriverLocationController,
+    DriverDashboardController,
+    DriverIncidentsController,
   ],
 })
 export class DriverModule {}
