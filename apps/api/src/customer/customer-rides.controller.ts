@@ -1,9 +1,13 @@
-﻿import { Controller, Get, Post, Body, UseGuards, Req, Param, SetMetadata, Logger } from "@nestjs/common";
+import { Controller, Get, Post, Body, UseGuards, Req, Param, SetMetadata, Logger } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { RolesGuard } from "../common/guards/roles.guard.js";
 import { Audit } from "../common/interceptors/audit.interceptor.js";
 import { PrismaService } from "../prisma/prisma.service.js";
 
+/**
+ * §12 + §18 — Customer-facing Ride endpoints.
+ * Matches schema: riderId (not userId), pickup/dropoff as Json.
+ */
 @ApiTags("customer-rides")
 @ApiBearerAuth()
 @UseGuards(RolesGuard)
@@ -13,6 +17,9 @@ export class CustomerRidesController {
 
   constructor(private readonly prisma: PrismaService) {}
 
+  /**
+   * Estimate fare for a ride.
+   */
   @Post("estimate")
   @SetMetadata("roles", ["CUSTOMER"])
   async estimate(@Body() body: { pickupLat: number; pickupLng: number; dropoffLat: number; dropoffLng: number; rideType?: string }) {
@@ -21,7 +28,11 @@ export class CustomerRidesController {
     const dLon = ((body.dropoffLng - body.pickupLng) * Math.PI) / 180;
     const a = Math.sin(dLat / 2) ** 2 + Math.cos((body.pickupLat * Math.PI) / 180) * Math.cos((body.dropoffLat * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
     const distanceKm = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const fareMinor = 2000 + Math.round(distanceKm * 500);
+
+    const baseFareMinor = 2000;
+    const perKmMinor = 500;
+    const fareMinor = baseFareMinor + Math.round(distanceKm * perKmMinor);
+
     return {
       fareMinor,
       currency: "EGP",
@@ -32,91 +43,83 @@ export class CustomerRidesController {
     };
   }
 
+  /**
+   * Request a ride — creates Ride entity with riderId + pickup/dropoff Json.
+   */
   @Post()
   @SetMetadata("roles", ["CUSTOMER"])
   @Audit("ride.request", "ride")
-  async request(@Req() req: any, @Body() body: { pickupLat: number; pickupLng: number; pickupAddress?: string; dropoffLat: number; dropoffLng: number; dropoffAddress?: string; rideType?: string; fareMinor?: number }) {
+  async request(@Req() req: any, @Body() body: {
+    pickupLat: number; pickupLng: number; pickupAddress?: string;
+    dropoffLat: number; dropoffLng: number; dropoffAddress?: string;
+    rideType?: string; fareMinor?: number; tripId?: string;
+  }) {
     try {
-      // Try different possible field names via dynamic data building
-      const data: any = {
-        status: "REQUESTED" as any,
-        fareMinor: body.fareMinor ?? 0,
-        currency: "EGP",
-        pickupLat: body.pickupLat,
-        pickupLng: body.pickupLng,
-        dropoffLat: body.dropoffLat,
-        dropoffLng: body.dropoffLng,
-      };
-      if (body.pickupAddress) data.pickupAddress = body.pickupAddress;
-      if (body.dropoffAddress) data.dropoffAddress = body.dropoffAddress;
-      if (body.rideType) data.rideType = body.rideType;
-
-      // Try relational user connect (safest for schema variations)
-      data.user = { connect: { id: req.user.sub } };
-
-      const ride = await this.prisma.ride.create({ data });
+      const ride = await this.prisma.ride.create({
+        data: {
+          riderId: req.user.sub,
+          pickup: { lat: body.pickupLat, lng: body.pickupLng, address: body.pickupAddress ?? null } as any,
+          dropoff: { lat: body.dropoffLat, lng: body.dropoffLng, address: body.dropoffAddress ?? null } as any,
+          fareMinor: body.fareMinor ?? 0,
+          currency: "EGP",
+          status: "REQUESTED" as any,
+          tripId: body.tripId ?? null,
+        },
+      });
       this.logger.log(`Ride requested: ${ride.id}`);
       return ride;
     } catch (err: any) {
-      this.logger.error(`Ride request failed: ${err.message}`, err.stack);
-      // Fallback: try passengerId or customerId
-      if (err.message?.includes("user")) {
-        try {
-          const data: any = {
-            passengerId: req.user.sub,
-            status: "REQUESTED" as any,
-            fareMinor: body.fareMinor ?? 0,
-            currency: "EGP",
-            pickupLat: body.pickupLat,
-            pickupLng: body.pickupLng,
-            dropoffLat: body.dropoffLat,
-            dropoffLng: body.dropoffLng,
-          };
-          const ride = await this.prisma.ride.create({ data });
-          return ride;
-        } catch (e2: any) {
-          return { error: { code: "CREATE_FAILED", message: e2.message } };
-        }
-      }
+      this.logger.error(`Ride request failed: ${err.message}`);
       return { error: { code: "CREATE_FAILED", message: err.message } };
     }
   }
 
+  /**
+   * List user's rides (using riderId).
+   */
   @Get()
   @SetMetadata("roles", ["CUSTOMER"])
   async list(@Req() req: any) {
-    // Try multiple where clauses
-    const where = { OR: [{ userId: req.user.sub }, { passengerId: req.user.sub }, { customerId: req.user.sub }, { travelerId: req.user.sub }] };
     const rides = await this.prisma.ride.findMany({
-      where: where as any,
-      orderBy: { createdAt: "desc" } as any,
+      where: { riderId: req.user.sub },
+      orderBy: { createdAt: "desc" },
       take: 20,
     });
     return { items: rides, total: rides.length };
   }
 
+  /**
+   * Get ride detail.
+   */
   @Get(":id")
   @SetMetadata("roles", ["CUSTOMER"])
   async get(@Req() req: any, @Param("id") id: string) {
-    const ride = await this.prisma.ride.findFirst({ where: { id } as any });
+    const ride = await this.prisma.ride.findFirst({
+      where: { id, riderId: req.user.sub },
+      include: {
+        driver: true,
+        events: { take: 10 },
+      },
+    });
     if (!ride) return { error: { code: "NOT_FOUND" } };
-    // Ownership check (flexible)
-    const ownerId = (ride as any).userId || (ride as any).passengerId || (ride as any).customerId || (ride as any).travelerId;
-    if (ownerId !== req.user.sub) return { error: { code: "FORBIDDEN" } };
     return ride;
   }
 
+  /**
+   * Cancel ride (only if REQUESTED or MATCHING).
+   */
   @Post(":id/cancel")
   @SetMetadata("roles", ["CUSTOMER"])
   @Audit("ride.cancel", "ride")
   async cancel(@Req() req: any, @Param("id") id: string) {
-    const ride = await this.prisma.ride.findFirst({ where: { id } as any });
+    const ride = await this.prisma.ride.findFirst({ where: { id, riderId: req.user.sub } });
     if (!ride) return { error: { code: "NOT_FOUND" } };
-    const ownerId = (ride as any).userId || (ride as any).passengerId || (ride as any).customerId || (ride as any).travelerId;
-    if (ownerId !== req.user.sub) return { error: { code: "FORBIDDEN" } };
-    if (!["REQUESTED", "ACCEPTED"].includes((ride as any).status)) {
-      return { error: { code: "INVALID_STATE" } };
+    if (!["REQUESTED", "MATCHING"].includes(ride.status)) {
+      return { error: { code: "INVALID_STATE", message: "Only REQUESTED/MATCHING can be cancelled" } };
     }
-    return await this.prisma.ride.update({ where: { id }, data: { status: "CANCELLED" as any } });
+    return await this.prisma.ride.update({
+      where: { id },
+      data: { status: "CANCELLED" as any },
+    });
   }
 }
