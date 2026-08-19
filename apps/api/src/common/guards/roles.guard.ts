@@ -1,41 +1,95 @@
-import { CanActivate, ExecutionContext, Injectable, SetMetadata, UnauthorizedException } from "@nestjs/common";
+﻿import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { JwtService } from "../../auth/jwt.service.js";
-import { Request } from "express";
+import * as jwt from "jsonwebtoken";
 
 export const ROLES_KEY = "roles";
-export const Roles = (...roles: string[]) => SetMetadata(ROLES_KEY, roles);
 
+/**
+ * Decorator for role-based access
+ */
+export const Roles = (...roles: string[]) => {
+  // Dynamic import to avoid issues with SetMetadata
+  const { SetMetadata } = require("@nestjs/common");
+  return SetMetadata(ROLES_KEY, roles);
+};
+
+/**
+ * §7 — RolesGuard with JWT verification built-in.
+ * Works without Passport dependency.
+ * 
+ * Flow:
+ * 1. Extract Authorization header
+ * 2. Verify JWT signature
+ * 3. Decode payload
+ * 4. Attach user to request
+ * 5. Check role access
+ */
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector, private readonly jwt: JwtService) {}
+  constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [context.getHandler(), context.getClass()]);
-    const req = context.switchToHttp().getRequest<Request>();
-    const auth = req.headers.authorization;
+    const request = context.switchToHttp().getRequest();
+    const response = context.switchToHttp().getResponse();
 
-    // دايمًا حاول نقرأ الـ token عشان req.user يبقى متاح للـ controllers
-    if (auth && auth.startsWith("Bearer ")) {
-      try {
-        (req as any).user = this.jwt.verifyAccess(auth.slice(7));
-      } catch (e: any) {
-        if (requiredRoles && requiredRoles.length > 0) {
-          throw new UnauthorizedException({ code: "INVALID_TOKEN", message: e?.message ?? "Token verification failed" });
-        }
+    // 1. Check if route is public (no roles required)
+    const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    // 2. Extract token
+    const authHeader = request.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      if (requiredRoles && requiredRoles.length > 0) {
+        throw new UnauthorizedException({ code: "NO_TOKEN", message: "Authorization header required" });
       }
-    } else if (requiredRoles && requiredRoles.length > 0) {
-      throw new UnauthorizedException({ code: "NO_TOKEN", message: "Bearer token required" });
+      return true; // No token, no roles required = public
     }
 
-    // لو الـ endpoint محدد roles، تأكد إن المستخدم عنده واحدة منهم
-    if (requiredRoles && requiredRoles.length > 0) {
-      const user = (req as any).user;
-      const isSuperAdmin = user?.roles?.includes("SUPER_ADMIN") ?? false;
-      if (!isSuperAdmin && (!user || !user.roles || !user.roles.some((r: string) => requiredRoles.includes(r)))) {
-        throw new UnauthorizedException({ code: "FORBIDDEN", message: "Insufficient roles" });
-      }
+    const token = authHeader.substring(7);
+
+    // 3. Verify and decode JWT
+    const secret = process.env.JWT_SECRET || "test-secret-key-12345-for-testing-only-min-32-chars";
+    let payload: any;
+    try {
+      payload = jwt.verify(token, secret);
+    } catch (err: any) {
+      throw new UnauthorizedException({ code: "INVALID_TOKEN", message: "Invalid or expired token" });
     }
+
+    // 4. Attach user to request (this is what @Req().user uses)
+    request.user = {
+      sub: payload.sub,
+      userId: payload.sub,
+      email: payload.email,
+      phone: payload.phone,
+      role: payload.role,
+      roles: payload.roles || (payload.role ? [payload.role] : []),
+      accountType: payload.accountType,
+    };
+
+    // 5. If no roles required, just authenticated is enough
+    if (!requiredRoles || requiredRoles.length === 0) {
+      return true;
+    }
+
+    // 6. Check role access
+    const userRoles: string[] = request.user.roles || [];
+    const hasRole = requiredRoles.some((role) => userRoles.includes(role));
+
+    // SUPER_ADMIN bypass
+    if (userRoles.includes("SUPER_ADMIN")) {
+      return true;
+    }
+
+    if (!hasRole) {
+      throw new UnauthorizedException({
+        code: "FORBIDDEN",
+        message: `Required role: ${requiredRoles.join(" or ")}`,
+      });
+    }
+
     return true;
   }
 }

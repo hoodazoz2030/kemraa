@@ -1,11 +1,9 @@
-import { Controller, Post, Body, UseGuards, Req, HttpCode, HttpStatus, Get, Patch, Param, Query } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { AuthGuard } from "@nestjs/passport";
-import { RolesGuard, Roles } from "../common/guards/roles.guard.js";
+import { Controller, Post, Body, HttpCode, HttpStatus } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { Audit } from "../common/interceptors/audit.interceptor.js";
 import { PrismaService } from "../prisma/prisma.service.js";
-import { randomUUID } from "node:crypto";
 import * as bcrypt from "bcryptjs";
+import * as jwt from "jsonwebtoken";
 
 @ApiTags("customer-auth")
 @Controller("auth")
@@ -41,7 +39,6 @@ export class CustomerAuthController {
       },
     });
 
-    // Create profile if nationality provided
     if (body.nationality) {
       await this.prisma.userProfile.upsert({
         where: { userId: user.id },
@@ -50,7 +47,6 @@ export class CustomerAuthController {
       });
     }
 
-    // Generate OTP (mock: 123456)
     const otp = "123456";
     await this.prisma.otp.create({
       data: {
@@ -79,16 +75,17 @@ export class CustomerAuthController {
     await this.prisma.otp.update({ where: { id: otp.id }, data: { usedAt: new Date() } });
     await this.prisma.user.update({ where: { id: body.userId }, data: { emailVerified: true, phoneVerified: true } });
 
-    // Generate JWT
-    const jwt = require("jsonwebtoken");
     const user = await this.prisma.user.findUnique({ where: { id: body.userId } });
+    if (!user) return { error: { code: "USER_NOT_FOUND" } };
+
+    const secret = process.env.JWT_SECRET || "test-secret-key-12345-for-testing-only-min-32-chars";
     const token = jwt.sign(
-      { sub: user!.id, email: user!.email, role: user!.role, roles: [user!.role], accountType: user!.accountType },
-      process.env.JWT_SECRET || "dev-secret",
+      { sub: user.id, email: user.email, role: user.role, roles: [user.role], accountType: user.accountType },
+      secret,
       { expiresIn: "7d" }
     );
 
-    return { accessToken: token, user: { id: user!.id, email: user!.email, role: user!.role } };
+    return { accessToken: token, user: { id: user.id, email: user.email, role: user.role } };
   }
 
   @Post("login")
@@ -107,20 +104,13 @@ export class CustomerAuthController {
       return { error: { code: "INVALID_CREDENTIALS", message: "Invalid credentials" } };
     }
 
-    const jwt = require("jsonwebtoken");
+    const secret = process.env.JWT_SECRET || "test-secret-key-12345-for-testing-only-min-32-chars";
     const token = jwt.sign(
       { sub: user.id, email: user.email, role: user.role, roles: [user.role], accountType: user.accountType },
-      process.env.JWT_SECRET || "dev-secret",
+      secret,
       { expiresIn: "7d" }
     );
 
     return { accessToken: token, user: { id: user.id, email: user.email, role: user.role } };
-  }
-
-  @Post("logout")
-  @UseGuards(AuthGuard("jwt"))
-  @HttpCode(HttpStatus.OK)
-  async logout() {
-    return { success: true };
   }
 }

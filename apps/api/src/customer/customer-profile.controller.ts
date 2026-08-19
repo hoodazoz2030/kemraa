@@ -1,13 +1,12 @@
 import { Controller, Get, Patch, Body, UseGuards, Req } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { AuthGuard } from "@nestjs/passport";
 import { RolesGuard, Roles } from "../common/guards/roles.guard.js";
 import { Audit } from "../common/interceptors/audit.interceptor.js";
 import { PrismaService } from "../prisma/prisma.service.js";
 
 @ApiTags("customer-profile")
 @ApiBearerAuth()
-@UseGuards(AuthGuard("jwt"), RolesGuard)
+@UseGuards(RolesGuard)
 @Controller("users")
 export class CustomerProfileController {
   constructor(private readonly prisma: PrismaService) {}
@@ -26,16 +25,29 @@ export class CustomerProfileController {
   @Roles("CUSTOMER")
   @Audit("user.update_profile", "user")
   async updateMe(@Req() req: any, @Body() body: { firstName?: string; lastName?: string; nationality?: string; dob?: string; preferences?: any }) {
-    const user = await this.prisma.user.update({
-      where: { id: req.user.sub },
-      data: {
-        profile: {
-          upsert: {
-            create: { firstName: body.firstName, lastName: body.lastName, nationality: body.nationality, dob: body.dob ? new Date(body.dob) : null, preferences: body.preferences || {} },
-            update: { firstName: body.firstName, lastName: body.lastName, nationality: body.nationality, dob: body.dob ? new Date(body.dob) : null, preferences: body.preferences || {} },
-          },
-        },
+    const userId = req.user.sub;
+
+    await this.prisma.userProfile.upsert({
+      where: { userId },
+      create: {
+        userId,
+        firstName: body.firstName ?? null,
+        lastName: body.lastName ?? null,
+        nationality: body.nationality ?? null,
+        dob: body.dob ? new Date(body.dob) : null,
+        preferences: (body.preferences ?? {}) as any,
       },
+      update: {
+        firstName: body.firstName ?? undefined,
+        lastName: body.lastName ?? undefined,
+        nationality: body.nationality ?? undefined,
+        dob: body.dob ? new Date(body.dob) : undefined,
+        preferences: (body.preferences ?? undefined) as any,
+      },
+    });
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
       include: { profile: true },
     });
     return user;

@@ -246,6 +246,9 @@ importers:
       ioredis:
         specifier: ^6.0.0
         version: 6.0.0
+      jsonwebtoken:
+        specifier: ^9.0.3
+        version: 9.0.3
       otplib:
         specifier: ^13.4.1
         version: 13.4.1
@@ -304,6 +307,9 @@ importers:
       '@types/jest':
         specifier: ^30.0.0
         version: 30.0.0
+      '@types/jsonwebtoken':
+        specifier: ^9.0.10
+        version: 9.0.10
       '@types/node':
         specifier: ^22.7.5
         version: 22.20.1

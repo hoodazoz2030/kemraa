@@ -1,13 +1,12 @@
-import { Controller, Get, Post, Patch, Body, UseGuards, Req, Param, Query } from "@nestjs/common";
+import { Controller, Get, Post, Body, UseGuards, Req, Param, Query } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { AuthGuard } from "@nestjs/passport";
 import { RolesGuard, Roles } from "../common/guards/roles.guard.js";
 import { Audit } from "../common/interceptors/audit.interceptor.js";
 import { PrismaService } from "../prisma/prisma.service.js";
 
 @ApiTags("customer-trips")
 @ApiBearerAuth()
-@UseGuards(AuthGuard("jwt"), RolesGuard)
+@UseGuards(RolesGuard)
 @Controller("trips")
 export class CustomerTripsController {
   constructor(private readonly prisma: PrismaService) {}
@@ -34,7 +33,6 @@ export class CustomerTripsController {
       include: {
         itineraries: { include: { items: true }, orderBy: { version: "desc" } },
         bookings: { include: { service: true } },
-        // payments: queried separately if needed
       },
     });
     if (!trip) return { error: { code: "NOT_FOUND", message: "Trip not found" } };
