@@ -6,6 +6,7 @@ import { AdapterRegistry } from "./adapter-registry.service.js";
 import { AdapterOrchestrator } from "./adapter-orchestrator.service.js";
 import { AdaptersController } from "./adapters.controller.js";
 import { AdapterWebhooksController } from "./adapter-webhooks.controller.js";
+import { TripPlanController } from "./trip-plan.controller.js";
 
 @Module({
   providers: [
@@ -15,7 +16,7 @@ import { AdapterWebhooksController } from "./adapter-webhooks.controller.js";
     AdapterRegistry,
     AdapterOrchestrator,
   ],
-  controllers: [AdaptersController, AdapterWebhooksController],
+  controllers: [AdaptersController, AdapterWebhooksController, TripPlanController],
   exports: [
     AdapterRegistry,
     AdapterOrchestrator,
