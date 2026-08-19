@@ -47,6 +47,7 @@ model User {
   userLocation   UserLocation?
   trustedDevices TrustedDevice[]
   auditLogs      AuditLog[]
+  reviewedKYBs   KYB[]                @relation("KYBReviewer")
   payments       Payment[]            @relation("TravelerPayments")
 
   @@map("users")
@@ -78,6 +79,8 @@ model Organization {
   members     OrganizationMember[]
   partner     Partner?
   agency      Agency?
+
+  kybs KYB[]
 
   @@map("organizations")
 }
@@ -988,4 +991,38 @@ model Otp {
 
   @@index([userId, type, code])
   @@map("otps")
+}
+
+enum KYBStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}
+
+model KYB {
+  id                  String    @id @default(uuid()) @db.Uuid
+  organizationId      String    @map("organization_id") @db.Uuid
+  legalName           String    @map("legal_name")
+  taxId               String?   @map("tax_id")
+  registrationCountry String    @map("registration_country")
+  businessType        String    @default("LLC") @map("business_type")
+  website             String?
+  contactEmail        String    @map("contact_email")
+  contactPhone        String?   @map("contact_phone")
+  documents           Json      @default("[]") @map("documents_json")
+  status              KYBStatus @default(DRAFT)
+  rejectionReason     String?   @map("rejection_reason")
+  reviewedBy          String?   @map("reviewed_by") @db.Uuid
+  reviewedAt          DateTime? @map("reviewed_at")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  reviewer     User?        @relation("KYBReviewer", fields: [reviewedBy], references: [id])
+
+  @@index([organizationId])
+  @@index([status])
+  @@map("kybs")
 }
