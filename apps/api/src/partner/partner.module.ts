@@ -4,6 +4,8 @@ import { PartnerAuthController } from "./partner-auth.controller.js";
 import { PartnerKYBController } from "./partner-kyb.controller.js";
 import { PartnerProfileController } from "./partner-profile.controller.js";
 import { PartnerServicesController } from "./partner-services.controller.js";
+import { PartnerBookingsController } from "./partner-bookings.controller.js";
+import { PartnerDashboardController } from "./partner-dashboard.controller.js";
 
 @Module({
   imports: [AuthModule],
@@ -12,6 +14,8 @@ import { PartnerServicesController } from "./partner-services.controller.js";
     PartnerKYBController,
     PartnerProfileController,
     PartnerServicesController,
+    PartnerBookingsController,
+    PartnerDashboardController,
   ],
 })
 export class PartnerModule {}
