@@ -1,4 +1,4 @@
-﻿import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
 import { ThothPolicyEngine } from "./policy-engine.service.js";
 import { ThothContextLoader } from "./context-loader.service.js";
@@ -185,7 +185,7 @@ export class ThothGatewayService {
     if (m.includes("دفع") || m.includes("payment") || m.includes("pay")) {
       return { tool: "create_payment_intent", payload: { amountMinor: 50000, currency: "EGP" } };
     }
-    if (m.includes("تاكسي") || m.includes("ride") || m.includes("taxi") || m.includes("مواصلات")) {
+    if (m.includes("تاكسي") || m.includes("taxi") || m.includes("مواصلات") || m.includes("مطار") || m.includes("airport") || m.includes("توصيلة") || m.includes("كابتن")) {
       return { tool: "estimate_ride", payload: { distanceKm: 15 } };
     }
     if (m.includes("وجهة") || m.includes("معلومات") || m.includes("destination") || m.includes("اعرف")) {

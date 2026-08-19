@@ -1,4 +1,4 @@
-﻿import { Injectable, Logger, ForbiddenException } from "@nestjs/common";
+import { Injectable, Logger, ForbiddenException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
 
 /**
@@ -54,7 +54,6 @@ export class ThothPolicyEngine {
     // §13.2 Risk-based policy
     const riskLevel = tool.riskLevel;
     const requiresApproval = tool.requiresApproval;
-    
     // SUPER_ADMIN can bypass approval gates
     const isSuperAdmin = params.userRoles?.includes("SUPER_ADMIN") ?? false;
     
