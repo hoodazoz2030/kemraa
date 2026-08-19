@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -40,6 +40,7 @@ const __ALL_ITEMS = [
   { href: "/content", label: "Content", icon: Newspaper },
   { href: "/thoth", label: "THOTH", icon: Sparkles },
   { href: "/queues", label: "Queues", icon: Layers },
+  { href: "/events", label: "Events", icon: Zap },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/audit-logs", label: "Audit Logs", icon: ScrollText },
   { href: "/feature-flags", label: "Feature Flags", icon: Flag },
@@ -76,7 +77,7 @@ const FEATURE_MAP: Record<string, string> = {
   "/signing": "signing",
   "/content": "content",
   "/thoth": "thoth",
-  "/queues": "queues",
+  "/queues": "queues", "/events": "events",
 };
 
 const __features = typeof window !== "undefined"

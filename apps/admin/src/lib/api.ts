@@ -656,3 +656,11 @@ export const bookingsApi = {
   reject: (id: string, reason?: string) => api.post(`/bookings/${id}/reject`, { reason }).then((r: any) => r.data),
   cancel: (id: string, reason?: string) => api.post(`/bookings/${id}/cancel`, { reason }).then((r: any) => r.data),
 };
+
+// ============ Events + Notifications ============
+export const eventsApi = {
+  catalog: () => api.get("/admin/events/catalog").then((r: any) => r.data),
+  stats: () => api.get("/admin/events/stats").then((r: any) => r.data),
+  emit: (type: string, payload: any, userId: string) =>
+    api.post("/admin/events/emit", { type, payload, userId }).then((r: any) => r.data),
+};
