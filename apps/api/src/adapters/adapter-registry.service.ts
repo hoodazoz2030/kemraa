@@ -1,20 +1,27 @@
 ﻿import { Injectable, Logger } from "@nestjs/common";
 import { MockFlightAdapter } from "./mock/mock-flight.adapter.js";
+import { MockHotelAdapter } from "./mock/mock-hotel.adapter.js";
+import { MockActivityAdapter } from "./mock/mock-activity.adapter.js";
 import type { BaseAdapter, ProviderIdentity } from "./interfaces/adapter.interface.js";
 
 /**
  * §24 — Adapter Registry.
  * Central registry of all provider adapters.
- * Supports dynamic registration + lookup by id/code/serviceType.
+ * Auto-registers all mock adapters at startup.
  */
 @Injectable()
 export class AdapterRegistry {
   private readonly logger = new Logger(AdapterRegistry.name);
   private readonly adapters = new Map<string, BaseAdapter>();
 
-  constructor(private readonly mockFlightAdapter: MockFlightAdapter) {
-    // Register built-in adapters
+  constructor(
+    private readonly mockFlightAdapter: MockFlightAdapter,
+    private readonly mockHotelAdapter: MockHotelAdapter,
+    private readonly mockActivityAdapter: MockActivityAdapter,
+  ) {
     this.register(mockFlightAdapter);
+    this.register(mockHotelAdapter);
+    this.register(mockActivityAdapter);
   }
 
   register(adapter: BaseAdapter): void {
