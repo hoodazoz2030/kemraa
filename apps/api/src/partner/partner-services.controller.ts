@@ -18,15 +18,21 @@ export class PartnerServicesController {
 
   constructor(private readonly prisma: PrismaService) {}
 
-    /**
-   * providerId in Service table = Organization.id (Partner shares PK with Organization).
-   * So we just need to resolve user's organizationId from membership.
+      /**
+   * providerId = organizationId (Partner shares PK with Organization).
+   * Partner entity is auto-created during partner-auth/register.
    */
   private async getProviderId(userId: string): Promise<string | null> {
     const membership = await this.prisma.organizationMember.findFirst({
       where: { userId, role: "PARTNER_ADMIN" as any, status: "ACTIVE" as any },
     });
-    return membership?.organizationId ?? null;
+    if (!membership) return null;
+
+    // Verify Partner entity exists (should always exist after register)
+    const partner = await this.prisma.partner.findUnique({
+      where: { organizationId: membership.organizationId },
+    });
+    return partner?.organizationId ?? null;
   }
 
   @Get()

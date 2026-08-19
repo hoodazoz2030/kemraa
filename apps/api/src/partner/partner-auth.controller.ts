@@ -1,4 +1,4 @@
-﻿import { Controller, Post, Body, HttpCode, HttpStatus, Logger } from "@nestjs/common";
+import { Controller, Post, Body, HttpCode, HttpStatus, Logger } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { Audit } from "../common/interceptors/audit.interceptor.js";
 import { PrismaService } from "../prisma/prisma.service.js";
@@ -31,18 +31,29 @@ export class PartnerAuthController {
 
     const passwordHash = await bcrypt.hash(body.password, 10);
 
-    try {
+        try {
       const result = await this.prisma.$transaction(async (tx) => {
-        // Organization: uses type + ContractStatus (DRAFT) + country
         const org = await tx.organization.create({
           data: {
             legalName: body.legalName,
             displayName: body.displayName || body.legalName,
             type: body.businessType || "LLC",
-            status: "DRAFT" as any, // ContractStatus enum value
+            status: "DRAFT" as any,
             country: body.registrationCountry || "EG",
             metadata: { website: body.website ?? null } as any,
           },
+        });
+
+        // Create Partner entity (shares PK with Organization)
+        const partner = await tx.partner.upsert({
+          where: { organizationId: org.id },
+          create: {
+            organizationId: org.id,
+            partnerType: body.businessType || "LLC",
+            contractStatus: "DRAFT" as any,
+            settlementTerms: {} as any,
+          },
+          update: {},
         });
 
         const user = await tx.user.create({
@@ -55,7 +66,6 @@ export class PartnerAuthController {
           },
         });
 
-        // OrganizationMember: role = PARTNER_ADMIN (from Role enum), status = ACTIVE (from MemberStatus)
         await tx.organizationMember.create({
           data: {
             organizationId: org.id,
@@ -65,7 +75,6 @@ export class PartnerAuthController {
           },
         });
 
-        // KYB draft
         const kyb = await tx.kYB.create({
           data: {
             organizationId: org.id,
@@ -80,7 +89,7 @@ export class PartnerAuthController {
           },
         });
 
-        return { org, user, kyb };
+        return { org, user, kyb, partner };
       });
 
       this.logger.log(`Partner registered: org=${result.org.id}`);
@@ -88,6 +97,7 @@ export class PartnerAuthController {
       return {
         userId: result.user.id,
         organizationId: result.org.id,
+        partnerId: result.partner.organizationId,
         kybId: result.kyb.id,
         message: "Registration complete. Complete KYB to activate.",
       };
