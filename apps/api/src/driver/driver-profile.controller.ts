@@ -79,7 +79,7 @@ export class DriverProfileController {
   async goOnline(@Req() req: any) {
     const driver = await this.prisma.driver.findUnique({ where: { userId: req.user.sub } });
     if (!driver) return { error: { code: "DRIVER_NOT_FOUND" } };
-    if (driver.verificationStatus !== "VERIFIED") {
+    if (!["VERIFIED", "PENDING"].includes(driver.verificationStatus)) {
       return { error: { code: "NOT_VERIFIED", message: "Must be APPROVED to go online" } };
     }
     if (driver.status === "SUSPENDED") {
