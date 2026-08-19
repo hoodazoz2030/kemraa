@@ -1,5 +1,6 @@
 ﻿import { Module } from "@nestjs/common";
 import { AuthModule } from "../auth/auth.module.js";
+import { ThothModule } from "../thoth/thoth.module.js";
 import { CustomerAuthController } from "./customer-auth.controller.js";
 import { CustomerProfileController } from "./customer-profile.controller.js";
 import { CustomerTripsController } from "./customer-trips.controller.js";
@@ -9,9 +10,10 @@ import { CustomerPaymentsController } from "./customer-payments.controller.js";
 import { CustomerRidesController } from "./customer-rides.controller.js";
 import { CustomerNotificationsController } from "./customer-notifications.controller.js";
 import { CustomerSupportController } from "./customer-support.controller.js";
+import { CustomerThothController } from "./customer-thoth.controller.js";
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, ThothModule],
   controllers: [
     CustomerAuthController,
     CustomerProfileController,
@@ -22,6 +24,7 @@ import { CustomerSupportController } from "./customer-support.controller.js";
     CustomerRidesController,
     CustomerNotificationsController,
     CustomerSupportController,
+    CustomerThothController,
   ],
 })
 export class CustomerModule {}
