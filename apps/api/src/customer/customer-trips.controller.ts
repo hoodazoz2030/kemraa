@@ -1,4 +1,4 @@
-﻿import { Controller, Get, Post, Body, UseGuards, Req, Param, Query, SetMetadata } from "@nestjs/common";
+import { Controller, Get, Post, Body, UseGuards, Req, Param, Query, SetMetadata } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { RolesGuard } from "../common/guards/roles.guard.js";
 import { Audit } from "../common/interceptors/audit.interceptor.js";
@@ -69,13 +69,16 @@ export class CustomerTripsController {
   @SetMetadata("roles", ["CUSTOMER"])
   @Audit("trip.customer_approve", "trip")
   async approve(@Req() req: any, @Param("id") id: string) {
+    try {
     const trip = await this.prisma.trip.findFirst({ where: { id, travelerId: req.user.sub } });
     if (!trip) return { error: { code: "NOT_FOUND", message: "Trip not found" } };
     if (trip.status !== "DRAFT") return { error: { code: "INVALID_STATE", message: "Trip must be DRAFT" } };
-
-    return await this.prisma.trip.update({
-      where: { id },
-      data: { status: "APPROVED" as any },
-    });
-  }
-}
+      return await this.prisma.trip.update({
+        where: { id },
+        data: { status: "APPROVED" as any },
+      });
+    } catch (err: any) {
+      console.error("[approve] error:", err);
+      return { error: { code: "INTERNAL", message: err?.message || "Approve failed" } };
+    }
+  }}

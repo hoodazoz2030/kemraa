@@ -563,6 +563,7 @@ enum ServiceStatus {
 }
 
 enum TripStatus {
+  APPROVED
   DRAFT
   PLANNING
   READY
