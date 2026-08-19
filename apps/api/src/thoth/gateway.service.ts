@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+﻿import { Injectable, Logger } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
 import { ThothPolicyEngine } from "./policy-engine.service.js";
 import { ThothContextLoader } from "./context-loader.service.js";
@@ -28,7 +28,6 @@ export class ThothGatewayService {
   }) {
     const startedAt = Date.now();
     const sessionId = params.sessionId || randomUUID();
-    const conversation: any[] = [];
 
     // 1) Save user message
     await this.prisma.thothChatMessage.create({
@@ -48,7 +47,7 @@ export class ThothGatewayService {
     const tools = await this.prisma.thothTool.findMany({ where: { enabled: true } });
     const toolNames = tools.map((t: any) => t.name);
 
-    // 4) Mock LLM decides what tool to call based on keywords (in production: Claude)
+    // 4) Mock LLM decides what tool to call
     const toolCall = this.mockLLMPlan(params.message, toolNames);
 
     // 5) If no tool, return text response
@@ -82,7 +81,7 @@ export class ThothGatewayService {
       payload: toolCall.payload,
     });
 
-    // 7) If approval required → create PENDING action
+    // 7) If approval required -> create PENDING action
     if (policyResult.requiresApproval) {
       const action = await this.prisma.thothAction.create({
         data: {
@@ -106,10 +105,15 @@ export class ThothGatewayService {
           durationMs: Date.now() - startedAt,
         },
       });
-      return { sessionId, reply, toolCalls: [{ tool: toolCall.tool, status: "PENDING_APPROVAL", actionId: action.id }], riskLevel: policyResult.riskLevel };
+      return {
+        sessionId,
+        reply,
+        toolCalls: [{ tool: toolCall.tool, status: "PENDING_APPROVAL", actionId: action.id }],
+        riskLevel: policyResult.riskLevel,
+      };
     }
 
-    // 8) If not allowed → reject
+    // 8) If not allowed -> reject
     if (!policyResult.allowed) {
       const reply = `❌ غير مسموح: ${policyResult.reason}`;
       await this.prisma.thothChatMessage.create({
@@ -165,37 +169,61 @@ export class ThothGatewayService {
   }
 
   /**
-   * Mock LLM planner (keyword-based). In production, replaced by Claude function calling.
+   * Mock LLM planner (keyword-based). Production: replaced by Claude function calling.
+   * Order matters: specific keywords (ride/taxi) BEFORE generic ones (كام/budget).
    */
   private mockLLMPlan(message: string, toolNames: string[]): { tool: string; payload: any } | null {
     const m = message.toLowerCase();
 
-    if (m.includes("بحث") || m.includes("search") || m.includes("ابحث")) {
-      return { tool: "search_services", payload: { type: "HOTEL" } };
-    }
-    if (m.includes("ميزانية") || m.includes("budget") || m.includes("كام")) {
-      return { tool: "calculate_budget", payload: { nights: 5, perNightMinor: 150000, currency: "EGP" } };
-    }
-    if (m.includes("رحلة") || m.includes("trip") || m.includes("سفرة")) {
-      return { tool: "create_itinerary_draft", payload: { title: "رحلة إلى الأقصر", destination: "EG", nights: 4 } };
-    }
-    if (m.includes("حجز") || m.includes("book")) {
-      return { tool: "create_booking_draft", payload: {} };
-    }
-    if (m.includes("دفع") || m.includes("payment") || m.includes("pay")) {
-      return { tool: "create_payment_intent", payload: { amountMinor: 50000, currency: "EGP" } };
-    }
-    if (m.includes("تاكسي") || m.includes("taxi") || m.includes("مواصلات") || m.includes("مطار") || m.includes("airport") || m.includes("توصيلة") || m.includes("كابتن")) {
+    // 1. Ride/taxi FIRST (specific keywords — before generic "كام")
+    const rideKeywords = ["تاكسي", "taxi", "مواصلات", "مطار", "airport", "توصيلة", "كابتن", "ride", "uber", "careem", "pickup", "dropoff"];
+    if (rideKeywords.some((k) => m.includes(k))) {
       return { tool: "estimate_ride", payload: { distanceKm: 15 } };
     }
-    if (m.includes("وجهة") || m.includes("معلومات") || m.includes("destination") || m.includes("اعرف")) {
-      return { tool: "search_destination_knowledge", payload: { destination: "Egypt" } };
+
+    // 2. Payment (HIGH risk)
+    const paymentKeywords = ["دفع", "payment", "pay", "ادفع", "checkout", "بطاقة"];
+    if (paymentKeywords.some((k) => m.includes(k))) {
+      return { tool: "create_payment_intent", payload: { amountMinor: 50000, currency: "EGP" } };
     }
-    if (m.includes("دعم") || m.includes("support") || m.includes("مشكلة")) {
+
+    // 3. Booking (HIGH risk)
+    const bookingKeywords = ["حجز", "book", "احجز", "reserve"];
+    if (bookingKeywords.some((k) => m.includes(k))) {
+      return { tool: "create_booking_draft", payload: {} };
+    }
+
+    // 4. Itinerary/trip creation (MEDIUM)
+    const tripKeywords = ["رحلة", "trip", "سفرة", "اعمل رحلة", "itinerary", "برنامج"];
+    if (tripKeywords.some((k) => m.includes(k))) {
+      return { tool: "create_itinerary_draft", payload: { title: "رحلة إلى الأقصر", destination: "EG", nights: 4 } };
+    }
+
+    // 5. Budget calc (LOW)
+    const budgetKeywords = ["ميزانية", "budget", "كام", "تكلفة", "cost", "price"];
+    if (budgetKeywords.some((k) => m.includes(k))) {
+      return { tool: "calculate_budget", payload: { nights: 5, perNightMinor: 150000, currency: "EGP" } };
+    }
+
+    // 6. Search (LOW)
+    const searchKeywords = ["بحث", "search", "ابحث", "فندق", "مطعم", "تجربة", "hotel", "restaurant"];
+    if (searchKeywords.some((k) => m.includes(k))) {
+      return { tool: "search_services", payload: { type: "HOTEL" } };
+    }
+
+    // 7. Support (MEDIUM)
+    const supportKeywords = ["دعم", "support", "مشكلة", "شكوى", "help"];
+    if (supportKeywords.some((k) => m.includes(k))) {
       return { tool: "create_support_ticket", payload: { subject: message.slice(0, 100), body: message, category: "OTHER" } };
     }
 
-    return null; // No tool → conversational reply
+    // 8. Destination knowledge (LOW)
+    const destKeywords = ["وجهة", "معلومات", "destination", "اعرف", "about"];
+    if (destKeywords.some((k) => m.includes(k))) {
+      return { tool: "search_destination_knowledge", payload: { destination: "Egypt" } };
+    }
+
+    return null;
   }
 
   async getHistory(userId?: string, sessionId?: string, limit = 50) {
@@ -228,8 +256,8 @@ export class ThothGatewayService {
     ]);
     return {
       total,
-      byStatus: byStatus.reduce((acc, s) => ({ ...acc, [s.status || "null"]: s._count.id }), {} as any),
-      byRisk: byRisk.reduce((acc, s) => ({ ...acc, [s.riskLevel || "null"]: s._count.id }), {} as any),
+      byStatus: byStatus.reduce((acc: any, s: any) => ({ ...acc, [s.status || "null"]: s._count.id }), {}),
+      byRisk: byRisk.reduce((acc: any, s: any) => ({ ...acc, [s.riskLevel || "null"]: s._count.id }), {}),
     };
   }
 }
