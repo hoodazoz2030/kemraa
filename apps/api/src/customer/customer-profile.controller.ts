@@ -1,6 +1,6 @@
-import { Controller, Get, Patch, Body, UseGuards, Req } from "@nestjs/common";
+﻿import { Controller, Get, Patch, Body, UseGuards, Req, SetMetadata } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { RolesGuard, Roles } from "../common/guards/roles.guard.js";
+import { RolesGuard } from "../common/guards/roles.guard.js";
 import { Audit } from "../common/interceptors/audit.interceptor.js";
 import { PrismaService } from "../prisma/prisma.service.js";
 
@@ -12,7 +12,7 @@ export class CustomerProfileController {
   constructor(private readonly prisma: PrismaService) {}
 
   @Get("me")
-  @Roles("CUSTOMER")
+  @SetMetadata("roles", ["CUSTOMER"])
   async getMe(@Req() req: any) {
     const user = await this.prisma.user.findUnique({
       where: { id: req.user.sub },
@@ -22,7 +22,7 @@ export class CustomerProfileController {
   }
 
   @Patch("me")
-  @Roles("CUSTOMER")
+  @SetMetadata("roles", ["CUSTOMER"])
   @Audit("user.update_profile", "user")
   async updateMe(@Req() req: any, @Body() body: { firstName?: string; lastName?: string; nationality?: string; dob?: string; preferences?: any }) {
     const userId = req.user.sub;
@@ -46,10 +46,9 @@ export class CustomerProfileController {
       },
     });
 
-    const user = await this.prisma.user.findUnique({
+    return await this.prisma.user.findUnique({
       where: { id: userId },
       include: { profile: true },
     });
-    return user;
   }
 }

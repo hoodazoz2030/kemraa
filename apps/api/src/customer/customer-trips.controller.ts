@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Body, UseGuards, Req, Param, Query } from "@nestjs/common";
+﻿import { Controller, Get, Post, Body, UseGuards, Req, Param, Query, SetMetadata } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { RolesGuard, Roles } from "../common/guards/roles.guard.js";
+import { RolesGuard } from "../common/guards/roles.guard.js";
 import { Audit } from "../common/interceptors/audit.interceptor.js";
 import { PrismaService } from "../prisma/prisma.service.js";
 
@@ -12,7 +12,7 @@ export class CustomerTripsController {
   constructor(private readonly prisma: PrismaService) {}
 
   @Get()
-  @Roles("CUSTOMER")
+  @SetMetadata("roles", ["CUSTOMER"])
   async list(@Req() req: any, @Query() q: any) {
     const where: any = { travelerId: req.user.sub };
     if (q.status) where.status = q.status;
@@ -26,7 +26,7 @@ export class CustomerTripsController {
   }
 
   @Get(":id")
-  @Roles("CUSTOMER")
+  @SetMetadata("roles", ["CUSTOMER"])
   async get(@Req() req: any, @Param("id") id: string) {
     const trip = await this.prisma.trip.findFirst({
       where: { id, travelerId: req.user.sub },
@@ -40,10 +40,10 @@ export class CustomerTripsController {
   }
 
   @Post()
-  @Roles("CUSTOMER")
+  @SetMetadata("roles", ["CUSTOMER"])
   @Audit("trip.create", "trip")
   async create(@Req() req: any, @Body() body: { title: string; destinationCountry: string; startAt: string; endAt: string; budgetMinor: number; currency?: string }) {
-    const trip = await this.prisma.trip.create({
+    return await this.prisma.trip.create({
       data: {
         travelerId: req.user.sub,
         title: body.title,
@@ -55,21 +55,19 @@ export class CustomerTripsController {
         status: "DRAFT" as any,
       },
     });
-    return trip;
   }
 
   @Post(":id/approve")
-  @Roles("CUSTOMER")
+  @SetMetadata("roles", ["CUSTOMER"])
   @Audit("trip.approve", "trip")
   async approve(@Req() req: any, @Param("id") id: string) {
     const trip = await this.prisma.trip.findFirst({ where: { id, travelerId: req.user.sub } });
     if (!trip) return { error: { code: "NOT_FOUND", message: "Trip not found" } };
     if (trip.status !== "DRAFT") return { error: { code: "INVALID_STATE", message: "Trip must be DRAFT" } };
 
-    const updated = await this.prisma.trip.update({
+    return await this.prisma.trip.update({
       where: { id },
       data: { status: "APPROVED" as any },
     });
-    return updated;
   }
 }
