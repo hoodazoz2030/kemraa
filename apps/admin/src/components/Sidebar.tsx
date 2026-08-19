@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -7,7 +7,7 @@ import {
   BarChart3, ScrollText, Flag, CreditCard, Percent, ArrowRightLeft,
   Shield, TicketPercent, Settings as SettingsIcon, Star, Car, DollarSign,
   Building2, Receipt, FileSignature, Newspaper, Sparkles, Layers,
-  Building, AlertTriangle, GitBranch, BookOpen
+  Building, AlertTriangle, GitBranch, BookOpen, Zap, MessageCircle
 } from "lucide-react";
 import clsx from "clsx";
 import Image from "next/image";
@@ -39,6 +39,7 @@ const __ALL_ITEMS = [
   { href: "/refunds", label: "Refunds", icon: ArrowRightLeft },
   { href: "/content", label: "Content", icon: Newspaper },
   { href: "/thoth", label: "THOTH", icon: Sparkles },
+  { href: "/thoth-chat", label: "THOTH Chat", icon: MessageCircle },
   { href: "/queues", label: "Queues", icon: Layers },
   { href: "/events", label: "Events", icon: Zap },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
@@ -77,7 +78,9 @@ const FEATURE_MAP: Record<string, string> = {
   "/signing": "signing",
   "/content": "content",
   "/thoth": "thoth",
-  "/queues": "queues", "/events": "events",
+  "/thoth-chat": "thoth",
+  "/queues": "queues",
+  "/events": "events",
 };
 
 const __features = typeof window !== "undefined"
@@ -88,7 +91,7 @@ const __user = typeof window !== "undefined"
   ? (() => { try { return JSON.parse(localStorage.getItem("kemraa_user") || "null"); } catch { return null; } })()
   : null;
 
-const __isSuperAdmin = __user?.roles?.includes("SUPER_ADMIN") || __user?.accountType === "OWNER";
+const __isSuperAdmin = __user?.roles?.includes("SUPER_ADMIN") || __user?.accountType === "STAFF";
 
 const navItems = __ALL_ITEMS.filter((i: any) => {
   if (__isSuperAdmin) return true;

@@ -957,3 +957,21 @@ model PaymentStateHistory {
   @@index([toStatus])
   @@map("payment_state_history")
 }
+
+model ThothChatMessage {
+  id          String   @id @default(uuid()) @db.Uuid
+  sessionId   String   @map("session_id") @db.Uuid
+  userId      String?  @map("user_id") @db.Uuid
+  role        String   @default("user")
+  content     String
+  toolCalls   Json?    @map("tool_calls_json")
+  toolResults Json?    @map("tool_results_json")
+  riskLevel   String?  @map("risk_level")
+  status      String   @default("COMPLETED")
+  durationMs  Int?     @map("duration_ms")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([userId, createdAt])
+  @@index([sessionId])
+  @@map("thoth_chat_messages")
+}

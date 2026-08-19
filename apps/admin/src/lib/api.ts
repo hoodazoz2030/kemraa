@@ -664,3 +664,13 @@ export const eventsApi = {
   emit: (type: string, payload: any, userId: string) =>
     api.post("/admin/events/emit", { type, payload, userId }).then((r: any) => r.data),
 };
+
+// ============ THOTH Chat ============
+export const thothChatApi = {
+  chat: (message: string, sessionId?: string) =>
+    api.post("/thoth/chat", { message, sessionId }).then((r: any) => r.data),
+  history: (userId?: string, sessionId?: string) =>
+    api.get(`/thoth/history${userId ? `?userId=${userId}` : sessionId ? `?sessionId=${sessionId}` : ""}`).then((r: any) => r.data),
+  sessions: () => api.get("/thoth/sessions").then((r: any) => r.data),
+  stats: () => api.get("/thoth/stats").then((r: any) => r.data),
+};
