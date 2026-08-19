@@ -155,19 +155,20 @@ model Vehicle {
 }
 
 model Service {
-  id          String        @id @default(uuid()) @db.Uuid
-  providerId  String        @map("provider_id") @db.Uuid
-  type        ServiceType
-  title       String
-  description String?
-  currency    String        @default("EGP")
-  priceMinor  Int           @default(0) @map("price_minor")
-  status      ServiceStatus @default(ACTIVE)
-  metadata    Json          @default("{}") @map("metadata_json")
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
-  provider    Partner       @relation(fields: [providerId], references: [organizationId])
-  bookings    Booking[]
+  id             String                @id @default(uuid()) @db.Uuid
+  providerId     String                @map("provider_id") @db.Uuid
+  type           ServiceType
+  title          String
+  description    String?
+  currency       String                @default("EGP")
+  priceMinor     Int                   @default(0) @map("price_minor")
+  status         ServiceStatus         @default(ACTIVE)
+  metadata       Json                  @default("{}") @map("metadata_json")
+  createdAt      DateTime              @default(now()) @map("created_at")
+  updatedAt      DateTime              @updatedAt @map("updated_at")
+  provider       Partner               @relation(fields: [providerId], references: [organizationId])
+  bookings       Booking[]
+  availabilities ServiceAvailability[]
 
   @@index([type, status])
   @@map("services")
@@ -1025,4 +1026,23 @@ model KYB {
   @@index([organizationId])
   @@index([status])
   @@map("kybs")
+}
+
+model ServiceAvailability {
+  id          String   @id @default(uuid()) @db.Uuid
+  serviceId   String   @map("service_id") @db.Uuid
+  date        DateTime @db.Date
+  startTime   String   @map("start_time")
+  endTime     String   @map("end_time")
+  capacity    Int      @default(1)
+  bookedCount Int      @default(0) @map("booked_count")
+  isBlocked   Boolean  @default(false) @map("is_blocked")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([serviceId, date, startTime])
+  @@index([serviceId, date])
+  @@map("service_availabilities")
 }
