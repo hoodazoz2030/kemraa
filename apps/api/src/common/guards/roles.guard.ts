@@ -1,4 +1,4 @@
-﻿import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from "@nestjs/common";
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, SetMetadata } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import * as jwt from "jsonwebtoken";
 
@@ -7,22 +7,11 @@ export const ROLES_KEY = "roles";
 /**
  * Decorator for role-based access
  */
-export const Roles = (...roles: string[]) => {
-  // Dynamic import to avoid issues with SetMetadata
-  const { SetMetadata } = require("@nestjs/common");
-  return SetMetadata(ROLES_KEY, roles);
-};
+export const Roles = (...roles: string[]) => SetMetadata(ROLES_KEY, roles);
 
 /**
  * §7 — RolesGuard with JWT verification built-in.
  * Works without Passport dependency.
- * 
- * Flow:
- * 1. Extract Authorization header
- * 2. Verify JWT signature
- * 3. Decode payload
- * 4. Attach user to request
- * 5. Check role access
  */
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -30,9 +19,8 @@ export class RolesGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
-    const response = context.switchToHttp().getResponse();
 
-    // 1. Check if route is public (no roles required)
+    // 1. Check if route has role requirements
     const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -44,7 +32,7 @@ export class RolesGuard implements CanActivate {
       if (requiredRoles && requiredRoles.length > 0) {
         throw new UnauthorizedException({ code: "NO_TOKEN", message: "Authorization header required" });
       }
-      return true; // No token, no roles required = public
+      return true;
     }
 
     const token = authHeader.substring(7);
@@ -58,7 +46,7 @@ export class RolesGuard implements CanActivate {
       throw new UnauthorizedException({ code: "INVALID_TOKEN", message: "Invalid or expired token" });
     }
 
-    // 4. Attach user to request (this is what @Req().user uses)
+    // 4. Attach user to request
     request.user = {
       sub: payload.sub,
       userId: payload.sub,
@@ -69,24 +57,26 @@ export class RolesGuard implements CanActivate {
       accountType: payload.accountType,
     };
 
-    // 5. If no roles required, just authenticated is enough
+    // 5. If no roles required, authenticated is enough
     if (!requiredRoles || requiredRoles.length === 0) {
       return true;
     }
 
     // 6. Check role access
     const userRoles: string[] = request.user.roles || [];
-    const hasRole = requiredRoles.some((role) => userRoles.includes(role));
-
+    
     // SUPER_ADMIN bypass
     if (userRoles.includes("SUPER_ADMIN")) {
       return true;
     }
 
+    const hasRole = requiredRoles.some((role) => userRoles.includes(role));
+
     if (!hasRole) {
       throw new UnauthorizedException({
         code: "FORBIDDEN",
         message: `Required role: ${requiredRoles.join(" or ")}`,
+        details: { userRoles, requiredRoles },
       });
     }
 
