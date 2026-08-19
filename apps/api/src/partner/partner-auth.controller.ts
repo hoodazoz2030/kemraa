@@ -31,62 +31,70 @@ export class PartnerAuthController {
 
     const passwordHash = await bcrypt.hash(body.password, 10);
 
-    const result = await this.prisma.$transaction(async (tx) => {
-      // Create org with only schema-valid fields
-      const org = await tx.organization.create({
-        data: {
-          legalName: body.legalName,
-          displayName: body.displayName || body.legalName,
-          status: "PENDING_KYB" as any,
-        } as any,
+    try {
+      const result = await this.prisma.$transaction(async (tx) => {
+        // Organization: uses type + ContractStatus (DRAFT) + country
+        const org = await tx.organization.create({
+          data: {
+            legalName: body.legalName,
+            displayName: body.displayName || body.legalName,
+            type: body.businessType || "LLC",
+            status: "DRAFT" as any, // ContractStatus enum value
+            country: body.registrationCountry || "EG",
+            metadata: { website: body.website ?? null } as any,
+          },
+        });
+
+        const user = await tx.user.create({
+          data: {
+            email: body.email,
+            passwordHash,
+            status: "ACTIVE" as any,
+            role: "CUSTOMER" as any,
+            accountType: "PARTNER" as any,
+          },
+        });
+
+        // OrganizationMember: role = PARTNER_ADMIN (from Role enum), status = ACTIVE (from MemberStatus)
+        await tx.organizationMember.create({
+          data: {
+            organizationId: org.id,
+            userId: user.id,
+            role: "PARTNER_ADMIN" as any,
+            status: "ACTIVE" as any,
+          },
+        });
+
+        // KYB draft
+        const kyb = await tx.kYB.create({
+          data: {
+            organizationId: org.id,
+            legalName: body.legalName,
+            businessType: body.businessType || "LLC",
+            registrationCountry: body.registrationCountry || "EG",
+            taxId: body.taxId ?? null,
+            website: body.website ?? null,
+            contactEmail: body.email,
+            contactPhone: body.contactPhone ?? null,
+            status: "DRAFT" as any,
+          },
+        });
+
+        return { org, user, kyb };
       });
 
-      const user = await tx.user.create({
-        data: {
-          email: body.email,
-          passwordHash,
-          status: "ACTIVE" as any,
-          role: "CUSTOMER" as any,
-          accountType: "PARTNER" as any,
-        },
-      });
+      this.logger.log(`Partner registered: org=${result.org.id}`);
 
-      // Create membership
-      await tx.organizationMember.create({
-        data: {
-          organizationId: org.id,
-          userId: user.id,
-          role: "ADMIN" as any, // Use valid Role enum value
-          status: "ACTIVE" as any,
-        } as any,
-      });
-
-      // Create KYB draft (this holds businessType, taxId, etc.)
-      const kyb = await tx.kYB.create({
-        data: {
-          organizationId: org.id,
-          legalName: body.legalName,
-          businessType: body.businessType || "LLC",
-          registrationCountry: body.registrationCountry || "EG",
-          taxId: body.taxId ?? null,
-          website: body.website ?? null,
-          contactEmail: body.email,
-          contactPhone: body.contactPhone ?? null,
-          status: "DRAFT" as any,
-        },
-      });
-
-      return { org, user, kyb };
-    });
-
-    this.logger.log(`Partner registered: org=${result.org.id}, user=${result.user.id}`);
-
-    return {
-      userId: result.user.id,
-      organizationId: result.org.id,
-      kybId: result.kyb.id,
-      message: "Registration complete. Complete KYB to activate.",
-    };
+      return {
+        userId: result.user.id,
+        organizationId: result.org.id,
+        kybId: result.kyb.id,
+        message: "Registration complete. Complete KYB to activate.",
+      };
+    } catch (err: any) {
+      this.logger.error(`Register failed: ${err.message}`, err.stack);
+      return { error: { code: "REGISTER_FAILED", message: err.message, meta: err.meta } };
+    }
   }
 
   @Post("login")
@@ -94,23 +102,15 @@ export class PartnerAuthController {
   async login(@Body() body: { email: string; password: string }) {
     const user = await this.prisma.user.findUnique({
       where: { email: body.email },
-      include: {
-        orgMembers: {
-          include: { organization: true },
-        },
-      },
+      include: { orgMembers: { include: { organization: true } } },
     });
 
-    if (!user || !user.passwordHash) {
-      return { error: { code: "INVALID_CREDENTIALS" } };
-    }
+    if (!user || !user.passwordHash) return { error: { code: "INVALID_CREDENTIALS" } };
 
     const valid = await bcrypt.compare(body.password, user.passwordHash);
     if (!valid) return { error: { code: "INVALID_CREDENTIALS" } };
 
-    if (user.accountType !== "PARTNER") {
-      return { error: { code: "NOT_PARTNER" } };
-    }
+    if (user.accountType !== "PARTNER") return { error: { code: "NOT_PARTNER" } };
 
     const membership = user.orgMembers?.[0];
     const org = membership?.organization;
@@ -134,9 +134,7 @@ export class PartnerAuthController {
     return {
       accessToken: token,
       user: { id: user.id, email: user.email, accountType: user.accountType },
-      organization: org
-        ? { id: org.id, displayName: org.displayName, legalName: org.legalName, status: org.status }
-        : null,
+      organization: org ? { id: org.id, displayName: org.displayName, legalName: org.legalName, status: org.status, type: org.type } : null,
       membership: membership ? { role: membership.role, status: membership.status } : null,
     };
   }

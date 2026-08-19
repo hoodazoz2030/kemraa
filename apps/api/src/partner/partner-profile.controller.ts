@@ -1,4 +1,4 @@
-﻿import { Controller, Get, Patch, Body, UseGuards, Req, SetMetadata } from "@nestjs/common";
+import { Controller, Get, Patch, Body, UseGuards, Req, SetMetadata } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { RolesGuard } from "../common/guards/roles.guard.js";
 import { Audit } from "../common/interceptors/audit.interceptor.js";
@@ -19,7 +19,6 @@ export class PartnerProfileController {
     });
     if (!membership) return { error: { code: "NO_ORGANIZATION" } };
 
-    // Fetch organization separately
     const organization = await this.prisma.organization.findUnique({
       where: { id: membership.organizationId },
       include: {
@@ -39,18 +38,16 @@ export class PartnerProfileController {
   @Patch()
   @SetMetadata("roles", ["CUSTOMER"])
   @Audit("partner.update_profile", "organization")
-  async update(@Req() req: any, @Body() body: { displayName?: string; website?: string; logoUrl?: string }) {
+  async update(@Req() req: any, @Body() body: { displayName?: string; metadata?: any }) {
+    // Only PARTNER_ADMIN can update
     const membership = await this.prisma.organizationMember.findFirst({
-      where: { userId: req.user.sub, role: "ADMIN" as any },
+      where: { userId: req.user.sub, role: "PARTNER_ADMIN" as any },
     });
-    if (!membership) {
-      return { error: { code: "FORBIDDEN", message: "Only ADMIN can update" } };
-    }
+    if (!membership) return { error: { code: "FORBIDDEN", message: "Only PARTNER_ADMIN" } };
 
     const data: any = {};
     if (body.displayName) data.displayName = body.displayName;
-    if (body.website !== undefined) data.website = body.website;
-    if (body.logoUrl !== undefined) data.logoUrl = body.logoUrl;
+    if (body.metadata !== undefined) data.metadata = body.metadata;
 
     return await this.prisma.organization.update({
       where: { id: membership.organizationId },
