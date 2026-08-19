@@ -1,7 +1,8 @@
-﻿import { Controller, Get, Post, Body, Param, Query, UseGuards, Req, SetMetadata, Logger } from "@nestjs/common";
+import { Controller, Get, Post, Body, Param, Query, UseGuards, Req, SetMetadata, Logger } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { RolesGuard } from "../common/guards/roles.guard.js";
 import { AdapterRegistry } from "./adapter-registry.service.js";
+import { AdapterOrchestrator } from "./adapter-orchestrator.service.js";
 
 /**
  * §24 — Provider adapter API.
@@ -14,7 +15,10 @@ import { AdapterRegistry } from "./adapter-registry.service.js";
 export class AdaptersController {
   private readonly logger = new Logger(AdaptersController.name);
 
-  constructor(private readonly registry: AdapterRegistry) {}
+  constructor(
+    private readonly registry: AdapterRegistry,
+    private readonly orchestrator: AdapterOrchestrator,
+  ) {}
 
   @Get("providers")
   @SetMetadata("roles", ["CUSTOMER", "ADMIN", "OPERATIONS"])
@@ -73,5 +77,19 @@ export class AdaptersController {
     if (!adapter) return { error: { code: "PROVIDER_NOT_FOUND" } };
 
     return await adapter.checkStatus(externalRef);
+  }
+
+  /**
+   * POST /adapters/search/:serviceType — search across ALL adapters of a type
+   */
+  @Post("search/:serviceType")
+  @SetMetadata("roles", ["CUSTOMER", "ADMIN", "OPERATIONS"])
+  async unifiedSearch(@Param("serviceType") serviceType: string, @Body() body: any) {
+    try {
+      const aggregated = await this.orchestrator.searchAll(serviceType, body);
+      return aggregated;
+    } catch (err: any) {
+      return { error: { code: "ORCHESTRATION_FAILED", message: err.message } };
+    }
   }
 }

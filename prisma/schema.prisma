@@ -1101,3 +1101,21 @@ model RideIncident {
   @@index([reporterId])
   @@map("ride_incidents")
 }
+
+model ProviderWebhookEvent {
+  id           String    @id @default(uuid()) @db.Uuid
+  providerCode String    @map("provider_code")
+  eventType    String    @map("event_type")
+  externalRef  String?   @map("external_ref")
+  payload      Json      @default("{}") @map("payload_json")
+  rawBody      String?   @map("raw_body")
+  signature    String?
+  processedAt  DateTime? @map("processed_at")
+  status       String    @default("RECEIVED")
+  error        String?
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  @@index([providerCode, eventType])
+  @@index([externalRef])
+  @@map("provider_webhook_events")
+}
