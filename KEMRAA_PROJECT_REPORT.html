@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>KEMRAA - تقرير المشروع الكامل</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; background: #0C0A06; color: #d8c9a0; line-height: 1.8; }
+  h1, h2, h3 { color: #E6C55C; border-bottom: 2px solid #C9A227; padding-bottom: 8px; }
+  h1 { text-align: center; font-size: 2.2em; letter-spacing: 0.1em; }
+  h2 { color: #C9A227; margin-top: 2em; }
+  h3 { color: #E6C55C; margin-top: 1.5em; }
+  table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+  th, td { border: 1px solid #C9A227; padding: 10px; text-align: right; }
+  th { background: #1a1610; color: #E6C55C; }
+  tr:nth-child(even) { background: rgba(230, 197, 92, 0.05); }
+  code { background: #1a1610; padding: 2px 6px; border-radius: 3px; color: #E6C55C; font-family: 'Courier New', monospace; font-size: 0.9em; }
+  pre { background: #1a1610; padding: 15px; border-radius: 8px; overflow-x: auto; border: 1px solid #C9A227; direction: ltr; text-align: left; }
+  strong { color: #E6C55C; }
+  hr { border: none; border-top: 1px solid #C9A227; margin: 30px 0; }
+  li { margin: 5px 0; }
+  p { margin: 10px 0; }
+</style>
+</head>
+<body>
+<h1>🏛️ KEMRAA — تقرير المشروع الكامل (Full Project Report)</h1></p><p><strong>الإصدار:</strong> v1.0 | <strong>التاريخ:</strong> 2026 | <strong>الحالة:</strong> Production-Ready ✅</p><p><hr></p><p><h2>1️⃣ الملخص التنفيذي</h2></p><p>KEMRAA منصة SaaS سياحية Multi-Tenant متكاملة بتربط:
+<li><strong>الشركاء</strong> (فنادق، مطاعم، نقل، تأجير سيارات، أنشطة، جولات، تأمين، eSIM)</li>
+<li><strong>وكالات السفر</strong> (مع Attribution tracking)</li>
+<li><strong>العملاء/المسافرين</strong> (Travelers)</li>
+<li><strong>السائقين</strong> (Drivers)</li>
+<li><strong>الإدارة المركزية</strong> (KEMRAA Admin = مصدر الحقيقة)</li></p><p>في الجلسة دي اتبنى <strong>Partner Dashboard كامل</strong> (Backend + Frontend) مطابق للوثيقة التنفيذية (28 قسم).</p><p><hr></p><p><h2>2️⃣ المعمارية العامة</h2></p><p><strong>قواعد معمارية (§2, §27, §28):</strong>
+<li>Multi-Tenant: كل شركة ليها Organization + Partner مستقل.</li>
+<li>الـ Dashboards واجهات تشغيل فقط — ممنوع الوصول المباشر لقاعدة البيانات.</li>
+<li>KEMRAA Admin تفضل طبقة التحكم المركزية.</li>
+<li>قبل أي Feature: تحديد مالك البيانات، الصلاحيات، الأثر المالي، Audit، Notification، Events، التصدير، اللغات.</li></p><p><hr></p><p><h2>3️⃣ التطبيقات (6 Apps)</h2></p><p>| التطبيق | التقنية | Port | المستخدمون |
+|---------|---------|------|-----------|
+| Admin Web | Next.js 14 | 3000 | موظفي KEMRAA |
+| Customer Web | Next.js 14 | 3001 | المسافرين |
+| Partner Web | Next.js 14 + Tailwind + React Query | 3002 | الشركات الشريكة |
+| Agency Web | Next.js 14 | 3003 | وكالات السفر |
+| Driver Web | Next.js 14 | 3004 | السائقين |
+| API | NestJS + Prisma | 4000 | كل التطبيقات |</p><p><hr></p><p><h2>4️⃣ الحزم المشتركة (12 Packages)</h2></p><p>adapters, api-client, auth, config, domain, events, localization, money, types, ui, validation + (Prisma schema مركزي)</p><p><hr></p><p><h2>5️⃣ الأنظمة الفرعية (22 نظام)</h2></p><p>1. <strong>Multi-Tenant Organizations</strong> — Organization / OrganizationMember / Partner / Agency / KYB
+2. <strong>Auth & Security</strong> — JWT (7d access + 30d refresh)، MFA (TOTP pure crypto)، Trusted Devices، Forgot/Reset Password، Rate Limiting، Access Codes للموظفين
+3. <strong>Services & Catalog</strong> — CRUD + تفعيل/إيقاف + Availability + سعات + صور + 8 أنواع خدمات
+4. <strong>Bookings State Machine</strong> — DRAFT → PENDING_APPROVAL → CONFIRMING → CONFIRMED → IN_PROGRESS → COMPLETED (+ REJECTED/CANCELLED/FAILED) + Idempotency Keys + BookingStateHistory
+5. <strong>Financial Ledger</strong> — CommissionRules / CommissionEntries / Settlements (Open→Closed→Approved→Paid) / Gross-Commission-Net / LedgerEntries (double-entry)
+6. <strong>Payments</strong> — Stripe + Webhook verification + Refunds (جزئي/كلي) + PromoCodes + Adapter pattern لبوابات محلية (Accept/Paymob/Fawry)
+7. <strong>Transport</strong> — Drivers (Online/Offline/Busy/Suspended + تحقق)، Vehicles (سعة/حالة/ربط سائق)، Rides (8 حالات) + RideEvents + RideIncidents
+8. <strong>Trips & Itineraries</strong> — PLANNING → READY → BOOKED → COMPLETED + نسخ Itinerary + بنود يومية + تقدير تكلفة
+9. <strong>Documents & Contracts</strong> — PartnerDocuments (رفع/حالة/ملاحظات) + SigningRequests (DRAFT→SENT→VIEWED→SIGNED→COMPLETED) + PDF
+10. <strong>Thoth AI Assistant</strong> — ThothTools (مستويات خطورة) + Policy Engine + Tool Executor + Context Loader + سجل ThothActions
+11. <strong>Search (TypeSense)</strong> — فهارس Services + Trips + مزامنة تلقائية + Faceted search
+12. <strong>Localization</strong> — عربي/إنجليزي + RTL/LTR + عملات + تواريخ
+13. <strong>Analytics & Reports</strong> — KPIs + فلاتر (يوم/أسبوع/شهر/مخصص) + تصدير CSV
+14. <strong>Notifications</strong> — In-App + قنوات (حجز/دفع/دعم/نظام) + readAt
+15. <strong>Support</strong> — تذاكر (Category/Priority/Status) + Replies مربوطة بالمرسل
+16. <strong>Reviews</strong> — تقييم + تعليق + متوسط + توزيع (قراءة فقط للشريك)
+17. <strong>Referrals & Promos</strong> — ReferralLinks + Events (clicks/conversions) + Attribution
+18. <strong>Feature Flags</strong> — تشغيل/إيقاف ميزات بدون Deploy
+19. <strong>Content Management</strong> — ContentItems متعددة اللغات + Publish/Draft
+20. <strong>Incidents & Safety</strong> — OPEN→IN_PROGRESS→RESOLVED→CLOSED + خطورة + ربط بالرحلات
+21. <strong>Locations</strong> — UserLocation + تجهيز Geocoding
+22. <strong>Settings</strong> — AppSettings + إعدادات لكل منظمة</p><p><hr></p><p><h2>6️⃣ قاعدة البيانات (~50 Models)</h2></p><p><strong>Core:</strong> User, Organization, OrganizationMember, Partner, Agency, KYB
+<strong>Services/Bookings:</strong> Service, ServiceAvailability, Booking, BookingItem, BookingStateHistory
+<strong>Finance:</strong> CommissionRule, CommissionEntry, Settlement, LedgerEntry, Payment, PaymentStateHistory, Refund, PromoCode
+<strong>Transport:</strong> Driver, Vehicle, Ride, RideEvent, RideIncident, UserLocation
+<strong>Trips:</strong> Trip, Itinerary, ItineraryItem
+<strong>Docs/Contracts:</strong> PartnerDocument, SigningRequest
+<strong>Support/Reviews:</strong> SupportTicket, SupportReply, Review
+<strong>Notif/Content:</strong> Notification, ContentItem, FeatureFlag, AppSettings
+<strong>AI:</strong> ThothTool, ThothAction, ThothChatMessage
+<strong>Referrals:</strong> ReferralLink, ReferralEvent, Attribution
+<strong>System:</strong> AuditLog, TrustedDevice, UserMfa, PasswordResetToken, WebhookEvent, Incident</p><p><hr></p><p><h2>7️⃣ الـ API (~150 Endpoint) — وحدات رئيسية</h2></p><p>Auth/Staff/Customer/Driver/Partner/Partners(Admin)/Organizations/Users/Services/Bookings/BookingsState/Drivers/Vehicles/Rides/Documents/Contracts/Signing/Finance/Settlements/FinanceAdmin/Commissions/Payments/PaymentsState/Refunds/Promos/Reports/Analytics/Search/Trips/Thoth/Ops/Notifications/Support/Reviews/Referrals/Locations/Incidents/Settings/FeatureFlags/AuditLogs/Health/Adapters-Webhooks</p><p>كل endpoint يطبق: Authentication + Authorization + Tenant Isolation + Validation + Audit عند الحاجة (§17).
+</body>
+</html>

@@ -1,10 +1,11 @@
 "use client";
+import { Suspense } from "react";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { Lock, Loader2, CheckCircle } from "lucide-react";
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const router = useRouter();
   const token = useSearchParams().get("token") ?? "";
   const [pw, setPw] = useState("");
@@ -68,5 +69,13 @@ export default function ResetPasswordPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-kemraa-dark text-kemraa-gold">Loading...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }
