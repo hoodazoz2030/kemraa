@@ -1,10 +1,10 @@
-﻿"use client";
+"use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Home, Map, Car, Truck, ScrollText, FileSignature,
   DollarSign, Receipt, BarChart3, Star, Bell, HelpCircle,
-  Users, Settings, Building2, Webhook
+  Users, Settings, Building2, Webhook, FileText, History, UserCircle
 } from "lucide-react";
 import clsx from "clsx";
 
@@ -17,14 +17,16 @@ const NAV_ITEMS = [
   { href: "/rides", label: "Rides", icon: Car },
   { href: "/finance", label: "Finance", icon: DollarSign },
   { href: "/settlements", label: "Settlements", icon: Receipt },
+  { href: "/documents", label: "Documents", icon: FileText },
   { href: "/contracts", label: "Contracts", icon: FileSignature },
   { href: "/reports", label: "Reports", icon: BarChart3 },
   { href: "/reviews", label: "Reviews", icon: Star },
   { href: "/notifications", label: "Notifications", icon: Bell },
   { href: "/support", label: "Support", icon: HelpCircle },
   { href: "/team", label: "Team", icon: Users },
-  { href: "/webhooks", label: "Webhooks", icon: Webhook },
+  { href: "/profile", label: "Company Profile", icon: Building2 },
   { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/audit", label: "Activity Log", icon: History },
 ];
 
 export default function Sidebar() {
