@@ -1,5 +1,6 @@
 ﻿import { Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
+import { ThrottlerModule } from "@nestjs/throttler";
 import { AuthModule } from "../auth/auth.module.js";
 import { PartnerAuthController } from "./partner-auth.controller.js";
 import { PartnerKYBController } from "./partner-kyb.controller.js";
@@ -16,6 +17,10 @@ import { PartnerServicesOpsController, PartnerAnalyticsController } from "./part
 import { PartnerFinanceController } from "./partner-finance.controller.js";
 import { PartnerContractsController } from "./partner-contracts.controller.js";
 import { PartnerReportsController } from "./partner-reports.controller.js";
+import { PartnerDriversController } from "./partner-drivers.controller.js";
+import { PartnerVehiclesController } from "./partner-vehicles.controller.js";
+import { PartnerRidesController } from "./partner-rides.controller.js";
+import { PartnerWebhooksController } from "./partner-webhooks.controller.js";
 
 @Module({
   imports: [
@@ -24,6 +29,7 @@ import { PartnerReportsController } from "./partner-reports.controller.js";
       secret: process.env.JWT_SECRET || "test-secret-key-12345-for-testing-only-min-32-chars",
       signOptions: { expiresIn: "7d" },
     }),
+    ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }]),
   ],
   controllers: [
     PartnerAuthController,
@@ -42,6 +48,10 @@ import { PartnerReportsController } from "./partner-reports.controller.js";
     PartnerFinanceController,
     PartnerContractsController,
     PartnerReportsController,
+    PartnerDriversController,
+    PartnerVehiclesController,
+    PartnerRidesController,
+    PartnerWebhooksController,
   ],
 })
 export class PartnerModule {}

@@ -98,6 +98,7 @@ model OrganizationMember {
 }
 
 model Partner {
+  webhookEvents  WebhookEvent[]
   organizationId  String            @id @map("organization_id") @db.Uuid
   partnerType     String            @map("partner_type")
   contractStatus  ContractStatus    @default(DRAFT) @map("contract_status")
@@ -1118,4 +1119,27 @@ model ProviderWebhookEvent {
   @@index([providerCode, eventType])
   @@index([externalRef])
   @@map("provider_webhook_events")
+}
+
+
+model WebhookEvent {
+  id             String    @id @default(uuid()) @db.Uuid
+  partnerId      String    @map("partner_id") @db.Uuid
+  eventType      String    @map("event_type")
+  eventId        String    @unique @map("event_id")
+  version        String    @default("1.0")
+  timestamp      DateTime  @default(now())
+  payload        Json      @default("{}") @map("payload_json")
+  signature      String?   @map("signature")
+  processed      Boolean   @default(false)
+  processedAt    DateTime? @map("processed_at")
+  error          String?
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  partner        Partner   @relation(fields: [partnerId], references: [organizationId], onDelete: Cascade)
+
+  @@index([partnerId])
+  @@index([eventType])
+  @@index([eventId])
+  @@map("webhook_events")
 }
