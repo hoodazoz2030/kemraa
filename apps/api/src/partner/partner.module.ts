@@ -13,6 +13,9 @@ import { PartnerReviewsController } from "./partner-reviews.controller.js";
 import { PartnerNotificationsController } from "./partner-notifications.controller.js";
 import { PartnerSupportController } from "./partner-support.controller.js";
 import { PartnerServicesOpsController, PartnerAnalyticsController } from "./partner-ops.controller.js";
+import { PartnerFinanceController } from "./partner-finance.controller.js";
+import { PartnerContractsController } from "./partner-contracts.controller.js";
+import { PartnerReportsController } from "./partner-reports.controller.js";
 
 @Module({
   imports: [
@@ -36,6 +39,9 @@ import { PartnerServicesOpsController, PartnerAnalyticsController } from "./part
     PartnerSupportController,
     PartnerServicesOpsController,
     PartnerAnalyticsController,
+    PartnerFinanceController,
+    PartnerContractsController,
+    PartnerReportsController,
   ],
 })
 export class PartnerModule {}
