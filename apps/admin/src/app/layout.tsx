@@ -8,7 +8,7 @@ import { queryClient } from "@/lib/query";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Kemraa — The Land of the Sun",
+  title: "Kemraa Dashboard",
   icons: [{ url: "/logo-dark.png?v=2", sizes: "any" }],
   description: "Admin dashboard for Kemraa travel platform",
 };

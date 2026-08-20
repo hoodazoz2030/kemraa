@@ -1,4 +1,4 @@
-﻿import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "../../prisma/prisma.service.js";
 
@@ -32,7 +32,7 @@ export class PartnerGuard implements CanActivate {
     if (!user) throw new UnauthorizedException("User not found");
 
     const partnerMembership = user.orgMembers.find(
-      (m: any) => m.role === "PARTNER_USER" && m.organization.partner
+      (m: any) => ["PARTNER_ADMIN", "PARTNER_STAFF", "PARTNER_USER"].includes(m.role) && m.organization.partner
     );
     if (!partnerMembership) {
       throw new UnauthorizedException("Not authorized as partner");
@@ -44,7 +44,7 @@ export class PartnerGuard implements CanActivate {
       username: user.username,
       partnerId: partnerMembership.organizationId,
       organizationName: partnerMembership.organization.displayName,
-      role: "PARTNER_USER",
+      role: partnerMembership.role,
     };
 
     return true;

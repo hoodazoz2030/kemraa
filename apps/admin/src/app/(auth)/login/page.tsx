@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { staffApi, setTokens } from "@/lib/api";
 import { Loader2, KeyRound } from "lucide-react";
@@ -30,8 +31,8 @@ export default function LoginPage() {
     try {
       const r = await staffApi.accessLogin(code.trim(), deviceId);
       setTokens(r.accessToken, r.refreshToken);
-      localStorage.setItem("access_token", r.accessToken);
-      localStorage.setItem("refresh_token", r.refreshToken);
+      Cookies.set("access_token", r.accessToken, { path: "/", expires: 1 });
+      Cookies.set("refresh_token", r.refreshToken, { path: "/", expires: 30 });
       localStorage.setItem("kemraa_features", JSON.stringify(r.user.features ?? []));
       localStorage.setItem("kemraa_user", JSON.stringify(r.user));
       localStorage.setItem("kemraa_features", JSON.stringify(r.user.features ?? []));

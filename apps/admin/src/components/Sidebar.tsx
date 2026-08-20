@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -116,7 +116,7 @@ export default function Sidebar() {
   }, [pathname]);
 
   return (
-    <aside className="w-72 bg-[#0C0A06] border-r border-[#C9A227]/25 flex flex-col min-h-screen">
+    <aside className="w-72 bg-[#0C0A06] border-r border-[#C9A227]/25 flex flex-col h-screen">
       <div className="p-5 border-b border-[#C9A227]/25 flex items-center gap-3">
         <Image
           src="/logo-dark.png"
