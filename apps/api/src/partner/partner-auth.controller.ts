@@ -125,6 +125,18 @@ export class PartnerAuthController {
     const membership = user.orgMembers?.[0];
     const org = membership?.organization;
 
+    // MFA gate
+    const mfaRec = await this.prisma.userMfa.findUnique({ where: { userId: user.id } });
+    if (mfaRec?.enabled) {
+      const fp = (body as any).deviceFingerprint as string | undefined;
+      const trusted = fp ? await this.prisma.trustedDevice.findFirst({ where: { userId: user.id, deviceFingerprint: fp } }) : null;
+      if (!trusted) {
+        const mfaTok = jwt.sign({ sub: user.id, scope: "mfa" }, process.env.JWT_SECRET || "test-secret-key-12345-for-testing-only-min-32-chars", { expiresIn: "5m" });
+        return { mfaRequired: true, mfaToken: mfaTok };
+      }
+      await this.prisma.trustedDevice.update({ where: { id: trusted.id }, data: { lastSeenAt: new Date() } });
+    }
+
     const secret = process.env.JWT_SECRET || "test-secret-key-12345-for-testing-only-min-32-chars";
     const token = jwt.sign(
       {

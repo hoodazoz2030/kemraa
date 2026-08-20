@@ -1,4 +1,4 @@
-﻿import { Module } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 import { ThrottlerModule } from "@nestjs/throttler";
 import { AuthModule } from "../auth/auth.module.js";
@@ -21,6 +21,7 @@ import { PartnerDriversController } from "./partner-drivers.controller.js";
 import { PartnerVehiclesController } from "./partner-vehicles.controller.js";
 import { PartnerRidesController } from "./partner-rides.controller.js";
 import { PartnerWebhooksController } from "./partner-webhooks.controller.js";
+import { PartnerSecurityController } from "./partner-security.controller.js";
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { PartnerWebhooksController } from "./partner-webhooks.controller.js";
     PartnerVehiclesController,
     PartnerRidesController,
     PartnerWebhooksController,
+    PartnerSecurityController,
   ],
 })
 export class PartnerModule {}

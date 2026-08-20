@@ -11,6 +11,9 @@ datasource db {
 }
 
 model User {
+  mfa                UserMfa?
+  passwordResetTokens PasswordResetToken[]
+
   id                    String      @id @default(uuid()) @db.Uuid
   email                 String?     @unique
   phone                 String?     @unique
@@ -1121,7 +1124,6 @@ model ProviderWebhookEvent {
   @@map("provider_webhook_events")
 }
 
-
 model WebhookEvent {
   id             String    @id @default(uuid()) @db.Uuid
   partnerId      String    @map("partner_id") @db.Uuid
@@ -1142,4 +1144,27 @@ model WebhookEvent {
   @@index([eventType])
   @@index([eventId])
   @@map("webhook_events")
+}
+
+model UserMfa {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @unique @map("user_id") @db.Uuid
+  secret    String
+  enabled   Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_mfa")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  token     String    @unique @db.VarChar(64)
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_reset_tokens")
 }
