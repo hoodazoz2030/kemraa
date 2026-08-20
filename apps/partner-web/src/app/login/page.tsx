@@ -1,4 +1,5 @@
-﻿"use client";
+import Link from "next/link";
+"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
@@ -91,6 +92,9 @@ export default function LoginPage() {
               {busy ? <Loader2 className="animate-spin" size={20} /> : "ENTER"}
             </button>
           </form>
+          <div className="text-center mt-4">
+            <Link href="/forgot-password" className="text-xs text-kemraa-goldDark hover:text-kemraa-gold transition">Forgot password?</Link>
+          </div>
 
           <p className="text-center text-[10px] text-kemraa-goldDark/60 tracking-[0.35em] mt-8">
             POWERED BY THOTH

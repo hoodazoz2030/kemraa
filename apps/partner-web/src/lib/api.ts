@@ -1,4 +1,4 @@
-﻿import axios from "axios";
+import axios from "axios";
 import Cookies from "js-cookie";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4001/api/v1";
@@ -146,4 +146,13 @@ export const partnerWebhooksApi = {
   detail: (id: string) => api.get(`/partner-webhooks/${id}`).then((r) => r.data),
   emit: (data: any) => api.post("/partner-webhooks/emit", data).then((r) => r.data),
   ack: (id: string) => api.post(`/partner-webhooks/${id}/ack`).then((r) => r.data),
+};
+
+export const partnerSecurityApi = {
+  mfaStatus: () => api.get("/partner-security/mfa/status").then((r) => r.data),
+  mfaSetup: () => api.post("/partner-security/mfa/setup").then((r) => r.data),
+  mfaVerify: (code: string) => api.post("/partner-security/mfa/verify", { code }).then((r) => r.data),
+  mfaDisable: (code: string) => api.post("/partner-security/mfa/disable", { code }).then((r) => r.data),
+  devices: () => api.get("/partner-security/devices").then((r) => r.data),
+  revokeDevice: (id: string) => api.delete("/partner-security/devices/" + id).then((r) => r.data),
 };
