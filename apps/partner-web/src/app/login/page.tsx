@@ -1,13 +1,15 @@
-import Link from "next/link";
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Building2, Mail, Lock, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
   const { login, user } = useAuth();
+  const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -41,14 +43,14 @@ export default function LoginPage() {
               <Building2 size={36} className="text-kemraa-dark" />
             </div>
             <h1 className="text-3xl font-bold tracking-[0.15em] text-kemraa-gold">KEMRAA</h1>
-            <p className="text-sm text-kemraa-text/70 tracking-wider mt-1">Partner Portal</p>
+            <p className="text-sm text-kemraa-text/70 tracking-wider mt-1">{t("partnerPortal")}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-xs text-kemraa-gold mb-2 tracking-wider">EMAIL</label>
+              <label className="block text-xs text-kemraa-gold mb-2 tracking-wider">{t("login.email")}</label>
               <div className="relative">
-                <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-kemraa-goldDark" />
+                <Mail size={18} className="absolute start-4 top-1/2 -translate-y-1/2 text-kemraa-goldDark" />
                 <input
                   type="email"
                   value={email}
@@ -57,15 +59,15 @@ export default function LoginPage() {
                   autoFocus
                   autoComplete="email"
                   placeholder="partner@company.com"
-                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-kemraa-goldDark/40 rounded-lg text-kemraa-text placeholder:text-gray-600 focus:outline-none focus:border-kemraa-gold focus:ring-2 focus:ring-kemraa-goldDark/20"
+                  className="w-full ps-12 pe-4 py-3 bg-white/5 border border-kemraa-goldDark/40 rounded-lg text-kemraa-text placeholder:text-gray-600 focus:outline-none focus:border-kemraa-gold focus:ring-2 focus:ring-kemraa-goldDark/20"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs text-kemraa-gold mb-2 tracking-wider">PASSWORD</label>
+              <label className="block text-xs text-kemraa-gold mb-2 tracking-wider">{t("login.password")}</label>
               <div className="relative">
-                <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-kemraa-goldDark" />
+                <Lock size={18} className="absolute start-4 top-1/2 -translate-y-1/2 text-kemraa-goldDark" />
                 <input
                   type="password"
                   value={password}
@@ -73,7 +75,7 @@ export default function LoginPage() {
                   required
                   autoComplete="current-password"
                   placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-kemraa-goldDark/40 rounded-lg text-kemraa-text placeholder:text-gray-600 focus:outline-none focus:border-kemraa-gold focus:ring-2 focus:ring-kemraa-goldDark/20"
+                  className="w-full ps-12 pe-4 py-3 bg-white/5 border border-kemraa-goldDark/40 rounded-lg text-kemraa-text placeholder:text-gray-600 focus:outline-none focus:border-kemraa-gold focus:ring-2 focus:ring-kemraa-goldDark/20"
                 />
               </div>
             </div>
@@ -89,15 +91,18 @@ export default function LoginPage() {
               disabled={busy || !email.trim() || !password}
               className="w-full py-3 bg-gradient-to-r from-kemraa-goldDark to-kemraa-gold text-kemraa-dark rounded-lg font-semibold disabled:opacity-50 flex items-center justify-center gap-2 hover:brightness-110 transition tracking-wider"
             >
-              {busy ? <Loader2 className="animate-spin" size={20} /> : "ENTER"}
+              {busy ? <Loader2 className="animate-spin" size={20} /> : t("login.enter")}
             </button>
           </form>
+
           <div className="text-center mt-4">
-            <Link href="/forgot-password" className="text-xs text-kemraa-goldDark hover:text-kemraa-gold transition">Forgot password?</Link>
+            <Link href="/forgot-password" className="text-xs text-kemraa-goldDark hover:text-kemraa-gold transition">
+              {t("login.forgot")}
+            </Link>
           </div>
 
-          <p className="text-center text-[10px] text-kemraa-goldDark/60 tracking-[0.35em] mt-8">
-            POWERED BY THOTH
+          <p className="text-center text-[10px] text-kemraa-goldDark/60 tracking-[0.35em] mt-6">
+            {t("poweredBy").toUpperCase()}
           </p>
         </div>
       </div>
